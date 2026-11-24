@@ -17,14 +17,85 @@
   *{box-sizing:border-box}
   body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--fundo);color:var(--tinta)}
   /* cores do Movimento BR-365: amarelo, preto e branco */
-  .topo{background:var(--preto);color:#fff;--morte:#FF6B76}
-  header{padding:22px 20px 20px;max-width:1200px;margin:auto;display:flex;gap:20px;align-items:center}
-  header .logo{width:clamp(84px,14vw,140px);flex:none;border-radius:16px}
+  html{scroll-behavior:smooth;scroll-padding-top:64px}
   .selo{display:inline-block;background:var(--amarelo);color:var(--preto);font-weight:900;font-size:12px;letter-spacing:.08em;padding:5px 10px;border-radius:6px;text-transform:uppercase}
-  h1{font-size:clamp(24px,4vw,42px);line-height:1.05;margin:10px 0 8px;font-weight:900;letter-spacing:-.02em}
-  h1 em{font-style:normal;color:var(--amarelo)}
-  .sub{color:#E8E8E8;font-size:16px;margin:0}
-  .sub b{color:#fff}
+
+  /* menu fixo */
+  .menu{position:sticky;top:0;z-index:2000;background:var(--preto);display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 16px;border-bottom:4px solid var(--amarelo)}
+  .menu .marca{display:flex;align-items:center;gap:8px;color:#fff;text-decoration:none;font-weight:900;text-transform:uppercase;letter-spacing:.03em;font-size:14px;white-space:nowrap}
+  .menu .marca img{width:34px;height:34px;border-radius:6px}
+  .abas{display:flex;gap:4px;overflow-x:auto}
+  .abas a{color:#ddd;text-decoration:none;font-weight:800;font-size:14px;padding:8px 12px;border-radius:8px;white-space:nowrap;transition:background .2s,color .2s}
+  .abas a:hover{background:#2a2a2a;color:#fff}
+  .abas a.on{background:var(--amarelo);color:var(--preto)}
+  .abas a.seguir{border:2px solid var(--amarelo);color:var(--amarelo)}
+
+  /* abertura: DUPLICAÇÃO JÁ */
+  .hero{position:relative;color:#fff;background:linear-gradient(100deg,rgba(10,10,10,.96) 35%,rgba(10,10,10,.55)),url(fotos/ato3.jpg) center/cover;overflow:hidden}
+  .hero::after{content:"";position:absolute;right:-60px;bottom:-80px;width:340px;height:300px;background:var(--amarelo);opacity:.08;clip-path:polygon(50% 0,100% 100%,0 100%)}
+  .hero-in{max-width:1200px;margin:auto;padding:34px 20px 40px;display:flex;gap:28px;align-items:center;position:relative;z-index:1}
+  .hero-logo{width:clamp(110px,20vw,230px);flex:none;border-radius:18px;animation:balanca 5s ease-in-out infinite}
+  .grito{font-size:clamp(54px,11vw,128px);line-height:.88;margin:12px 0 12px;font-weight:900;text-transform:uppercase;letter-spacing:-.03em}
+  .grito em{font-style:normal;color:var(--amarelo);display:inline-block;animation:pulsa 2.4s ease-in-out infinite}
+  .hero-sub{font-size:clamp(16px,2vw,20px);line-height:1.4;max-width:620px;margin:0 0 18px;color:#EDEDED}
+  .contadores{display:flex;flex-wrap:wrap;gap:10px}
+  .cont{background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.18);border-radius:14px;padding:10px 16px;min-width:130px}
+  .cont b{display:block;font-size:clamp(34px,5vw,56px);font-weight:900;line-height:1;font-variant-numeric:tabular-nums}
+  .cont span{font-size:13px;font-weight:700;color:#ccc;text-transform:uppercase;letter-spacing:.05em}
+  .cont.morte{background:var(--amarelo);border-color:var(--amarelo);color:var(--preto)}
+  .cont.morte span{color:var(--preto)}
+  .hero-nota{font-size:13px;color:#bbb;margin:10px 0 16px}
+  .hero-bts{display:flex;flex-wrap:wrap;gap:10px}
+  .bt{display:inline-block;text-decoration:none;font-weight:900;padding:12px 18px;border-radius:10px;font-size:15px;transition:transform .15s}
+  .bt:hover{transform:translateY(-2px)}
+  .bt.am{background:var(--amarelo);color:var(--preto)}
+  .bt.cl{border:2px solid #fff;color:#fff}
+
+  /* letreiro correndo */
+  .letreiro{background:var(--amarelo);color:var(--preto);overflow:hidden;white-space:nowrap;border-top:3px solid var(--preto);border-bottom:3px solid var(--preto)}
+  .letreiro div{display:inline-block;padding:9px 0;animation:corre 38s linear infinite;font-weight:900;font-size:16px;letter-spacing:.06em}
+  .letreiro span{margin:0 14px}.letreiro i{font-style:normal;font-size:12px}
+
+  /* manifesto */
+  .manifesto{background:#0f0f0f;color:#fff;background-image:radial-gradient(circle at 85% 10%,rgba(255,199,44,.12),transparent 40%)}
+  .mf-in{max-width:1000px;margin:auto;padding:44px 20px 50px}
+  .mf-cab{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+  .tri{font-size:64px;color:var(--amarelo);line-height:1}
+  .mf-cab small{color:var(--amarelo);font-weight:800;text-transform:uppercase;letter-spacing:.1em;font-size:13px}
+  .mf-cab h2{margin:2px 0 0;font-size:clamp(26px,4vw,40px);font-weight:900;text-transform:uppercase;line-height:1.05}
+  .mf-corpo p{font-size:clamp(16px,1.8vw,19px);line-height:1.6;color:#e6e6e6;margin:0 0 14px}
+  .mf-corpo b{color:#fff}
+  .mf-abre{font-size:clamp(18px,2.2vw,23px)!important;color:#fff!important;border-left:6px solid var(--amarelo);padding-left:16px}
+  .mf-vivo{color:var(--amarelo)!important}
+  .principios{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:26px 0}
+  .pr{background:#1c1c1c;border:2px solid #2c2c2c;border-radius:14px;padding:16px;position:relative;transition:border-color .2s,transform .2s}
+  .pr:hover{border-color:var(--amarelo);transform:translateY(-3px)}
+  .pr span{display:inline-flex;align-items:center;justify-content:center;width:34px;height:30px;background:var(--amarelo);color:var(--preto);font-weight:900;clip-path:polygon(50% 0,100% 100%,0 100%);padding-top:8px;font-size:13px}
+  .pr b{display:block;margin:10px 0 6px;font-size:17px;color:var(--amarelo);text-transform:uppercase}
+  .pr p{margin:0;font-size:14px;line-height:1.45;color:#d0d0d0}
+  .mf-grito{text-align:center;font-size:clamp(24px,4.5vw,46px);font-weight:900;color:var(--preto);background:var(--amarelo);padding:16px;border-radius:12px;margin:10px 0 0;letter-spacing:-.01em}
+
+  /* cabeçalho do painel */
+  .painel-cab{padding:26px 0 4px}
+  .painel-cab h2{font-size:clamp(24px,3.6vw,38px);line-height:1.05;margin:10px 0 8px;font-weight:900;letter-spacing:-.02em}
+  .painel-cab h2 em{font-style:normal;background:linear-gradient(transparent 60%,var(--amarelo) 60%)}
+  .sub{color:var(--suave);font-size:16px;margin:0}
+  .sub b{color:var(--tinta)}
+
+  /* entrada suave ao rolar */
+  .revela{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
+  .revela.vis{opacity:1;transform:none}
+  @keyframes corre{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  @keyframes pulsa{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+  @keyframes balanca{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}
+  @media (prefers-reduced-motion:reduce){.letreiro div,.grito em,.hero-logo{animation:none}.revela{opacity:1;transform:none;transition:none}}
+
+  .mov h4.ato{margin:12px 20px 8px;color:#fff;font-size:15px;font-weight:900;letter-spacing:.02em}
+  .galeria.g3{grid-template-columns:1.3fr 1fr 1fr;grid-auto-rows:300px}
+  .galeria.g3 figure:first-child{grid-row:span 1}
+  .linha-tempo li.vitoria b{color:#7CFC9A}
+  .linha-tempo li.vitoria::before{background:#7CFC9A;box-shadow:0 0 0 2px #7CFC9A}
+  .linha-tempo li.proximo span{font-weight:800;color:var(--amarelo)}
   .fita{height:14px;background:repeating-linear-gradient(-45deg,var(--amarelo) 0 18px,var(--preto) 18px 36px)}
   .chip.on,.mes.on{border-color:var(--preto)}
   .chip.on{background:var(--preto);color:var(--amarelo)}
@@ -118,26 +189,84 @@
     .placar,.grade{grid-template-columns:1fr}
     #mapa{height:420px}
     .nums{grid-template-columns:repeat(2,1fr)}
-    header{align-items:flex-start}
     .galeria{grid-template-columns:1fr 1fr;grid-auto-rows:140px}
     .galeria figure:first-child{grid-column:span 2;grid-row:span 2}
+    .galeria.g3{grid-template-columns:1fr 1fr;grid-auto-rows:230px}
+    .galeria.g3 figure:first-child{grid-column:span 2}
+    .hero-in{flex-direction:column;align-items:flex-start;padding-top:22px}
+    .hero-logo{width:110px}
+    .menu .marca span{display:none}
+    .menu .marca{font-size:0}
+    .cont{min-width:0;flex:1}
   }
 </style>
 </head>
 <body>
-<div class="topo">
-<header>
-  <img class="logo" src="fotos/perfil.jpg" alt="Logo do Movimento BR-365: Pedágio sem obra, não!">
-  <div>
-    <span class="selo">Movimento BR-365 · Pedágio sem obra, não!</span>
-    <h1>BR-365: quantos acidentes de <em>Uberlândia</em> até a <em>BR-040</em></h1>
-    <p class="sub" id="periodo"></p>
-    <a href="#movimento" style="display:inline-block;margin-top:10px;color:var(--amarelo);font-weight:800;font-size:14px">✊ Conheça o movimento ↓</a>
+<nav class="menu" id="menu">
+  <a class="marca" href="#topo"><img src="fotos/perfil.jpg" alt="">Movimento BR-365</a>
+  <div class="abas">
+    <a href="#painel" data-sec="painel">🗺️ Acidentes</a>
+    <a href="#manifesto" data-sec="manifesto">📜 Manifesto</a>
+    <a href="#movimento" data-sec="movimento">✊ Nossa luta</a>
+    <a class="seguir" href="https://www.instagram.com/movimentobr365/" target="_blank" rel="noopener">Seguir</a>
   </div>
-</header>
-</div>
+</nav>
+
+<section class="hero" id="topo">
+  <div class="hero-in">
+    <img class="hero-logo" src="fotos/perfil.jpg" alt="Logo do Movimento BR-365: Pedágio sem obra, não!">
+    <div class="hero-txt">
+      <span class="selo">Movimento BR-365 · Pedágio sem obra, não!</span>
+      <h1 class="grito">Duplicação<br><em>já!</em></h1>
+      <p class="hero-sub">A BR-365 está matando quem trabalha e produz. A gente quer a duplicação imediata, de Uberlândia até a BR-040, para salvar vidas.</p>
+      <div class="contadores">
+        <div class="cont morte"><b data-conta="m">0</b><span>vidas perdidas</span></div>
+        <div class="cont"><b data-conta="ac">0</b><span>acidentes</span></div>
+        <div class="cont"><b data-conta="f">0</b><span>feridos</span></div>
+      </div>
+      <p class="hero-nota" id="heroNota"></p>
+      <div class="hero-bts">
+        <a class="bt am" href="#painel">Ver no mapa ↓</a>
+        <a class="bt cl" href="#manifesto">Ler o manifesto</a>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="letreiro" aria-hidden="true"><div>
+  <span>DUPLICAÇÃO JÁ</span><i>▲</i><span>PEDÁGIO SEM OBRA, NÃO!</span><i>▲</i><span>NÃO É SOBRE POLÍTICA. É SOBRE VIDAS.</span><i>▲</i><span>OBRA PRIMEIRO, PEDÁGIO DEPOIS</span><i>▲</i>
+  <span>DUPLICAÇÃO JÁ</span><i>▲</i><span>PEDÁGIO SEM OBRA, NÃO!</span><i>▲</i><span>NÃO É SOBRE POLÍTICA. É SOBRE VIDAS.</span><i>▲</i><span>OBRA PRIMEIRO, PEDÁGIO DEPOIS</span><i>▲</i>
+</div></div>
+
+<section class="manifesto" id="manifesto">
+  <div class="mf-in">
+    <div class="mf-cab">
+      <span class="tri">▲</span>
+      <div><small>Por que o movimento nasceu</small><h2>Manifesto do Movimento BR-365</h2></div>
+    </div>
+    <div class="mf-corpo revela">
+      <p class="mf-abre">Nós somos produtores, caminhoneiros, trabalhadores, famílias e lideranças do Alto Paranaíba e do Noroeste de Minas. A BR-365 é o nosso caminho de todo dia: leva a safra, o leite, o frete, o paciente para o hospital e o filho para a escola.</p>
+      <p>No começo de 2026, o governo de Minas pôs em licitação o <b>Lote Noroeste</b>: a BR-365 entre Patrocínio, Patos de Minas e a BR-040 seria entregue a uma concessão, com praças de pedágio, sem a duplicação que essa estrada pede há anos. Pagar antes de receber. Foi isso que levou o povo para a beira da pista.</p>
+      <p>Em <b>2 de fevereiro</b>, no trevo de Coromandel, debaixo de chuva. Em <b>7 de fevereiro</b>, no trevo da Pipoca, em Patos de Minas. Em <b>13 de fevereiro</b>, o edital foi revogado e o Ministério dos Transportes anunciou que a duplicação será feita pelo DNIT.</p>
+      <p>Mas a estrada continua matando. <b class="mf-vivo" id="mfVivo"></b> Cada número deste painel tem nome, família e endereço.</p>
+    </div>
+    <div class="principios">
+      <div class="pr revela"><span>1</span><b>Duplicação já</b><p>Duplicação imediata da BR-365, para salvar vidas. Cada mês de espera custa gente.</p></div>
+      <div class="pr revela"><span>2</span><b>Obra primeiro, pedágio depois</b><p>Não somos contra o progresso. Somos contra pagar antes de receber. Pedágio sem obra, não!</p></div>
+      <div class="pr revela"><span>3</span><b>É sobre vidas</b><p>Não é sobre partido nem vaidade. É sobre quem sai de casa pela BR-365 e precisa voltar.</p></div>
+      <div class="pr revela"><span>4</span><b>Cobrança com prova</b><p>Cada acidente registrado no km onde aconteceu, com fonte: PRF, concessionária e imprensa. Sem número inventado.</p></div>
+      <div class="pr revela"><span>5</span><b>Movimento do povo</b><p>Pacífico, legítimo e aberto. Quem usa a BR-365 faz parte. Quanto mais gente cobrar, mais difícil é ignorar.</p></div>
+    </div>
+    <p class="mf-grito revela">DUPLICAÇÃO JÁ. PARA SALVAR VIDAS.</p>
+  </div>
+</section>
 <div class="fita"></div>
-<main>
+
+<main id="painel">
+  <div class="painel-cab revela">
+    <span class="selo">O painel dos acidentes</span>
+    <h2>BR-365: quantos acidentes de <em>Uberlândia</em> até a <em>BR-040</em></h2>
+    <p class="sub" id="periodo"></p>
+  </div>
   <div class="filtros">
     <label for="mesCal">📅 Mês:</label><input type="month" id="mesCal">
     <button class="chip" id="verTudo">Ver tudo desde a manifestação</button>
@@ -211,23 +340,34 @@
   </div>
 
   <section class="mov" id="movimento">
-    <h3>✊ O Movimento BR-365</h3>
-    <p class="dica">Moradores, produtores, caminhoneiros e lideranças do Alto Paranaíba que foram para a beira da rodovia cobrar uma coisa simples: <b style="color:#fff">primeiro a obra, depois o pedágio</b>. O movimento é pacífico e cobra segurança e a duplicação da BR-365, porque quem usa essa estrada todo dia está perdendo a vida nela.</p>
+    <h3>✊ Nossa luta</h3>
+    <p class="dica">Moradores, produtores, caminhoneiros e lideranças do Alto Paranaíba e do Noroeste de Minas que foram para a beira da rodovia cobrar uma coisa simples: <b style="color:#fff">primeiro a obra, depois o pedágio</b>. O movimento é pacífico e cobra a duplicação imediata da BR-365, porque quem usa essa estrada todo dia está perdendo a vida nela.</p>
+    <h4 class="ato">▲ 1º ato · 02/02/2026 · trevo de Coromandel (BR-365 com MG-188)</h4>
     <div class="galeria">
-      <figure><img src="fotos/ato2.jpg" alt="Manifestantes de punho erguido com camisetas do movimento" loading="lazy"><figcaption>02/02/2026 · trevo da BR-365 com a MG-188, Coromandel</figcaption></figure>
+      <figure><img src="fotos/ato2.jpg" alt="Manifestantes de punho erguido com camisetas do movimento" loading="lazy"><figcaption>Debaixo de chuva, de punho erguido</figcaption></figure>
       <figure><img src="fotos/ato4.jpg" alt="Faixa Acorda Região! Pedágio sem obras não!" loading="lazy"><figcaption>"Acorda, Região!"</figcaption></figure>
       <figure><img src="fotos/ato3.jpg" alt="Grupo de manifestantes com cartazes na beira da rodovia" loading="lazy"><figcaption>Povo na beira da pista</figcaption></figure>
       <figure><img src="fotos/ato7.jpg" alt="Lideranças da região com os cartazes do movimento" loading="lazy"><figcaption>Lideranças da região juntas</figcaption></figure>
       <figure><img src="fotos/ato1.jpg" alt="Dois manifestantes de punho fechado" loading="lazy"><figcaption>Pedágio sem obra, não!</figcaption></figure>
     </div>
+    <h4 class="ato">▲ 2º ato · 07/02/2026 · trevo da Pipoca, Patos de Minas</h4>
+    <div class="galeria g3">
+      <figure><img src="fotos/patos_falcao.jpg" alt="Marcão fala ao microfone ao lado de Luís Eduardo Falcão" loading="lazy"><figcaption>Marcão ao microfone, ao lado de Luís Eduardo Falcão, então prefeito de Patos de Minas e hoje vice-governador eleito</figcaption></figure>
+      <figure><img src="fotos/patos_grupo.jpg" alt="Manifestantes com faixas na pista molhada" loading="lazy"><figcaption>Faixas na pista: "Sem obras e duplicação, pedágio não!"</figcaption></figure>
+      <figure><img src="fotos/patos_faixa.jpg" alt="Manifestantes com a faixa Acorda Região" loading="lazy"><figcaption>"Acorda, Região!" em Patos de Minas</figcaption></figure>
+    </div>
     <ol class="linha-tempo">
-      <li><b>02/02/2026 · 1ª manifestação</b><span>Das 8h às 13h, no trevo da BR-365 com a MG-188, no acesso a Coromandel, com acompanhamento da PRF e presença de prefeitos da região.</span><br><a href="https://www.em.com.br/gerais/2026/02/7345487-moradores-protestam-contra-pedagio-sem-obras-na-br-365.html" target="_blank" rel="noopener">Estado de Minas</a> · <a href="https://difusora95.com.br/noticias/manifestantes-protestam-contra-pedagio-sem-obras-na-br-365/" target="_blank" rel="noopener">Difusora 95</a> · <a href="https://www.instagram.com/p/DUTqIDbEQ1y/" target="_blank" rel="noopener">fotos do movimento</a></li>
-      <li><b>07/02/2026 · 2ª manifestação</b><span>O movimento cresce e chega a Patos de Minas.</span><br><a href="https://www.instagram.com/p/DUeIn05EQGq/" target="_blank" rel="noopener">@movimentobr365</a></li>
+      <li><b>Janeiro de 2026 · O alerta</b><span>O governo de Minas põe em licitação o Lote Noroeste: a BR-365 entre Patrocínio, Patos de Minas e a BR-040 iria para concessão com pedágio, sem a duplicação que a estrada pede. O movimento convoca o povo.</span><br><a href="https://www.em.com.br/gerais/2026/01/7344643-br-365-moradores-protestam-contra-criacao-de-pedagios-e-pedem-duplicacao.html" target="_blank" rel="noopener">Estado de Minas</a></li>
+      <li><b>02/02/2026 · 1º ato, em Coromandel</b><span>Das 8h às 13h, no trevo da BR-365 com a MG-188, no acesso a Coromandel, com acompanhamento da PRF e presença de prefeitos da região. Debaixo de chuva.</span><br><a href="https://www.em.com.br/gerais/2026/02/7345487-moradores-protestam-contra-pedagio-sem-obras-na-br-365.html" target="_blank" rel="noopener">Estado de Minas</a> · <a href="https://difusora95.com.br/noticias/manifestantes-protestam-contra-pedagio-sem-obras-na-br-365/" target="_blank" rel="noopener">Difusora 95</a> · <a href="https://www.instagram.com/p/DUTqIDbEQ1y/" target="_blank" rel="noopener">fotos do movimento</a></li>
+      <li><b>03/02/2026 · Na TV</b><span>O movimento leva a pauta à TV Integração (Globo), em Uberlândia: "Não somos contra o progresso. Somos contra pagar antes de receber."</span><br><a href="https://www.instagram.com/p/DUSuySOjiYb/" target="_blank" rel="noopener">@omarcaobr</a></li>
+      <li><b>07/02/2026 · 2º ato, em Patos de Minas</b><span>O movimento cresce e chega ao trevo da Pipoca, em Patos de Minas, com a presença do prefeito Luís Eduardo Falcão, hoje vice-governador eleito.</span><br><a href="https://www.instagram.com/p/DUeFB5nkTtj/" target="_blank" rel="noopener">@omarcaobr</a> · <a href="https://www.instagram.com/p/DUeIn05EQGq/" target="_blank" rel="noopener">@movimentobr365</a></li>
       <li><b>09/02/2026 · Recado ao governo de Minas</b><span>O movimento cobra o governador e o vice: diálogo, solução e compromisso com as estradas da região.</span><br><a href="https://www.instagram.com/p/DUjglfbDSkq/" target="_blank" rel="noopener">@movimentobr365</a></li>
+      <li class="vitoria"><b>13/02/2026 · Edital revogado 🏆</b><span>O Ministério dos Transportes não aceita entregar a BR-365 ao Estado, e o governo de Minas revoga o edital do Lote Noroeste. A duplicação passa a ser do DNIT. Pedágio sem obra, não!</span><br><a href="https://www.patrocinioonline.com.br/noticia/apos-decisao-da-uniao-estado-revoga-edital-que-incluia-a-br-365-entre-uberlandia-e-patrocinio-84054.html" target="_blank" rel="noopener">Patrocínio Online</a> · <a href="https://www.instagram.com/p/DUtFmOZjTHE/" target="_blank" rel="noopener">@omarcaobr</a></li>
       <li><b>30/03/2026 · O desafio</b><span>O governador Mateus Simões diz ser contra pedágio sem obra. O movimento responde: então suspenda a cobrança enquanto não houver obra de verdade.</span><br><a href="https://www.instagram.com/p/DWjIqpwjXTe/" target="_blank" rel="noopener">@movimentobr365</a></li>
-      <li><b>25/09/2026 · Primeira vitória</b><span>O Copam aprova a Licença Prévia da duplicação da BR-365 entre Patos de Minas e Patrocínio. A próxima cobrança é a licitação e a obra.</span><br><a href="https://www.patosja.com.br/Meio%20Ambiente/copam-concede-licenca-previa-para-duplicacao-da-br-365-entre-patos-de-minas-e-patrocinio" target="_blank" rel="noopener">PatosJá</a> · <a href="https://www.instagram.com/p/DdtwMeCOVnL/" target="_blank" rel="noopener">@movimentobr365</a></li>
+      <li class="vitoria"><b>25/09/2026 · Licença da duplicação 🏆</b><span>O Copam aprova a Licença Prévia da duplicação da BR-365 entre Patos de Minas e Patrocínio. A próxima cobrança é a licitação e a obra.</span><br><a href="https://www.patosja.com.br/Meio%20Ambiente/copam-concede-licenca-previa-para-duplicacao-da-br-365-entre-patos-de-minas-e-patrocinio" target="_blank" rel="noopener">PatosJá</a> · <a href="https://www.instagram.com/p/DdtwMeCOVnL/" target="_blank" rel="noopener">@movimentobr365</a></li>
       <li><b>02/10/2026 · De novo no mesmo lugar</b><span>Duas carretas batem no mesmo trecho onde, meses antes, dois caminhoneiros morreram numa batida de frente. Duplicação já!</span><br><a href="https://www.instagram.com/p/Dd_6nTcJokR/" target="_blank" rel="noopener">@movimentobr365</a></li>
       <li><b>Hoje · Este painel</b><span>Cada acidente desde a manifestação, no km onde aconteceu, atualizado todo dia com dados da PRF e da imprensa.</span></li>
+      <li class="proximo"><b>A próxima cobrança</b><span>Licitação e obra de duplicação pelo DNIT, de Uberlândia até a BR-040. Duplicação já!</span></li>
     </ol>
     <div class="chamada">Essa luta é de todos. Acompanhe e compartilhe.<a href="https://www.instagram.com/movimentobr365/" target="_blank" rel="noopener">Seguir @movimentobr365</a></div>
   </section>
@@ -531,6 +671,34 @@ document.querySelectorAll('.chip[data-f]').forEach(b => b.onclick = () => {
 
 desenhar();
 tracadoReal();
+
+/* ---------- abertura, manifesto e movimento da página ---------- */
+(() => {
+  const desde = D.acidentes.filter(a => a.km != null && a.data >= C.data_manifestacao);
+  const tot = soma(desde);
+  const alvo = {m: tot.m, ac: tot.ac, f: tot.f};
+  document.getElementById('heroNota').textContent =
+    `Na BR-365, de Uberlândia até a BR-040, desde a manifestação de ${dataBR(C.data_manifestacao)}. Dados da PRF, da concessionária e da imprensa, atualizados em ${D.gerado_em}.`;
+  document.getElementById('mfVivo').textContent =
+    `Desde o primeiro ato, já foram ${fmt(tot.m)} vidas perdidas e ${fmt(tot.f)} feridos em ${fmt(tot.ac)} acidentes, de Uberlândia até a BR-040.`;
+  const calmo = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll('[data-conta]').forEach(el => {
+    const fim = alvo[el.dataset.conta];
+    if (calmo) { el.textContent = fmt(fim); return; }
+    const t0 = performance.now(), dur = 1600;
+    const passo = t => { const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+      el.textContent = fmt(Math.round(fim * e)); if (p < 1) requestAnimationFrame(passo); };
+    requestAnimationFrame(passo);
+  });
+  // entrada suave ao rolar
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('vis'); io.unobserve(e.target); } }), {threshold: .12});
+  document.querySelectorAll('.revela').forEach(el => io.observe(el));
+  // aba acesa conforme a parte da página
+  const abas = [...document.querySelectorAll('.abas a[data-sec]')];
+  const io2 = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting)
+    abas.forEach(a => a.classList.toggle('on', a.dataset.sec === e.target.id)); }), {rootMargin: '-45% 0px -50% 0px'});
+  ['painel', 'manifesto', 'movimento'].forEach(id => io2.observe(document.getElementById(id)));
+})();
 </script>
 </body>
 </html>
