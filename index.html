@@ -31,11 +31,21 @@
   .abas a.seguir{border:2px solid var(--amarelo);color:var(--amarelo)}
 
   /* abertura: DUPLICAÇÃO JÁ */
-  .hero{position:relative;color:#fff;background:linear-gradient(100deg,rgba(10,10,10,.96) 35%,rgba(10,10,10,.55)),url(fotos/ato3.jpg) center/cover;overflow:hidden}
+  .hero{position:relative;color:#fff;background:linear-gradient(rgba(12,12,12,.93),rgba(12,12,12,.93)),url(fotos/ato3.jpg) center/cover;overflow:hidden}
+  .hero-foto .luz{position:absolute;inset:0;border-radius:14px;pointer-events:none;background:radial-gradient(ellipse 30% 46% at 49% 40%,transparent 60%,rgba(0,0,0,.42))}
+  .hero-foto .etiqueta{position:absolute;left:49%;top:10%;transform:translateX(-50%);background:var(--amarelo);color:var(--preto);font-weight:900;font-size:13px;padding:4px 10px;border-radius:6px;text-transform:uppercase;letter-spacing:.05em;box-shadow:0 3px 10px rgba(0,0,0,.4);animation:aponta 2.2s ease-in-out infinite}
+  .hero-foto .etiqueta::after{content:"";position:absolute;left:50%;bottom:-7px;transform:translateX(-50%);border:7px solid transparent;border-bottom:0;border-top-color:var(--amarelo)}
+  @keyframes aponta{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,-4px)}}
+  .hero-foto{order:2;margin:0;position:relative;flex:0 1 auto;width:clamp(260px,36vw,470px);aspect-ratio:1/1;border:6px solid var(--amarelo);border-radius:20px;overflow:visible;box-shadow:14px 14px 0 rgba(255,199,44,.25)}
+  .hero-foto>img:first-child{width:100%;height:100%;object-fit:cover;object-position:50% 30%;border-radius:14px;display:block}
+  .hero-selo{position:absolute;left:-34px;bottom:56px;width:96px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.5);animation:balanca 5s ease-in-out infinite}
+  .hero-foto figcaption{position:absolute;left:0;right:0;bottom:0;padding:26px 12px 10px;font-size:12px;line-height:1.35;color:#eee;background:linear-gradient(transparent,rgba(0,0,0,.85));border-radius:0 0 14px 14px;text-align:right}
+  .hero-foto figcaption b{color:var(--amarelo);font-size:15px}
+  .hero-txt{flex:1;min-width:0}
   .hero::after{content:"";position:absolute;right:-60px;bottom:-80px;width:340px;height:300px;background:var(--amarelo);opacity:.08;clip-path:polygon(50% 0,100% 100%,0 100%)}
   .hero-in{max-width:1200px;margin:auto;padding:34px 20px 40px;display:flex;gap:28px;align-items:center;position:relative;z-index:1}
   .hero-logo{width:clamp(110px,20vw,230px);flex:none;border-radius:18px;animation:balanca 5s ease-in-out infinite}
-  .grito{font-size:clamp(54px,11vw,128px);line-height:.88;margin:12px 0 12px;font-weight:900;text-transform:uppercase;letter-spacing:-.03em}
+  .grito{font-size:clamp(48px,7.6vw,112px);line-height:.88;margin:12px 0 12px;font-weight:900;text-transform:uppercase;letter-spacing:-.03em}
   .grito em{font-style:normal;color:var(--amarelo);display:inline-block;animation:pulsa 2.4s ease-in-out infinite}
   .hero-sub{font-size:clamp(16px,2vw,20px);line-height:1.4;max-width:620px;margin:0 0 18px;color:#EDEDED}
   .contadores{display:flex;flex-wrap:wrap;gap:10px}
@@ -73,6 +83,15 @@
   .pr span{display:inline-flex;align-items:center;justify-content:center;width:34px;height:30px;background:var(--amarelo);color:var(--preto);font-weight:900;clip-path:polygon(50% 0,100% 100%,0 100%);padding-top:8px;font-size:13px}
   .pr b{display:block;margin:10px 0 6px;font-size:17px;color:var(--amarelo);text-transform:uppercase}
   .pr p{margin:0;font-size:14px;line-height:1.45;color:#d0d0d0}
+  .comeco{margin:28px 0 6px;position:relative;border:6px solid var(--amarelo);border-radius:18px;overflow:hidden;box-shadow:14px 14px 0 rgba(255,199,44,.22)}
+  .comeco img{display:block;width:100%;aspect-ratio:1440/780;object-fit:cover}
+  .comeco .nomes{position:relative;height:38px;background:var(--amarelo)}
+  .comeco .nomes span{position:absolute;top:50%;transform:translate(-50%,-50%);color:var(--preto);font-weight:900;font-size:clamp(10px,1.4vw,15px);text-transform:uppercase;letter-spacing:.03em;white-space:nowrap}
+  .comeco .nomes span::before{content:"";position:absolute;left:50%;top:-13px;transform:translateX(-50%);border:7px solid transparent;border-top:0;border-bottom-color:var(--amarelo)}
+  .comeco figcaption{padding:16px 20px 18px;background:#000;font-size:clamp(14px,1.7vw,18px);line-height:1.45;color:#eee}
+  .comeco figcaption span{display:inline-block;background:var(--amarelo);color:var(--preto);font-weight:900;text-transform:uppercase;letter-spacing:.06em;font-size:13px;padding:4px 10px;border-radius:6px;margin-bottom:8px}
+  .comeco figcaption b{color:#fff;display:block;font-size:clamp(20px,2.6vw,30px);font-weight:900;text-transform:uppercase;line-height:1.1;margin-bottom:4px}
+  .comeco figcaption i{color:var(--amarelo);font-style:normal;font-weight:800}
   .mf-grito{text-align:center;font-size:clamp(24px,4.5vw,46px);font-weight:900;color:var(--preto);background:var(--amarelo);padding:16px;border-radius:12px;margin:10px 0 0;letter-spacing:-.01em}
 
   /* cabeçalho do painel */
@@ -88,7 +107,7 @@
   @keyframes corre{from{transform:translateX(0)}to{transform:translateX(-50%)}}
   @keyframes pulsa{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
   @keyframes balanca{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}
-  @media (prefers-reduced-motion:reduce){.letreiro div,.grito em,.hero-logo{animation:none}.revela{opacity:1;transform:none;transition:none}}
+  @media (prefers-reduced-motion:reduce){.letreiro div,.grito em,.hero-selo,.hero-foto .etiqueta{animation:none}.revela{opacity:1;transform:none;transition:none}}
 
   .mov h4.ato{margin:12px 20px 8px;color:#fff;font-size:15px;font-weight:900;letter-spacing:.02em}
   .galeria.g3{grid-template-columns:1.3fr 1fr 1fr;grid-auto-rows:300px}
@@ -192,9 +211,16 @@
     .galeria{grid-template-columns:1fr 1fr;grid-auto-rows:140px}
     .galeria figure:first-child{grid-column:span 2;grid-row:span 2}
     .galeria.g3{grid-template-columns:1fr 1fr;grid-auto-rows:230px}
+    .comeco figcaption{padding:14px}
+    .comeco .nomes{height:30px}
+    .comeco .nomes span{font-size:9.5px;letter-spacing:0}
+    .comeco .nomes span::before{border-width:5px;top:-10px}
+    .comeco{box-shadow:8px 8px 0 rgba(255,199,44,.22)}
     .galeria.g3 figure:first-child{grid-column:span 2}
-    .hero-in{flex-direction:column;align-items:flex-start;padding-top:22px}
-    .hero-logo{width:110px}
+    .hero-in{flex-direction:column;align-items:stretch;padding-top:22px}
+    .hero-foto{order:0;width:100%;align-self:center}
+    .grito{font-size:clamp(48px,15vw,80px)}
+    .hero-selo{width:72px;left:-22px}
     .menu .marca span{display:none}
     .menu .marca{font-size:0}
     .cont{min-width:0;flex:1}
@@ -214,7 +240,13 @@
 
 <section class="hero" id="topo">
   <div class="hero-in">
-    <img class="hero-logo" src="fotos/perfil.jpg" alt="Logo do Movimento BR-365: Pedágio sem obra, não!">
+    <figure class="hero-foto">
+      <img src="fotos/marcao_povo.jpg" alt="Marcão, de chapéu, no centro de um grupo de produtores e lideranças com as placas Pedágio sem obra, não!, no 1º ato">
+      <span class="luz" aria-hidden="true"></span>
+      <span class="etiqueta">Marcão</span>
+      <img class="hero-selo" src="fotos/perfil.jpg" alt="">
+      <figcaption><b>Marcão</b> (de chapéu) com produtores e lideranças da região<br>1º ato, 02/02/2026, trevo de Coromandel</figcaption>
+    </figure>
     <div class="hero-txt">
       <span class="selo">Movimento BR-365 · Pedágio sem obra, não!</span>
       <h1 class="grito">Duplicação<br><em>já!</em></h1>
@@ -249,6 +281,13 @@
       <p>Em <b>2 de fevereiro</b>, no trevo de Coromandel, debaixo de chuva. Em <b>7 de fevereiro</b>, no trevo da Pipoca, em Patos de Minas. Em <b>13 de fevereiro</b>, o edital foi revogado e o Ministério dos Transportes anunciou que a duplicação será feita pelo DNIT.</p>
       <p>Mas a estrada continua matando. <b class="mf-vivo" id="mfVivo"></b> Cada número deste painel tem nome, família e endereço.</p>
     </div>
+    <figure class="comeco revela">
+      <img src="fotos/comeco.jpg" alt="Anderson, Marcão, Chicão, Arthur e Lucas, de punho erguido, segurando a faixa Acorda Região! Pedágio sem obras não!, à beira da BR-365" loading="lazy">
+      <div class="nomes" aria-hidden="true">
+        <span style="left:11%">Anderson</span><span style="left:33%">Marcão</span><span style="left:53%">Chicão</span><span style="left:69.5%">Arthur</span><span style="left:84%">Lucas</span>
+      </div>
+      <figcaption><span>▲ Onde tudo começou</span><b>Os primeiros do movimento.</b> Anderson, Marcão, Chicão, Arthur e Lucas. Foi com essa faixa, à beira da BR-365, que os cinco decidiram chamar a região: <i>"Acorda, Região! Pedágio sem obras, não!"</i> Depois deles, veio o povo.</figcaption>
+    </figure>
     <div class="principios">
       <div class="pr revela"><span>1</span><b>Duplicação já</b><p>Duplicação imediata da BR-365, para salvar vidas. Cada mês de espera custa gente.</p></div>
       <div class="pr revela"><span>2</span><b>Obra primeiro, pedágio depois</b><p>Não somos contra o progresso. Somos contra pagar antes de receber. Pedágio sem obra, não!</p></div>
@@ -344,8 +383,8 @@
     <p class="dica">Moradores, produtores, caminhoneiros e lideranças do Alto Paranaíba e do Noroeste de Minas que foram para a beira da rodovia cobrar uma coisa simples: <b style="color:#fff">primeiro a obra, depois o pedágio</b>. O movimento é pacífico e cobra a duplicação imediata da BR-365, porque quem usa essa estrada todo dia está perdendo a vida nela.</p>
     <h4 class="ato">▲ 1º ato · 02/02/2026 · trevo de Coromandel (BR-365 com MG-188)</h4>
     <div class="galeria">
+      <figure><img src="fotos/ato4.jpg" alt="Faixa Acorda Região! Pedágio sem obras não!" loading="lazy"><figcaption>Os primeiros do movimento: Anderson, Marcão, Chicão, Arthur e Lucas</figcaption></figure>
       <figure><img src="fotos/ato2.jpg" alt="Manifestantes de punho erguido com camisetas do movimento" loading="lazy"><figcaption>Debaixo de chuva, de punho erguido</figcaption></figure>
-      <figure><img src="fotos/ato4.jpg" alt="Faixa Acorda Região! Pedágio sem obras não!" loading="lazy"><figcaption>"Acorda, Região!"</figcaption></figure>
       <figure><img src="fotos/ato3.jpg" alt="Grupo de manifestantes com cartazes na beira da rodovia" loading="lazy"><figcaption>Povo na beira da pista</figcaption></figure>
       <figure><img src="fotos/ato7.jpg" alt="Lideranças da região com os cartazes do movimento" loading="lazy"><figcaption>Lideranças da região juntas</figcaption></figure>
       <figure><img src="fotos/ato1.jpg" alt="Dois manifestantes de punho fechado" loading="lazy"><figcaption>Pedágio sem obra, não!</figcaption></figure>
@@ -686,7 +725,7 @@ tracadoReal();
     const fim = alvo[el.dataset.conta];
     if (calmo) { el.textContent = fmt(fim); return; }
     const t0 = performance.now(), dur = 1600;
-    const passo = t => { const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+    const passo = t => { const p = Math.min(1, Math.max(0, (t - t0) / dur)), e = 1 - Math.pow(1 - p, 3);
       el.textContent = fmt(Math.round(fim * e)); if (p < 1) requestAnimationFrame(passo); };
     requestAnimationFrame(passo);
   });
