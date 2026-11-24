@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BR-365: acidentes de Patos de Minas a Uberlândia</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>document.write('<script src="dados.js?v=' + Date.now() + '"><\/script>');</script>
+<style>
+  :root{
+    --conc:#F07E13; --conc-claro:#FFF1E2; --sem:#2F6FB3; --sem-claro:#E6F0FA;
+    --morte:#C8102E; --ferido:#F2B705; --leve:#8A94A6;
+    --tinta:#1B2330; --suave:#5B6676; --fundo:#F6F4EF; --cartao:#fff; --linha:#E4E0D6;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--fundo);color:var(--tinta)}
+  header{padding:22px 20px 8px;max-width:1200px;margin:auto}
+  .selo{display:inline-block;background:var(--tinta);color:#fff;font-weight:800;font-size:12px;letter-spacing:.08em;padding:5px 10px;border-radius:99px;text-transform:uppercase}
+  h1{font-size:clamp(24px,4vw,40px);line-height:1.05;margin:10px 0 6px;font-weight:900;letter-spacing:-.02em}
+  h1 em{font-style:normal;color:var(--conc)}
+  .sub{color:var(--suave);font-size:15px;margin:0 0 6px}
+  main{max-width:1200px;margin:auto;padding:0 20px 40px}
+
+  .filtros{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:14px 0}
+  .filtros label{font-size:14px;color:var(--suave)}
+  .filtros input[type=month]{font:inherit;padding:7px 10px;border:2px solid var(--linha);border-radius:10px;background:#fff}
+  .chip{border:2px solid var(--linha);background:#fff;border-radius:99px;padding:7px 14px;font:inherit;font-size:14px;font-weight:700;cursor:pointer;color:var(--tinta)}
+  .chip.on{background:var(--tinta);border-color:var(--tinta);color:#fff}
+
+  .placar{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .lado{border-radius:20px;padding:16px 18px;border:3px solid}
+  .lado.conc{background:var(--conc-claro);border-color:var(--conc)}
+  .lado.sem{background:var(--sem-claro);border-color:var(--sem)}
+  .lado h2{margin:0 0 2px;font-size:18px;display:flex;align-items:center;gap:8px}
+  .lado .tag{font-size:13px;color:var(--suave);margin-bottom:10px}
+  .nums{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  .num{background:#fff;border-radius:14px;padding:10px 8px;text-align:center}
+  .num b{display:block;font-size:clamp(24px,3.6vw,38px);font-weight:900;line-height:1;font-variant-numeric:tabular-nums}
+  .num span{font-size:12px;color:var(--suave);font-weight:600}
+  .num.m b{color:var(--morte)}
+  .por10{margin-top:10px;font-size:14px;font-weight:700}
+
+  .caixa{background:var(--cartao);border-radius:20px;border:1px solid var(--linha);margin-top:16px;overflow:hidden}
+  .caixa h3{margin:0;padding:14px 18px 4px;font-size:17px}
+  .caixa .dica{padding:0 18px 10px;color:var(--suave);font-size:13px;margin:0}
+  #mapa{height:520px}
+  .fundo-mapa{filter:saturate(.55) brightness(1.04)}
+  .legenda{display:flex;flex-wrap:wrap;gap:14px;padding:10px 18px 14px;font-size:13px;color:var(--suave)}
+  .legenda i{display:inline-block;vertical-align:middle;margin-right:6px}
+  .faixa{width:28px;height:8px;border-radius:4px}
+  .bola{width:14px;height:14px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.25)}
+
+  /* régua da rodovia */
+  #regua{padding:6px 18px 18px;overflow-x:auto}
+  #regua svg{display:block;min-width:820px;width:100%}
+  .rot{font-size:12px;fill:var(--suave);font-weight:600}
+  .cid{font-size:13px;fill:var(--tinta);font-weight:800}
+
+  .grade{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  td,th{padding:9px 18px;text-align:left;border-top:1px solid var(--linha)}
+  th{font-size:12px;color:var(--suave);text-transform:uppercase;letter-spacing:.05em}
+  td.n{text-align:right;font-variant-numeric:tabular-nums;font-weight:700}
+  .ponto{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+  .lista{max-height:420px;overflow:auto}
+  .item{padding:10px 18px;border-top:1px solid var(--linha);cursor:pointer;display:flex;gap:10px}
+  .item:hover{background:#FAF8F3}
+  .item .k{font-weight:900;min-width:66px}
+  .item small{color:var(--suave)}
+
+  .leaflet-popup-content{margin:12px 14px;font-size:14px;line-height:1.35}
+  .pop h4{margin:0 0 4px;font-size:16px}
+  .pop .t{display:inline-block;font-size:11px;font-weight:800;padding:2px 8px;border-radius:99px;color:#fff;margin-bottom:6px}
+  .pop .v{display:flex;gap:10px;margin:6px 0;font-weight:800}
+  .pop a{color:var(--sem)}
+  .marca-km{background:#fff;border:2px solid var(--tinta);border-radius:6px;font-size:11px;font-weight:800;padding:1px 5px;white-space:nowrap}
+  .marca-praca{font-size:22px;line-height:1}
+  .rotulo{background:none;border:0}
+  #meses{display:flex;gap:6px;padding:4px 18px 16px;overflow-x:auto}
+  .mes{flex:1;min-width:54px;border:2px solid var(--linha);background:#fff;border-radius:12px;padding:6px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;font:inherit}
+  .mes.on{border-color:var(--tinta);background:#FFF8EC;box-shadow:0 0 0 2px var(--tinta)}
+  .mes .pilha{height:60px;width:22px;display:flex;flex-direction:column-reverse;border-radius:4px;overflow:hidden;background:#F1EEE6}
+  .mes .pilha i{display:block;width:100%}
+  .mes b{font-size:16px}.mes small{color:var(--morte);font-weight:800;font-size:11px}.mes em{font-style:normal;font-size:11px;color:var(--suave)}
+  .marca-cid{font-weight:900;font-size:15px;color:var(--tinta);text-shadow:0 0 3px #fff,0 0 3px #fff,0 0 3px #fff;white-space:nowrap}
+
+  footer{max-width:1200px;margin:auto;padding:0 20px 40px;color:var(--suave);font-size:13px;line-height:1.5}
+  .alerta{background:#FFF8D6;border:1px solid #EAD98A;border-radius:12px;padding:10px 14px;font-size:13px;margin-top:10px}
+  @media (max-width:760px){
+    .placar,.grade{grid-template-columns:1fr}
+    #mapa{height:420px}
+    .nums{grid-template-columns:repeat(2,1fr)}
+  }
+</style>
+</head>
+<body>
+<header>
+  <span class="selo">Pedágio sem obra, não</span>
+  <h1>BR-365: quantos acidentes de <em>Patos de Minas</em> a <em>Uberlândia</em></h1>
+  <p class="sub" id="periodo"></p>
+</header>
+<main>
+  <div class="filtros">
+    <label for="mesCal">📅 Mês:</label><input type="month" id="mesCal">
+    <button class="chip" id="verTudo">Ver tudo desde a manifestação</button>
+    <input type="hidden" id="desde">
+    <button class="chip on" data-f="todos">Todos</button>
+    <button class="chip" data-f="mortes">Só com morte</button>
+    <button class="chip" data-f="frontal">Só batida frontal</button>
+  </div>
+
+  <div class="caixa" style="margin:0 0 14px">
+    <h3>📅 Mês a mês</h3>
+    <p class="dica" id="mes-aviso"></p>
+    <div id="meses"></div>
+  </div>
+
+  <section class="placar">
+    <div class="lado conc">
+      <h2>🟧 Com pedágio</h2>
+      <div class="tag">Patrocínio → Uberlândia · concessão EPR Triângulo · km 474,6 a 605,5</div>
+      <div class="nums" id="n-conc"></div>
+      <div class="por10" id="p-conc"></div>
+    </div>
+    <div class="lado sem">
+      <h2>🟦 Sem concessão</h2>
+      <div class="tag" id="tag-sem"></div>
+      <div class="nums" id="n-sem"></div>
+      <div class="por10" id="p-sem"></div>
+    </div>
+  </section>
+
+  <div class="caixa">
+    <h3>🗺️ O mapa da rodovia</h3>
+    <p class="dica">Cada bolinha é um acidente, no km onde aconteceu. Toque nela para ver o que houve.</p>
+    <div id="mapa"></div>
+    <div class="legenda">
+      <span><i class="faixa" style="background:var(--conc)"></i>Trecho com pedágio (EPR Triângulo)</span>
+      <span><i class="faixa" style="background:var(--sem)"></i>Trecho sem concessão</span>
+      <span><i class="bola" style="background:var(--morte)"></i>Teve morte</span>
+      <span><i class="bola" style="background:var(--ferido)"></i>Teve ferido</span>
+      <span><i class="bola" style="background:var(--leve)"></i>Sem feridos</span>
+      <span>🚧 Praça de pedágio</span>
+    </div>
+  </div>
+
+  <div class="caixa">
+    <h3>📏 A rodovia esticada, km por km</h3>
+    <p class="dica">Cada coluna é um pedaço de 5 km. Quanto mais alta, mais acidentes ali. As cruzes vermelhas são mortes.</p>
+    <div id="regua"></div>
+  </div>
+
+  <div class="grade">
+    <div class="caixa">
+      <h3>⚠️ Os pontos mais perigosos</h3>
+      <p class="dica">Os pedaços de 5 km com mais acidentes no período.</p>
+      <table id="piores"></table>
+    </div>
+    <div class="caixa">
+      <h3>🕒 Últimos acidentes</h3>
+      <p class="dica">Do mais novo para o mais antigo. Toque para ver no mapa.</p>
+      <div class="lista" id="ultimos"></div>
+    </div>
+  </div>
+
+  <div class="caixa">
+    <h3>💥 Que tipo de acidente acontece mais</h3>
+    <table id="tipos"></table>
+  </div>
+</main>
+<footer id="rodape"></footer>
+
+<script>
+const D = window.DADOS, C = D.config;
+const fmt = n => n.toLocaleString('pt-BR');
+const dataBR = s => s.split('-').reverse().join('/');
+const kmBR = k => 'km ' + k.toLocaleString('pt-BR', {maximumFractionDigits: 1});
+const trechoDe = km => C.trechos.find(t => km >= t.de && km <= t.ate) || C.trechos[0];
+const ehConc = km => trechoDe(Math.min(km, C.km_fim)).tipo === 'concessao';
+const cor = a => a.mortos > 0 ? 'var(--morte)' : (a.feridos > 0 ? 'var(--ferido)' : 'var(--leve)');
+const corHex = a => a.mortos > 0 ? '#C8102E' : (a.feridos > 0 ? '#F2B705' : '#8A94A6');
+const frontal = a => /frontal/i.test(a.tipo);
+const extSem = C.trechos.filter(t => t.tipo === 'sem').reduce((s, t) => s + (t.ate - t.de), 0);
+const extConc = C.trechos.filter(t => t.tipo === 'concessao').reduce((s, t) => s + (t.ate - t.de), 0);
+
+document.getElementById('tag-sem').textContent =
+  'Patos de Minas → Patrocínio · km 400 a 474,6 · ' + fmt(Math.round(extSem)) + ' km';
+
+let filtro = 'todos';
+const inpDesde = document.getElementById('desde');
+inpDesde.value = C.data_manifestacao;
+
+/* ---------- mapa ---------- */
+const mapa = L.map('mapa', {scrollWheelZoom: false, zoomSnap: .25});
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; OpenStreetMap', maxZoom: 18, className: 'fundo-mapa'
+}).addTo(mapa);
+
+const kmPts = Object.entries(D.km_pontos).map(([k, v]) => [Number(k), v]).sort((a, b) => a[0] - b[0]);
+function pontoDoKm(km) {
+  if (km <= kmPts[0][0]) return kmPts[0][1];
+  for (let i = 1; i < kmPts.length; i++) {
+    const [ka, pa] = kmPts[i - 1], [kb, pb] = kmPts[i];
+    if (km <= kb) { const t = (km - ka) / (kb - ka); return [pa[0] + t * (pb[0] - pa[0]), pa[1] + t * (pb[1] - pa[1])]; }
+  }
+  return kmPts[kmPts.length - 1][1];
+}
+
+// a estrada, pintada pelo trecho (linha fina; depois troca pelo desenho real do OpenStreetMap)
+const todasCoords = [], linhasAprox = [];
+async function tracadoReal() {
+  const q = '[out:json][timeout:60];way["highway"]["ref"~"365"](-19.0,-48.30,-18.55,-46.40);out geom;';
+  try {
+    let j = null;
+    for (const s of ['https://overpass-api.de/api/interpreter', 'https://overpass.kumi.systems/api/interpreter', 'https://overpass.private.coffee/api/interpreter']) {
+      try { const r = await fetch(s, {method: 'POST', body: 'data=' + encodeURIComponent(q)}); if (r.ok) { j = await r.json(); break; } } catch (e) {}
+    }
+    if (!j) return;
+    const kmDe = (la, lo) => { let mk = null, md = 1e9; kmPts.forEach(([k, p]) => { const d = (p[0] - la) ** 2 + (p[1] - lo) ** 2; if (d < md) { md = d; mk = k; } }); return md < 0.0006 ? mk : null; };
+    let desenhou = 0;
+    j.elements.forEach(w => {
+      const hw = (w.tags || {}).highway || '';
+      if (!/^(motorway|trunk|primary|secondary)(_link)?$/.test(hw) || /_link$/.test(hw)) return; // sem obra, projeto ou alça de acesso
+      const g = (w.geometry || []).map(p => [p.lat, p.lon]); if (g.length < 2) return;
+      for (let i = 1; i < g.length; i++) {
+        const k = kmDe(g[i][0], g[i][1]); if (k == null || k < C.km_inicio || k > C.km_fim) continue;
+        L.polyline([g[i - 1], g[i]], {color: ehConc(k) ? '#F07E13' : '#2F6FB3', weight: 4, opacity: .95}).addTo(mapa); desenhou++;
+      }
+    });
+    if (desenhou > 20) linhasAprox.forEach(l => mapa.removeLayer(l));
+    camada.eachLayer(l => l.bringToFront());
+  } catch (e) { /* sem internet para o OSM: fica a linha aproximada */ }
+}
+D.tracado.forEach(seg => {
+  let atual = null, ultimoKm = null;
+  const fechar = () => { if (atual && atual.pts.length > 1) {
+    const c = atual.tipo === 'concessao' ? '#F07E13' : '#2F6FB3';
+    atual.linha = L.polyline(atual.pts, {color: c, weight: 4, opacity: .9}).addTo(mapa);
+    linhasAprox.push(atual.linha);
+  }};
+  seg.forEach(([la, lo, k]) => {
+    if (k != null) ultimoKm = k;
+    if (ultimoKm == null) return;
+    const tipo = trechoDe(ultimoKm).tipo;
+    todasCoords.push([la, lo]);
+    if (!atual || atual.tipo !== tipo) { const ant = atual && atual.pts[atual.pts.length - 1]; fechar(); atual = {tipo, pts: ant ? [ant] : []}; }
+    atual.pts.push([la, lo]);
+  });
+  fechar();
+});
+const limites = L.latLngBounds(todasCoords).pad(.06);
+const enquadrar = () => { mapa.invalidateSize(); const s = mapa.getSize(); if (s.x > 50 && s.y > 50) mapa.fitBounds(limites); };
+document.addEventListener('visibilitychange', () => { if (!document.hidden && mapa.getZoom() < 6) enquadrar(); });
+new IntersectionObserver(e => { if (e[0].isIntersecting && mapa.getZoom() < 6) enquadrar(); }).observe(document.getElementById('mapa'));
+mapa.setView(limites.getCenter(), 9);
+window.addEventListener('load', enquadrar);
+new ResizeObserver(() => { if (mapa.getZoom() < 6) enquadrar(); else mapa.invalidateSize(); }).observe(document.getElementById('mapa'));
+
+// cidades, km e praças
+const rotulo = (pt, html, dx, dy, z) => L.marker(pt, {interactive: false, zIndexOffset: z || 0, icon: L.divIcon({className: 'rotulo', html, iconSize: null, iconAnchor: [dx, dy]})}).addTo(mapa);
+[['Patos de Minas', 404, 120, 30], ['Patrocínio', 473, -10, -14], ['Uberlândia', 605, 40, 34]].forEach(([n, k, dx, dy]) =>
+  rotulo(pontoDoKm(k), `<div class="marca-cid">${n}</div>`, dx, dy, 1000));
+[450, 500, 550, 600].forEach(k => rotulo(pontoDoKm(k), `<div class="marca-km">km ${k}</div>`, 20, -14, 900));
+C.pracas.forEach(p => L.marker(pontoDoKm(p.km), {icon: L.divIcon({className: '', html: '<div class="marca-praca">🚧</div>', iconSize: [24, 24], iconAnchor: [12, 12]})})
+  .bindPopup(`<div class="pop"><h4>🚧 ${p.name || p.nome}</h4>${kmBR(p.km)} · cobra pedágio no trecho da EPR Triângulo</div>`).addTo(mapa));
+
+const camada = L.layerGroup().addTo(mapa);
+const marcadores = {};
+
+function popup(a) {
+  const tr = trechoDe(a.km);
+  const fontes = a.fontes.map(f => f.link ? `<a href="${f.link}" target="_blank" rel="noopener">${f.nome}</a>` : f.nome).join(' · ');
+  return `<div class="pop">
+    <span class="t" style="background:${tr.tipo === 'concessao' ? '#F07E13' : '#2F6FB3'}">${tr.tipo === 'concessao' ? 'TRECHO COM PEDÁGIO' : 'TRECHO SEM CONCESSÃO'}</span>
+    <h4>${a.tipo || 'Acidente'}</h4>
+    📅 ${dataBR(a.data)}${a.hora ? ' às ' + a.hora : ''}<br>📍 ${kmBR(a.km)}${a.municipio ? ' · ' + a.municipio : ''}
+    <div class="v"><span style="color:#C8102E">✝ ${a.mortos} morte${a.mortos === 1 ? '' : 's'}</span><span style="color:#B07F00">🩹 ${a.feridos} ferido${a.feridos === 1 ? '' : 's'}</span></div>
+    ${a.feridos_graves ? `<small>${a.feridos_graves} ferido(s) grave(s)</small><br>` : ''}
+    ${a.causa ? `<small>Causa apontada pela PRF: ${a.causa}</small><br>` : ''}
+    ${a.descricao ? `<small>${a.descricao}</small><br>` : ''}
+    ${a.obs_mortos ? `<small><b>${a.obs_mortos}</b></small><br>` : ''}
+    ${a.obs_ligacao ? `<small><i>${a.obs_ligacao}</i></small><br>` : ''}
+    <small>Fonte: ${fontes}</small></div>`;
+}
+
+/* ---------- filtro e desenho ---------- */
+function filtrados() {
+  return D.acidentes.filter(a => a.km != null && a.data >= inpDesde.value &&
+    (filtro === 'todos' || (filtro === 'mortes' && a.mortos > 0) || (filtro === 'frontal' && frontal(a))));
+}
+
+function soma(lista) {
+  return {ac: lista.length, m: lista.reduce((s, a) => s + a.mortos, 0), f: lista.reduce((s, a) => s + a.feridos, 0), fr: lista.filter(frontal).length};
+}
+function caixaNums(id, s) {
+  document.getElementById(id).innerHTML =
+    `<div class="num"><b>${fmt(s.ac)}</b><span>acidentes</span></div>
+     <div class="num m"><b>${fmt(s.m)}</b><span>mortes</span></div>
+     <div class="num"><b>${fmt(s.f)}</b><span>feridos</span></div>
+     <div class="num"><b>${fmt(s.fr)}</b><span>batidas frontais</span></div>`;
+}
+
+function desenhar() {
+  const lista = filtrados();
+  const conc = lista.filter(a => ehConc(a.km)), sem = lista.filter(a => !ehConc(a.km));
+  const sc = soma(conc), ss = soma(sem);
+  caixaNums('n-conc', sc); caixaNums('n-sem', ss);
+  const p = (s, ext) => `A cada 10 km: ${(s.ac / ext * 10).toLocaleString('pt-BR', {maximumFractionDigits: 1})} acidentes e ${(s.m / ext * 10).toLocaleString('pt-BR', {maximumFractionDigits: 1})} mortes`;
+  document.getElementById('p-conc').textContent = p(sc, extConc) + ` (${fmt(Math.round(extConc))} km)`;
+  document.getElementById('p-sem').textContent = p(ss, extSem) + ` (${fmt(Math.round(extSem))} km)`;
+
+  const tot = soma(lista);
+  document.getElementById('periodo').innerHTML =
+    `De <b>${dataBR(inpDesde.value)}</b> até hoje: <b>${fmt(tot.ac)} acidentes</b>, <b style="color:var(--morte)">${fmt(tot.m)} mortes</b> e <b>${fmt(tot.f)} feridos</b> nos ${fmt(Math.round(C.km_fim - C.km_inicio))} km.`;
+
+  // bolinhas
+  camada.clearLayers();
+  lista.forEach(a => {
+    if (a.lat == null) return;
+    const r = a.mortos > 0 ? 8 + Math.min(8, a.mortos * 2.5) : (a.feridos > 0 ? 5 + Math.min(5, a.feridos) : 4);
+    const m = L.circleMarker([a.lat, a.lon], {radius: r, color: '#fff', weight: 2, fillColor: corHex(a), fillOpacity: .92})
+      .bindPopup(popup(a));
+    camada.addLayer(m); marcadores[a.id] = m;
+  });
+  // mortes por cima
+  camada.eachLayer(l => { if (l.options.fillColor === '#C8102E') l.bringToFront(); });
+
+  regua(lista); piores(lista); ultimos(lista); tipos(lista);
+}
+
+/* ---------- régua ---------- */
+function regua(lista) {
+  const W = 1100, H = 230, x0 = 40, x1 = W - 20, base = 150;
+  const X = k => x0 + (k - C.km_inicio) / (C.km_fim - C.km_inicio) * (x1 - x0);
+  const passo = 5, caixas = {};
+  lista.forEach(a => { const b = Math.floor(a.km / passo) * passo; (caixas[b] ||= {n: 0, m: 0}); caixas[b].n++; caixas[b].m += a.mortos; });
+  const max = Math.max(1, ...Object.values(caixas).map(c => c.n));
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Acidentes por km">`;
+  C.trechos.forEach(t => {
+    s += `<rect x="${X(t.de)}" y="${base}" width="${X(t.ate) - X(t.de)}" height="16" rx="4" fill="${t.tipo === 'concessao' ? '#F07E13' : '#2F6FB3'}"/>`;
+  });
+  s += `<line x1="${x0}" x2="${x1}" y1="${base + 8}" y2="${base + 8}" stroke="#fff" stroke-width="2" stroke-dasharray="10 8"/>`;
+  Object.entries(caixas).forEach(([b, c]) => {
+    b = Number(b); const h = c.n / max * 110, x = X(b) + 1, w = X(b + passo) - X(b) - 2;
+    const fill = ehConc(b + passo / 2) ? '#F07E13' : '#2F6FB3';
+    s += `<rect x="${x}" y="${base - 4 - h}" width="${w}" height="${h}" rx="3" fill="${fill}" opacity=".35"><title>km ${b} a ${b + passo}: ${c.n} acidentes, ${c.m} mortes</title></rect>`;
+    for (let i = 0; i < Math.min(c.m, 8); i++)
+      s += `<text x="${x + w / 2}" y="${base - 8 - i * 13}" text-anchor="middle" font-size="13" font-weight="900" fill="#C8102E">✝</text>`;
+    if (c.n >= max * .5) s += `<text x="${x + w / 2}" y="${base - 10 - h}" text-anchor="middle" class="rot">${c.n}</text>`;
+  });
+  C.pracas.forEach(p => s += `<text x="${X(p.km)}" y="${base + 13}" text-anchor="middle" font-size="16">🚧</text>`);
+  for (let k = 400; k <= C.km_fim; k += 25) s += `<text x="${X(k)}" y="${base + 34}" text-anchor="middle" class="rot">km ${k}</text>`;
+  [['Patos de Minas', 404], ['Patrocínio', 474.6], ['Uberlândia', 600]].forEach(([n, k]) =>
+    s += `<text x="${X(k)}" y="${base + 56}" text-anchor="middle" class="cid">${n}</text>`);
+  s += `<text x="${(X(474.6) + X(605.5)) / 2}" y="${H - 4}" text-anchor="middle" font-size="13" font-weight="800" fill="#F07E13">◀ trecho com pedágio (EPR Triângulo) ▶</text>`;
+  s += `<text x="${(X(400) + X(474.6)) / 2}" y="${H - 4}" text-anchor="middle" font-size="13" font-weight="800" fill="#2F6FB3">sem concessão</text>`;
+  document.getElementById('regua').innerHTML = s + '</svg>';
+}
+
+function piores(lista) {
+  const c = {};
+  lista.forEach(a => { const b = Math.floor(a.km / 5) * 5; (c[b] ||= {n: 0, m: 0, f: 0}); c[b].n++; c[b].m += a.mortos; c[b].f += a.feridos; });
+  const top = Object.entries(c).sort((a, b) => b[1].n - a[1].n || b[1].m - a[1].m).slice(0, 8);
+  document.getElementById('piores').innerHTML = '<tr><th>Trecho</th><th>Acid.</th><th>Mortes</th><th>Feridos</th></tr>' +
+    top.map(([b, v]) => { b = Number(b); return `<tr><td><span class="ponto" style="background:${ehConc(b + 2.5) ? '#F07E13' : '#2F6FB3'}"></span>km ${b} a ${b + 5}</td><td class="n">${v.n}</td><td class="n" style="color:#C8102E">${v.m}</td><td class="n">${v.f}</td></tr>`; }).join('');
+}
+
+function ultimos(lista) {
+  const el = document.getElementById('ultimos');
+  el.innerHTML = [...lista].reverse().slice(0, 60).map(a =>
+    `<div class="item" data-id="${a.id}"><span class="ponto" style="background:${corHex(a)};margin-top:5px"></span>
+     <div><span class="k">${kmBR(a.km)}</span> · ${a.tipo || 'Acidente'}<br>
+     <small>${dataBR(a.data)} · ${a.mortos ? a.mortos + ' morte(s) · ' : ''}${a.feridos} ferido(s) · ${ehConc(a.km) ? 'com pedágio' : 'sem concessão'}</small></div></div>`).join('')
+    || '<p class="dica" style="padding:14px 18px">Nenhum acidente com esse filtro.</p>';
+  el.querySelectorAll('.item').forEach(i => i.onclick = () => {
+    const m = marcadores[i.dataset.id]; if (!m) return;
+    document.getElementById('mapa').scrollIntoView({behavior: 'smooth', block: 'center'});
+    mapa.setView(m.getLatLng(), 12); m.openPopup();
+  });
+}
+
+function tipos(lista) {
+  const c = {};
+  lista.forEach(a => { const t = a.tipo || 'Não informado'; (c[t] ||= {n: 0, m: 0}); c[t].n++; c[t].m += a.mortos; });
+  const top = Object.entries(c).sort((a, b) => b[1].n - a[1].n);
+  const max = Math.max(1, ...top.map(t => t[1].n));
+  document.getElementById('tipos').innerHTML = '<tr><th>Tipo</th><th></th><th>Acid.</th><th>Mortes</th></tr>' + top.map(([t, v]) =>
+    `<tr><td>${/frontal/i.test(t) ? '<b>' + t + '</b>' : t}</td><td style="width:40%"><div style="height:10px;border-radius:5px;background:${/frontal/i.test(t) ? '#C8102E' : '#9AA5B5'};width:${v.n / max * 100}%"></div></td><td class="n">${v.n}</td><td class="n" style="color:#C8102E">${v.m}</td></tr>`).join('');
+}
+
+document.querySelectorAll('.chip').forEach(b => b.onclick = () => {
+  document.querySelectorAll('.chip').forEach(x => x.classList.remove('on')); b.classList.add('on'); filtro = b.dataset.f; desenhar();
+});
+inpDesde.onchange = desenhar;
+
+document.getElementById('rodape').innerHTML = `
+  <b>De onde vêm os dados.</b> PRF (dados abertos, um registro por acidente, com km, tipo, mortos e feridos), comunicados da concessionária EPR Triângulo e a imprensa da região.
+  Quando duas fontes falam do mesmo acidente (mesma data, até 1 dia de diferença, e mesmo km, até 5 km), ele entra uma vez só, com as duas fontes no cartão.
+  Se a imprensa noticia uma morte depois (no hospital), vale o número maior, e o cartão avisa.<br>
+  <b>Trechos.</b> Concessão estadual da EPR Triângulo na BR-365 do km 474,6 ao 605,5 (Delegação nº 10/2022; contrato nº 003/2022). O resto do caminho é federal, sem concessão.
+  <div class="alerta">📌 A PRF publicou os dados até <b>${D.prf_ate ? dataBR(D.prf_ate) : '—'}</b>. Depois dessa data, os acidentes entram pela concessionária e pela imprensa, e são conferidos com a PRF quando ela publicar.
+  ${C.data_manifestacao_confirmada ? '<br>📣 A contagem começa no dia da manifestação "Pedágio sem obra, não", ' + dataBR(C.data_manifestacao) + (C.manifestacao_fonte ? ' (' + C.manifestacao_fonte.replace(/^[^,]*, [^:]*: /, 'noticiada por ') + ')' : '') + '.' :'<br>⚠️ A data da manifestação ainda está provisória (' + dataBR(C.data_manifestacao) + ').'}
+  Atualizado em ${D.gerado_em}.</div>`;
+
+// ---------- mês a mês ----------
+const NOMES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+let mesSel = null;
+function mesesGrafico() {
+  const base = D.acidentes.filter(a => a.km != null && a.data >= inpDesde.value &&
+    (filtro === 'todos' || (filtro === 'mortes' && a.mortos > 0) || (filtro === 'frontal' && frontal(a))));
+  const m = {};
+  base.forEach(a => { const k = a.data.slice(0, 7); (m[k] ||= {c: 0, s: 0, mo: 0}); ehConc(a.km) ? m[k].c++ : m[k].s++; m[k].mo += a.mortos; });
+  const ks = Object.keys(m).sort(), max = Math.max(1, ...ks.map(k => m[k].c + m[k].s));
+  document.getElementById('meses').innerHTML = ks.map(k => {
+    const v = m[k], [ano, mm] = k.split('-');
+    return `<button class="mes ${mesSel === k ? 'on' : ''}" data-m="${k}" title="${v.c + v.s} acidentes, ${v.mo} mortes">
+      <span class="pilha"><i style="height:${v.s / max * 100}%;background:#2F6FB3"></i><i style="height:${v.c / max * 100}%;background:#F07E13"></i></span>
+      <b>${v.c + v.s}</b><small>${v.mo ? '✝' + v.mo : '&nbsp;'}</small><em>${NOMES[mm - 1]}/${ano.slice(2)}</em></button>`;
+  }).join('');
+  document.querySelectorAll('.mes').forEach(b => b.onclick = () => escolherMes(mesSel === b.dataset.m ? null : b.dataset.m));
+  const semPrf = mesSel && D.prf_ate && mesSel > D.prf_ate.slice(0, 7);
+  document.getElementById('mes-aviso').textContent = (mesSel
+    ? `Mostrando só ${NOMES[mesSel.slice(5) - 1]}/${mesSel.slice(0, 4)} no placar, no mapa e nas listas. Toque de novo no mês para ver tudo.`
+    : 'Toque num mês (ou escolha no calendário) para ver só ele no placar, no mapa e nas listas.')
+    + (semPrf ? ` A PRF ainda não publicou este mês: os acidentes vêm da imprensa e da concessionária, conferidos matéria por matéria.` : '');
+  document.getElementById('verTudo').classList.toggle('on', !mesSel);
+}
+function escolherMes(m) {
+  mesSel = m || null;
+  document.getElementById('mesCal').value = mesSel || '';
+  desenhar();
+  if (mesSel) { const pts = filtrados().filter(a => a.lat != null).map(a => [a.lat, a.lon]); if (pts.length) mapa.fitBounds(L.latLngBounds(pts).pad(.3), {maxZoom: 11}); }
+  else enquadrar();
+}
+document.getElementById('mesCal').onchange = e => escolherMes(e.target.value);
+document.getElementById('verTudo').onclick = () => escolherMes(null);
+const filtradosBase = filtrados;
+filtrados = () => filtradosBase().filter(a => !mesSel || a.data.startsWith(mesSel));
+const desenharBase = desenhar;
+desenhar = () => { desenharBase(); mesesGrafico();
+  if (mesSel) document.getElementById('periodo').innerHTML = document.getElementById('periodo').innerHTML.replace(/^De <b>[^<]+<\/b> até hoje/, `Em <b>${NOMES[mesSel.slice(5) - 1]}/${mesSel.slice(0, 4)}</b>`); };
+document.querySelectorAll('.chip[data-f]').forEach(b => b.onclick = () => {
+  document.querySelectorAll('.chip[data-f]').forEach(x => x.classList.remove('on')); b.classList.add('on'); filtro = b.dataset.f; desenhar();
+});
+
+desenhar();
+tracadoReal();
+</script>
+</body>
+</html>
