@@ -233,6 +233,47 @@
   .mes .pilha{height:60px;width:22px;display:flex;flex-direction:column-reverse;border-radius:4px;overflow:hidden;background:#F1EEE6}
   .mes .pilha i{display:block;width:100%}
   .mes b{font-size:16px}.mes small{color:var(--morte);font-weight:800;font-size:11px}.mes em{font-style:normal;font-size:11px;color:var(--suave)}
+  /* fontes e redes */
+  .rs{display:inline-block;font-size:11px;font-weight:800;text-decoration:none;border-radius:6px;padding:1px 6px;margin:1px 0;white-space:nowrap}
+  .rs.ig{background:linear-gradient(45deg,#F58529,#DD2A7B 55%,#8134AF);color:#fff!important}
+  .rs.fb{background:#1877F2;color:#fff!important}
+  .rs.site{background:#EEE;color:var(--tinta)!important}
+  .fontes-grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px;padding:0 18px 18px}
+  .fonte{border:1px solid var(--linha);border-radius:12px;padding:10px 12px;background:#fff}
+  .fonte b{display:block;margin-bottom:6px;font-size:14px}
+  .fonte div{display:flex;flex-wrap:wrap;gap:4px}
+  /* dia da semana e calendário */
+  #semana{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;padding:4px 18px 8px}
+  .dsem{border:2px solid var(--linha);background:#fff;border-radius:12px;padding:6px 2px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;font:inherit}
+  .dsem .barra{height:56px;width:20px;background:#F1EEE6;border-radius:4px;display:flex;align-items:flex-end;overflow:hidden}
+  .dsem .barra i{display:block;width:100%;background:var(--preto)}
+  .dsem.top .barra i{background:var(--morte)}
+  .dsem b{font-size:16px}.dsem small{color:var(--morte);font-weight:800;font-size:11px}.dsem em{font-style:normal;font-size:12px;font-weight:800;color:var(--suave);text-transform:uppercase}
+  .dsem.on{border-color:var(--preto);background:var(--amarelo);box-shadow:0 0 0 2px var(--preto)}
+  .dsem.on em{color:var(--preto)}
+  .dia-linha{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:4px 18px 10px}
+  .dia-linha label{font-size:14px;color:var(--suave)}
+  .dia-linha input{font:inherit;padding:7px 10px;border:2px solid var(--linha);border-radius:10px;background:#fff}
+  #calendario{padding:0 18px 12px}
+  .cal-tit{font-weight:900;margin:4px 0 6px}
+  .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;max-width:560px}
+  .cal .cab{font-size:11px;font-weight:800;color:var(--suave);text-align:center;text-transform:uppercase}
+  .cal button{aspect-ratio:1/1;min-height:38px;border:1px solid var(--linha);background:#fff;border-radius:8px;font:inherit;font-size:13px;cursor:pointer;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.05;padding:2px}
+  .cal button:disabled{opacity:.35;cursor:default}
+  .cal button.tem{background:#FFF4D1;border-color:#F0D37A;font-weight:800}
+  .cal button.morte{background:#FFE1E1;border-color:#F3A3A3}
+  .cal button .q{font-size:10px;font-weight:900;color:var(--preto)}
+  .cal button.morte .q{color:var(--morte)}
+  .cal button.on{background:var(--preto);color:var(--amarelo);border-color:var(--preto)}
+  .cal button.on .q{color:var(--amarelo)}
+  .cal button.apaga{opacity:.3}
+  #doDia{padding:0 18px 16px}
+  .dd-tit{font-weight:900;font-size:16px;margin:6px 0 8px}
+  .dd{display:flex;gap:10px;align-items:flex-start;border:2px solid var(--linha);border-left:6px solid var(--leve);border-radius:12px;padding:10px 12px;margin-bottom:8px;cursor:pointer;background:#fff}
+  .dd.m{border-left-color:var(--morte)}.dd.f{border-left-color:var(--ferido)}
+  .dd:hover{border-color:var(--preto)}
+  .dd .k{font-weight:900;min-width:70px}
+  .dd small{color:var(--suave)}
   .marca-cid{font-weight:900;font-size:15px;color:var(--tinta);text-shadow:0 0 3px #fff,0 0 3px #fff,0 0 3px #fff;white-space:nowrap}
 
   footer{max-width:1200px;margin:auto;padding:0 20px 40px;color:var(--suave);font-size:13px;line-height:1.5}
@@ -361,6 +402,18 @@
     <div id="meses"></div>
   </div>
 
+  <div class="caixa" id="caixaDias" style="margin:0 0 14px">
+    <h3>📆 Dia da semana e dia a dia</h3>
+    <p class="dica" id="dia-aviso">Toque num dia da semana para ver só ele. Escolha um mês (ou uma data) e toque num dia do calendário para ver todos os acidentes daquele dia no mapa.</p>
+    <div id="semana"></div>
+    <div class="dia-linha">
+      <label for="diaCal">📅 Ver um dia:</label><input type="date" id="diaCal">
+      <button class="chip" id="limpaDia" hidden>✕ Limpar dia e dia da semana</button>
+    </div>
+    <div id="calendario"></div>
+    <div id="doDia"></div>
+  </div>
+
   <section class="placar">
     <div class="lado conc">
       <h2>🟧 Com pedágio</h2>
@@ -446,6 +499,12 @@
     </ol>
     <div class="chamada">Essa luta é de todos. Entre no grupo, acompanhe e compartilhe.<span class="chamada-bts"><a class="zap" href="https://chat.whatsapp.com/BVSPz3aiAOjIN6pGvh2V3P" target="_blank" rel="noopener">💬 Entrar no grupo do WhatsApp</a><a href="https://www.instagram.com/movimentobr365/" target="_blank" rel="noopener">Seguir @movimentobr365</a></span></div>
   </section>
+
+  <section class="caixa fontes-cx" id="fontes">
+    <h3>📰 De onde vêm os dados: nossas fontes</h3>
+    <p class="dica">Cada acidente do mapa mostra a fonte no cartão. Siga quem cobre a BR-365 todos os dias:</p>
+    <div class="fontes-grade" id="fontesGrade"></div>
+  </section>
 </main>
 <footer id="rodape"></footer>
 
@@ -485,7 +544,7 @@ const inpDesde = document.getElementById('desde');
 inpDesde.value = C.data_manifestacao;
 
 /* ---------- mapa ---------- */
-const mapa = L.map('mapa', {scrollWheelZoom: false, zoomSnap: .25});
+const mapa = L.map('mapa', {scrollWheelZoom: true, wheelPxPerZoomLevel: 90, zoomSnap: .25});
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; OpenStreetMap', maxZoom: 18, className: 'fundo-mapa'
 }).addTo(mapa);
@@ -561,9 +620,35 @@ C.pracas.forEach(p => L.marker(pontoDoKm(p.km), {icon: L.divIcon({className: '',
 const camada = L.layerGroup().addTo(mapa);
 const marcadores = {};
 
+/* ---------- fontes e redes sociais ---------- */
+const FONTES = [
+  {nome: 'PRF em Minas Gerais', re: /^PRF/, site: 'https://www.gov.br/prf/pt-br', ig: 'prf_mg'},
+  {nome: 'EPR Triângulo (concessionária)', re: /EPR/, site: 'https://eprtriangulo.com.br', ig: 'epr.triangulo'},
+  {nome: 'Patos Notícias', re: /Patos Not[ií]cias/, site: 'https://patosnoticias.com.br', ig: 'patosnoticias', fb: 'patosnoticias'},
+  {nome: 'Patos Hoje', re: /Patos Hoje/, site: 'https://patoshoje.com.br', ig: 'patoshoje', fb: 'Patoshoje'},
+  {nome: 'Patos Agora', re: /Patos Agora/, site: 'https://patosagora.net', ig: 'patos_agora', fb: 'patosagora'},
+  {nome: 'PatosJá', re: /PatosJ[áa]/, site: 'https://www.patosja.com.br', ig: 'patosja'},
+  {nome: 'NTV Patos de Minas', re: /NTV/, ig: 'ntvpatosdeminas'},
+  {nome: 'TV Paranaíba (Record)', re: /TV Parana[ií]ba/, ig: 'tvparanaiba', fb: 'tvparanaiba'},
+  {nome: 'TV Integração (Globo)', re: /TV Integra[çc][ãa]o/, ig: 'tvintegracao', fb: 'tvintegracao'},
+  {nome: 'Patos 1', re: /Patos 1\b/, site: 'https://www.patos1.com.br', ig: 'patos1noticias', fb: 'patos1noticias'},
+  {nome: 'Clube Notícia / Rádio Clube 98.3', re: /Clube Not[ií]cia/, site: 'https://clubenoticia.com.br', ig: 'radioclube98.3_clubenoticia'},
+  {nome: 'Correio Regional', re: /Correio Regional/, site: 'https://correioregional.net'},
+  {nome: 'Patrocínio Online', re: /Patroc[ií]nio Online/, site: 'https://www.patrocinioonline.com.br', ig: 'patrocinioonline_pol', fb: 'POLpatrocinioonline'},
+  {nome: 'Patrocínio Fácil', re: /Patroc[ií]nio F[áa]cil/, site: 'https://patrociniofacil.com.br', ig: 'patrocinio_facil'},
+  {nome: 'Rádio Difusora 95 (Patrocínio)', re: /Difusora/, site: 'https://difusora95.com.br', ig: 'difusora95', fb: 'difusora95'},
+  {nome: 'Módulo FM', re: /M[óo]dulo FM/, site: 'https://modulofm.com.br'},
+  {nome: 'Rede Hoje', re: /Rede Hoje/, site: 'https://redehoje.com.br'},
+  {nome: 'Tribuna Informa', re: /Tribuna Informa/, site: 'https://tribunainforma.com.br', ig: 'tribunainforma', fb: 'jornaltribunainforma'},
+  {nome: 'Estado de Minas', re: /Estado de Minas/, site: 'https://www.em.com.br'},
+  {nome: 'g1', re: /\bg1\b/, site: 'https://g1.globo.com'},
+];
+const igLink = f => f.ig ? `<a class="rs ig" href="https://www.instagram.com/${f.ig}/" target="_blank" rel="noopener" title="Instagram de ${f.nome}">IG @${f.ig}</a>` : '';
+const redesDe = nome => FONTES.filter(f => f.re.test(nome || '')).map(igLink).filter(Boolean).join(' ');
+
 function popup(a) {
   const tr = trechoDe(a.km);
-  const fontes = a.fontes.map(f => f.link ? `<a href="${f.link}" target="_blank" rel="noopener">${f.nome}</a>` : f.nome).join(' · ');
+  const fontes = a.fontes.map(f => (f.link ? `<a href="${f.link}" target="_blank" rel="noopener">${f.nome}</a>` : f.nome) + (redesDe(f.nome) ? ' ' + redesDe(f.nome) : '')).join(' · ');
   return `<div class="pop">
     <span class="t" style="background:${tr.tipo === 'concessao' ? '#F07E13' : '#2F6FB3'}">${tr.tipo === 'concessao' ? 'TRECHO COM PEDÁGIO' : 'TRECHO SEM CONCESSÃO'}</span>
     <h4>${a.tipo || 'Acidente'}</h4>
@@ -719,7 +804,7 @@ document.getElementById('rodape').innerHTML = `
 
 // ---------- mês a mês ----------
 const NOMES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
-let mesSel = null;
+let mesSel = null, semSel = null, diaSel = null;
 function mesesGrafico() {
   const base = D.acidentes.filter(a => a.km != null && a.data >= inpDesde.value && noTrecho(a) &&
     (filtro === 'todos' || (filtro === 'mortes' && a.mortos > 0) || (filtro === 'frontal' && frontal(a))));
@@ -742,6 +827,7 @@ function mesesGrafico() {
 }
 function escolherMes(m) {
   mesSel = m || null;
+  if (diaSel && (!mesSel || !diaSel.startsWith(mesSel))) diaSel = null;
   document.getElementById('mesCal').value = mesSel || '';
   desenhar();
   if (mesSel) { const pts = filtrados().filter(a => a.lat != null).map(a => [a.lat, a.lon]); if (pts.length) mapa.fitBounds(L.latLngBounds(pts).pad(.3), {maxZoom: 11}); }
@@ -757,6 +843,84 @@ desenhar = () => { desenharBase(); mesesGrafico();
 document.querySelectorAll('.chip[data-f]').forEach(b => b.onclick = () => {
   document.querySelectorAll('.chip[data-f]').forEach(x => x.classList.remove('on')); b.classList.add('on'); filtro = b.dataset.f; desenhar();
 });
+
+document.getElementById('fontesGrade').innerHTML = FONTES.map(f => `<div class="fonte"><b>${f.nome}</b><div>
+  ${f.ig ? igLink(f) : ''}${f.fb ? `<a class="rs fb" href="https://www.facebook.com/${f.fb}" target="_blank" rel="noopener">Facebook</a>` : ''}${f.site ? `<a class="rs site" href="${f.site}" target="_blank" rel="noopener">Site</a>` : ''}</div></div>`).join('');
+
+// ---------- dia da semana e dia a dia ----------
+const DIAS = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'];
+const DIAS_LONGO = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'];
+const MESES_LONGO = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+const diaSem = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d).getDay(); };
+const filtradosMes = filtrados;  // trecho, tipo, período e mês
+filtrados = () => filtradosMes().filter(a => (semSel == null || diaSem(a.data) === semSel) && (!diaSel || a.data === diaSel));
+const hojeISO = (() => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); })();
+const inpDia = document.getElementById('diaCal');
+inpDia.min = C.data_manifestacao; inpDia.max = hojeISO;
+
+function semanaGrafico() {
+  const c = Array.from({length: 7}, () => ({n: 0, m: 0}));
+  filtradosMes().filter(a => !diaSel || a.data === diaSel).forEach(a => { const d = diaSem(a.data); c[d].n++; c[d].m += a.mortos; });
+  const max = Math.max(1, ...c.map(x => x.n)), top = c.findIndex(x => x.n === max);
+  document.getElementById('semana').innerHTML = [1, 2, 3, 4, 5, 6, 0].map(d =>
+    `<button class="dsem ${semSel === d ? 'on' : ''} ${d === top && c[d].n ? 'top' : ''}" data-d="${d}" title="${DIAS_LONGO[d]}: ${c[d].n} acidentes, ${c[d].m} mortes">
+      <span class="barra"><i style="height:${c[d].n / max * 100}%"></i></span><b>${c[d].n}</b><small>${c[d].m ? '✝' + c[d].m : '&nbsp;'}</small><em>${DIAS[d]}</em></button>`).join('');
+  document.querySelectorAll('.dsem').forEach(b => b.onclick = () => { const d = +b.dataset.d; semSel = semSel === d ? null : d; desenhar(); });
+}
+
+function calendario() {
+  const el = document.getElementById('calendario');
+  const mes = mesSel || (diaSel && diaSel.slice(0, 7));
+  if (!mes) { el.innerHTML = ''; return; }
+  const [y, m] = mes.split('-').map(Number);
+  const qtd = {};
+  filtradosMes().forEach(a => { (qtd[a.data] ||= {n: 0, m: 0}); qtd[a.data].n++; qtd[a.data].m += a.mortos; });
+  const ini = new Date(y, m - 1, 1).getDay(), dias = new Date(y, m, 0).getDate();
+  let h = `<div class="cal-tit">${MESES_LONGO[m - 1][0].toUpperCase() + MESES_LONGO[m - 1].slice(1)} de ${y}</div><div class="cal">` + DIAS.map(d => `<div class="cab">${d}</div>`).join('');
+  for (let i = 0; i < ini; i++) h += '<span></span>';
+  for (let d = 1; d <= dias; d++) {
+    const iso = `${mes}-${String(d).padStart(2, '0')}`, q = qtd[iso], fora = iso < C.data_manifestacao || iso > hojeISO;
+    const apaga = semSel != null && diaSem(iso) !== semSel;
+    h += `<button data-dia="${iso}" class="${q ? 'tem' : ''} ${q && q.m ? 'morte' : ''} ${diaSel === iso ? 'on' : ''} ${apaga ? 'apaga' : ''}" ${fora || !q ? 'disabled' : ''} title="${q ? q.n + ' acidente(s), ' + q.m + ' morte(s)' : 'sem acidente registrado'}">${d}${q ? `<span class="q">${q.n}${q.m ? ' ✝' + q.m : ''}</span>` : ''}</button>`;
+  }
+  el.innerHTML = h + '</div>';
+  el.querySelectorAll('button[data-dia]').forEach(b => b.onclick = () => escolherDia(b.dataset.dia));
+}
+
+function listaDia() {
+  const el = document.getElementById('doDia');
+  if (!diaSel) { el.innerHTML = ''; return; }
+  const l = filtrados().slice().sort((a, b) => (a.hora || '').localeCompare(b.hora || ''));
+  el.innerHTML = `<div class="dd-tit">${l.length ? l.length + (l.length === 1 ? ' acidente' : ' acidentes') : 'Nenhum acidente registrado'} em ${dataBR(diaSel)} (${DIAS_LONGO[diaSem(diaSel)]})</div>` +
+    l.map(a => `<div class="dd ${a.mortos ? 'm' : (a.feridos ? 'f' : '')}" data-id="${a.id}"><span class="k">${kmBR(a.km)}</span><div><b>${a.tipo || 'Acidente'}</b>${a.hora ? ' · ' + a.hora : ''} · ${a.municipio || ''}<br><small>✝ ${a.mortos} · 🩹 ${a.feridos} · ${ehConc(a.km) ? 'trecho com pedágio' : 'trecho sem concessão'} · toque para ver no mapa</small></div></div>`).join('');
+  el.querySelectorAll('.dd').forEach(c => c.onclick = () => { const mk = marcadores[c.dataset.id]; if (mk) { document.getElementById('mapa').scrollIntoView({behavior: 'smooth', block: 'center'}); setTimeout(() => { mapa.setView(mk.getLatLng(), 12); mk.openPopup(); }, 450); } });
+}
+
+function escolherDia(iso) {
+  diaSel = iso && diaSel !== iso ? iso : null;
+  if (diaSel) { mesSel = diaSel.slice(0, 7); document.getElementById('mesCal').value = mesSel; }
+  inpDia.value = diaSel || '';
+  desenhar();
+  const pts = filtrados().filter(a => a.lat != null);
+  if (diaSel && pts.length) {
+    mapa.fitBounds(L.latLngBounds(pts.map(a => [a.lat, a.lon])).pad(.4), {maxZoom: 12});
+    if (pts.length === 1) setTimeout(() => marcadores[pts[0].id] && marcadores[pts[0].id].openPopup(), 400);
+  }
+}
+inpDia.onchange = () => escolherDia(inpDia.value);
+document.getElementById('limpaDia').onclick = () => { semSel = null; escolherDia(null); };
+
+const desenharMes = desenhar;
+desenhar = () => {
+  desenharMes(); semanaGrafico(); calendario(); listaDia();
+  const per = document.getElementById('periodo');
+  if (diaSel) per.innerHTML = per.innerHTML.replace(/^(De <b>[^<]+<\/b> até hoje|Em <b>[^<]+<\/b>)/, `Em <b>${dataBR(diaSel)}</b> (${DIAS_LONGO[diaSem(diaSel)]})`);
+  else if (semSel != null) per.innerHTML = per.innerHTML.replace(/:/, `, só às <b>${DIAS_LONGO[semSel].replace('-feira', 's-feiras').replace('sábado', 'sábados').replace('domingo', 'domingos')}</b>:`);
+  document.getElementById('limpaDia').hidden = !diaSel && semSel == null;
+  document.getElementById('dia-aviso').textContent = diaSel ? 'Mostrando só este dia no placar, no mapa e nas listas. Toque no dia de novo para ver tudo.'
+    : semSel != null ? `Mostrando só ${DIAS_LONGO[semSel].endsWith('feira') ? 'as' : 'os'} ${DIAS_LONGO[semSel].replace('-feira', 's-feiras').replace('sábado', 'sábados').replace('domingo', 'domingos')}. Toque de novo para ver todos os dias.`
+    : 'Toque num dia da semana para ver só ele. Escolha um mês (ou uma data) e toque num dia do calendário para ver todos os acidentes daquele dia no mapa.';
+};
 
 desenhar();
 tracadoReal();
