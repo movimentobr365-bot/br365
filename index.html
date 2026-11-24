@@ -4,6 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>BR-365: acidentes de Uberlândia até a BR-040</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#151515">
+<link rel="icon" href="icones/icone-192.png">
+<link rel="apple-touch-icon" href="icones/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="BR-365">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="description" content="Duplicação já! Acidentes e mortes na BR-365 de Uberlândia até a BR-040, km por km. Movimento BR-365: Pedágio sem obra, não!">
+<meta property="og:title" content="Duplicação já! Movimento BR-365">
+<meta property="og:description" content="Acidentes e mortes na BR-365 de Uberlândia até a BR-040, km por km, atualizados todo dia.">
+<meta property="og:image" content="fotos/marcao_povo.jpg">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>document.write('<script src="dados.js?v=' + Date.now() + '"><\/script>');</script>
@@ -30,6 +42,23 @@
   .abas a.on{background:var(--amarelo);color:var(--preto)}
   .abas a.seguir{border:2px solid var(--amarelo);color:var(--amarelo)}
   .abas a.zap{background:#25D366;color:#06281a}
+  .abas a.app{border:2px solid #fff;color:#fff}
+  /* faixa de instalar o app */
+  .instalar{position:fixed;left:12px;right:12px;bottom:12px;z-index:3000;max-width:560px;margin:auto;background:var(--preto);color:#fff;border:3px solid var(--amarelo);border-radius:16px;padding:10px 12px;display:flex;align-items:center;gap:10px;box-shadow:0 10px 30px rgba(0,0,0,.45);animation:sobe .4s ease-out}
+  .instalar[hidden]{display:none}
+  .instalar img{width:44px;height:44px;border-radius:10px;flex:none}
+  .instalar div{flex:1;min-width:0;line-height:1.25}
+  .instalar b{display:block;font-size:15px;color:var(--amarelo)}
+  .instalar span{font-size:12px;color:#ccc}
+  .instalar #btInstalar{background:var(--amarelo);color:var(--preto);border:0;border-radius:10px;font:inherit;font-weight:900;padding:10px 12px;cursor:pointer;white-space:nowrap}
+  .fecha{background:none;border:0;color:#aaa;font-size:18px;cursor:pointer;padding:4px}
+  .modal{position:fixed;inset:0;z-index:3100;background:rgba(0,0,0,.7);display:flex;align-items:flex-end;justify-content:center;padding:12px}
+  .modal[hidden]{display:none}
+  .modal-in{position:relative;background:#fff;color:var(--tinta);border-radius:18px;padding:20px;max-width:460px;width:100%;border-top:8px solid var(--amarelo)}
+  .modal-in h3{margin:0 0 10px;font-size:20px}
+  .modal-in ol{margin:0;padding-left:22px;font-size:16px;line-height:1.6}
+  .modal-in .fecha{position:absolute;right:10px;top:8px;color:#666}
+  @keyframes sobe{from{transform:translateY(120%)}to{transform:none}}
   .bt.zap{background:#25D366;color:#06281a}
   .chamada-bts{display:flex;flex-wrap:wrap;gap:8px}
   .mov .chamada a.zap{background:#25D366;color:#06281a}
@@ -238,6 +267,7 @@
     <a href="#painel" data-sec="painel">🗺️ Acidentes</a>
     <a href="#manifesto" data-sec="manifesto">📜 Manifesto</a>
     <a href="#movimento" data-sec="movimento">✊ Nossa luta</a>
+    <a class="app" href="#" id="abaApp">📲 App</a>
     <a class="zap" href="https://chat.whatsapp.com/BVSPz3aiAOjIN6pGvh2V3P" target="_blank" rel="noopener">💬 Grupo</a>
     <a class="seguir" href="https://www.instagram.com/movimentobr365/" target="_blank" rel="noopener">Seguir</a>
   </div>
@@ -418,6 +448,20 @@
   </section>
 </main>
 <footer id="rodape"></footer>
+
+<div class="instalar" id="instalar" hidden>
+  <img src="icones/icone-192.png" alt="">
+  <div><b>Leve o BR-365 no celular</b><span>Ícone na tela, abre direto, funciona até sem internet.</span></div>
+  <button id="btInstalar">📲 Instalar</button>
+  <button class="fecha" id="fechaInstalar" aria-label="Fechar">✕</button>
+</div>
+<div class="modal" id="ajudaInstalar" hidden>
+  <div class="modal-in">
+    <button class="fecha" id="fechaAjuda" aria-label="Fechar">✕</button>
+    <h3>📲 Instalar o app do BR-365</h3>
+    <div id="passosInstalar"></div>
+  </div>
+</div>
 
 <script>
 const D = window.DADOS, C = D.config;
@@ -743,6 +787,32 @@ tracadoReal();
   const io2 = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting)
     abas.forEach(a => a.classList.toggle('on', a.dataset.sec === e.target.id)); }), {rootMargin: '-45% 0px -50% 0px'});
   ['painel', 'manifesto', 'movimento'].forEach(id => io2.observe(document.getElementById(id)));
+})();
+
+/* ---------- app no celular ---------- */
+(() => {
+  if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('sw.js').catch(() => {});
+  const instalado = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const faixa = document.getElementById('instalar'), ajuda = document.getElementById('ajudaInstalar');
+  let pedido = null;
+  addEventListener('beforeinstallprompt', e => { e.preventDefault(); pedido = e; });
+  const passos = () => ios
+    ? '<ol><li>Toque no botão <b>Compartilhar</b> (o quadrado com a seta para cima ⬆️), embaixo da tela.</li><li>Desça e toque em <b>Adicionar à Tela de Início</b>.</li><li>Toque em <b>Adicionar</b>. Pronto: o ícone do BR-365 aparece na tela.</li></ol>'
+    : '<ol><li>Toque nos <b>três pontinhos ⋮</b>, no canto de cima do navegador.</li><li>Toque em <b>Instalar app</b> ou <b>Adicionar à tela inicial</b>.</li><li>Confirme. Pronto: o ícone do BR-365 aparece na tela.</li></ol>';
+  const instalar = async () => {
+    if (pedido) { pedido.prompt(); const r = await pedido.userChoice; pedido = null; if (r.outcome === 'accepted') faixa.hidden = true; return; }
+    document.getElementById('passosInstalar').innerHTML = passos(); ajuda.hidden = false;
+  };
+  document.getElementById('btInstalar').onclick = instalar;
+  document.getElementById('abaApp').onclick = e => { e.preventDefault(); instalar(); };
+  document.getElementById('fechaAjuda').onclick = () => ajuda.hidden = true;
+  ajuda.onclick = e => { if (e.target === ajuda) ajuda.hidden = true; };
+  document.getElementById('fechaInstalar').onclick = () => { faixa.hidden = true; try { localStorage.setItem('br365-sem-faixa', Date.now()); } catch (e) {} };
+  let fechou = 0; try { fechou = +localStorage.getItem('br365-sem-faixa') || 0; } catch (e) {}
+  const celular = matchMedia('(max-width: 900px)').matches || 'ontouchstart' in window;
+  if (instalado) document.getElementById('abaApp').hidden = true;
+  else if (celular && Date.now() - fechou > 3 * 864e5) setTimeout(() => faixa.hidden = false, 4000);
 })();
 </script>
 </body>
