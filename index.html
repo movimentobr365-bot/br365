@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>BR-365: acidentes de Patos de Minas a Uberlândia</title>
+<title>BR-365: acidentes de Uberlândia até a BR-040</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>document.write('<script src="dados.js?v=' + Date.now() + '"><\/script>');</script>
@@ -11,15 +11,42 @@
   :root{
     --conc:#F07E13; --conc-claro:#FFF1E2; --sem:#2F6FB3; --sem-claro:#E6F0FA;
     --morte:#C8102E; --ferido:#F2B705; --leve:#8A94A6;
+    --amarelo:#FFC72C; --preto:#151515;
     --tinta:#1B2330; --suave:#5B6676; --fundo:#F6F4EF; --cartao:#fff; --linha:#E4E0D6;
   }
   *{box-sizing:border-box}
   body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--fundo);color:var(--tinta)}
-  header{padding:22px 20px 8px;max-width:1200px;margin:auto}
-  .selo{display:inline-block;background:var(--tinta);color:#fff;font-weight:800;font-size:12px;letter-spacing:.08em;padding:5px 10px;border-radius:99px;text-transform:uppercase}
-  h1{font-size:clamp(24px,4vw,40px);line-height:1.05;margin:10px 0 6px;font-weight:900;letter-spacing:-.02em}
-  h1 em{font-style:normal;color:var(--conc)}
-  .sub{color:var(--suave);font-size:15px;margin:0 0 6px}
+  /* cores do Movimento BR-365: amarelo, preto e branco */
+  .topo{background:var(--preto);color:#fff;--morte:#FF6B76}
+  header{padding:22px 20px 20px;max-width:1200px;margin:auto;display:flex;gap:20px;align-items:center}
+  header .logo{width:clamp(84px,14vw,140px);flex:none;border-radius:16px}
+  .selo{display:inline-block;background:var(--amarelo);color:var(--preto);font-weight:900;font-size:12px;letter-spacing:.08em;padding:5px 10px;border-radius:6px;text-transform:uppercase}
+  h1{font-size:clamp(24px,4vw,42px);line-height:1.05;margin:10px 0 8px;font-weight:900;letter-spacing:-.02em}
+  h1 em{font-style:normal;color:var(--amarelo)}
+  .sub{color:#E8E8E8;font-size:16px;margin:0}
+  .sub b{color:#fff}
+  .fita{height:14px;background:repeating-linear-gradient(-45deg,var(--amarelo) 0 18px,var(--preto) 18px 36px)}
+  .chip.on,.mes.on{border-color:var(--preto)}
+  .chip.on{background:var(--preto);color:var(--amarelo)}
+
+  /* o movimento */
+  .mov{background:var(--preto);color:#fff;border-radius:20px;margin-top:16px;overflow:hidden}
+  .mov h3{margin:0;padding:18px 20px 4px;font-size:22px;color:var(--amarelo);font-weight:900;text-transform:uppercase;letter-spacing:.02em}
+  .mov .dica{color:#CFCFCF;padding:0 20px 12px;font-size:15px;margin:0;line-height:1.45}
+  .galeria{display:grid;grid-template-columns:2fr 1fr 1fr;grid-auto-rows:170px;gap:6px;padding:0 6px}
+  .galeria figure{margin:0;position:relative;overflow:hidden;border-radius:10px}
+  .galeria figure:first-child{grid-row:span 2}
+  .galeria img{width:100%;height:100%;object-fit:cover;display:block}
+  .galeria figcaption{position:absolute;left:0;right:0;bottom:0;padding:18px 10px 6px;font-size:12px;font-weight:700;background:linear-gradient(transparent,rgba(0,0,0,.75))}
+  .linha-tempo{list-style:none;margin:0;padding:16px 20px 6px}
+  .linha-tempo li{position:relative;padding:0 0 16px 26px;border-left:3px solid var(--amarelo);margin-left:7px}
+  .linha-tempo li:last-child{border-left-color:transparent}
+  .linha-tempo li::before{content:"";position:absolute;left:-10px;top:0;width:14px;height:14px;background:var(--amarelo);border:3px solid var(--preto);border-radius:50%;box-shadow:0 0 0 2px var(--amarelo)}
+  .linha-tempo b{color:var(--amarelo);display:block;font-size:14px}
+  .linha-tempo span{font-size:15px;line-height:1.4}
+  .linha-tempo a{color:#fff;font-size:12px;opacity:.75}
+  .mov .chamada{margin:6px 20px 20px;background:var(--amarelo);color:var(--preto);border-radius:12px;padding:14px 16px;font-weight:800;font-size:16px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+  .mov .chamada a{background:var(--preto);color:var(--amarelo);text-decoration:none;padding:9px 14px;border-radius:8px;font-weight:900;white-space:nowrap}
   main{max-width:1200px;margin:auto;padding:0 20px 40px}
 
   .filtros{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:14px 0}
@@ -53,7 +80,7 @@
 
   /* régua da rodovia */
   #regua{padding:6px 18px 18px;overflow-x:auto}
-  #regua svg{display:block;min-width:820px;width:100%}
+  #regua svg{display:block;min-width:1100px;width:100%}
   .rot{font-size:12px;fill:var(--suave);font-weight:600}
   .cid{font-size:13px;fill:var(--tinta);font-weight:800}
 
@@ -91,15 +118,25 @@
     .placar,.grade{grid-template-columns:1fr}
     #mapa{height:420px}
     .nums{grid-template-columns:repeat(2,1fr)}
+    header{align-items:flex-start}
+    .galeria{grid-template-columns:1fr 1fr;grid-auto-rows:140px}
+    .galeria figure:first-child{grid-column:span 2;grid-row:span 2}
   }
 </style>
 </head>
 <body>
+<div class="topo">
 <header>
-  <span class="selo">Pedágio sem obra, não</span>
-  <h1>BR-365: quantos acidentes de <em>Patos de Minas</em> a <em>Uberlândia</em></h1>
-  <p class="sub" id="periodo"></p>
+  <img class="logo" src="fotos/perfil.jpg" alt="Logo do Movimento BR-365: Pedágio sem obra, não!">
+  <div>
+    <span class="selo">Movimento BR-365 · Pedágio sem obra, não!</span>
+    <h1>BR-365: quantos acidentes de <em>Uberlândia</em> até a <em>BR-040</em></h1>
+    <p class="sub" id="periodo"></p>
+    <a href="#movimento" style="display:inline-block;margin-top:10px;color:var(--amarelo);font-weight:800;font-size:14px">✊ Conheça o movimento ↓</a>
+  </div>
 </header>
+</div>
+<div class="fita"></div>
 <main>
   <div class="filtros">
     <label for="mesCal">📅 Mês:</label><input type="month" id="mesCal">
@@ -108,6 +145,10 @@
     <button class="chip on" data-f="todos">Todos</button>
     <button class="chip" data-f="mortes">Só com morte</button>
     <button class="chip" data-f="frontal">Só batida frontal</button>
+  </div>
+  <div class="filtros" id="trechosSel">
+    <label>🛣️ Trecho:</label>
+    <button class="chip on" data-t="">Todo o caminho</button>
   </div>
 
   <div class="caixa" style="margin:0 0 14px">
@@ -168,6 +209,28 @@
     <h3>💥 Que tipo de acidente acontece mais</h3>
     <table id="tipos"></table>
   </div>
+
+  <section class="mov" id="movimento">
+    <h3>✊ O Movimento BR-365</h3>
+    <p class="dica">Moradores, produtores, caminhoneiros e lideranças do Alto Paranaíba que foram para a beira da rodovia cobrar uma coisa simples: <b style="color:#fff">primeiro a obra, depois o pedágio</b>. O movimento é pacífico e cobra segurança e a duplicação da BR-365, porque quem usa essa estrada todo dia está perdendo a vida nela.</p>
+    <div class="galeria">
+      <figure><img src="fotos/ato2.jpg" alt="Manifestantes de punho erguido com camisetas do movimento" loading="lazy"><figcaption>02/02/2026 · trevo da BR-365 com a MG-188, Coromandel</figcaption></figure>
+      <figure><img src="fotos/ato4.jpg" alt="Faixa Acorda Região! Pedágio sem obras não!" loading="lazy"><figcaption>"Acorda, Região!"</figcaption></figure>
+      <figure><img src="fotos/ato3.jpg" alt="Grupo de manifestantes com cartazes na beira da rodovia" loading="lazy"><figcaption>Povo na beira da pista</figcaption></figure>
+      <figure><img src="fotos/ato7.jpg" alt="Lideranças da região com os cartazes do movimento" loading="lazy"><figcaption>Lideranças da região juntas</figcaption></figure>
+      <figure><img src="fotos/ato1.jpg" alt="Dois manifestantes de punho fechado" loading="lazy"><figcaption>Pedágio sem obra, não!</figcaption></figure>
+    </div>
+    <ol class="linha-tempo">
+      <li><b>02/02/2026 · 1ª manifestação</b><span>Das 8h às 13h, no trevo da BR-365 com a MG-188, no acesso a Coromandel, com acompanhamento da PRF e presença de prefeitos da região.</span><br><a href="https://www.em.com.br/gerais/2026/02/7345487-moradores-protestam-contra-pedagio-sem-obras-na-br-365.html" target="_blank" rel="noopener">Estado de Minas</a> · <a href="https://difusora95.com.br/noticias/manifestantes-protestam-contra-pedagio-sem-obras-na-br-365/" target="_blank" rel="noopener">Difusora 95</a> · <a href="https://www.instagram.com/p/DUTqIDbEQ1y/" target="_blank" rel="noopener">fotos do movimento</a></li>
+      <li><b>07/02/2026 · 2ª manifestação</b><span>O movimento cresce e chega a Patos de Minas.</span><br><a href="https://www.instagram.com/p/DUeIn05EQGq/" target="_blank" rel="noopener">@movimentobr365</a></li>
+      <li><b>09/02/2026 · Recado ao governo de Minas</b><span>O movimento cobra o governador e o vice: diálogo, solução e compromisso com as estradas da região.</span><br><a href="https://www.instagram.com/p/DUjglfbDSkq/" target="_blank" rel="noopener">@movimentobr365</a></li>
+      <li><b>30/03/2026 · O desafio</b><span>O governador Mateus Simões diz ser contra pedágio sem obra. O movimento responde: então suspenda a cobrança enquanto não houver obra de verdade.</span><br><a href="https://www.instagram.com/p/DWjIqpwjXTe/" target="_blank" rel="noopener">@movimentobr365</a></li>
+      <li><b>25/09/2026 · Primeira vitória</b><span>O Copam aprova a Licença Prévia da duplicação da BR-365 entre Patos de Minas e Patrocínio. A próxima cobrança é a licitação e a obra.</span><br><a href="https://www.patosja.com.br/Meio%20Ambiente/copam-concede-licenca-previa-para-duplicacao-da-br-365-entre-patos-de-minas-e-patrocinio" target="_blank" rel="noopener">PatosJá</a> · <a href="https://www.instagram.com/p/DdtwMeCOVnL/" target="_blank" rel="noopener">@movimentobr365</a></li>
+      <li><b>02/10/2026 · De novo no mesmo lugar</b><span>Duas carretas batem no mesmo trecho onde, meses antes, dois caminhoneiros morreram numa batida de frente. Duplicação já!</span><br><a href="https://www.instagram.com/p/Dd_6nTcJokR/" target="_blank" rel="noopener">@movimentobr365</a></li>
+      <li><b>Hoje · Este painel</b><span>Cada acidente desde a manifestação, no km onde aconteceu, atualizado todo dia com dados da PRF e da imprensa.</span></li>
+    </ol>
+    <div class="chamada">Essa luta é de todos. Acompanhe e compartilhe.<a href="https://www.instagram.com/movimentobr365/" target="_blank" rel="noopener">Seguir @movimentobr365</a></div>
+  </section>
 </main>
 <footer id="rodape"></footer>
 
@@ -181,11 +244,12 @@ const ehConc = km => trechoDe(Math.min(km, C.km_fim)).tipo === 'concessao';
 const cor = a => a.mortos > 0 ? 'var(--morte)' : (a.feridos > 0 ? 'var(--ferido)' : 'var(--leve)');
 const corHex = a => a.mortos > 0 ? '#C8102E' : (a.feridos > 0 ? '#F2B705' : '#8A94A6');
 const frontal = a => /frontal/i.test(a.tipo);
-const extSem = C.trechos.filter(t => t.tipo === 'sem').reduce((s, t) => s + (t.ate - t.de), 0);
+const extSemTodo = C.trechos.filter(t => t.tipo === 'sem').reduce((s, t) => s + (t.ate - t.de), 0);
+let extSem = extSemTodo;
 const extConc = C.trechos.filter(t => t.tipo === 'concessao').reduce((s, t) => s + (t.ate - t.de), 0);
 
-document.getElementById('tag-sem').textContent =
-  'Patos de Minas → Patrocínio · km 400 a 474,6 · ' + fmt(Math.round(extSem)) + ' km';
+const tagSemTodo = 'São Gonçalo do Abaeté (BR-040) → Varjão → Patos de Minas → Patrocínio · km ' + fmt(C.km_inicio) + ' a 474,6 · ' + fmt(Math.round(extSemTodo)) + ' km';
+document.getElementById('tag-sem').textContent = tagSemTodo;
 
 let filtro = 'todos';
 const inpDesde = document.getElementById('desde');
@@ -210,7 +274,7 @@ function pontoDoKm(km) {
 // a estrada, pintada pelo trecho (linha fina; depois troca pelo desenho real do OpenStreetMap)
 const todasCoords = [], linhasAprox = [];
 async function tracadoReal() {
-  const q = '[out:json][timeout:60];way["highway"]["ref"~"365"](-19.0,-48.30,-18.55,-46.40);out geom;';
+  const q = '[out:json][timeout:60];way["highway"]["ref"~"365"](-19.0,-48.30,-17.90,-45.50);out geom;';
   try {
     let j = null;
     for (const s of ['https://overpass-api.de/api/interpreter', 'https://overpass.kumi.systems/api/interpreter', 'https://overpass.private.coffee/api/interpreter']) {
@@ -259,9 +323,9 @@ new ResizeObserver(() => { if (mapa.getZoom() < 6) enquadrar(); else mapa.invali
 
 // cidades, km e praças
 const rotulo = (pt, html, dx, dy, z) => L.marker(pt, {interactive: false, zIndexOffset: z || 0, icon: L.divIcon({className: 'rotulo', html, iconSize: null, iconAnchor: [dx, dy]})}).addTo(mapa);
-[['Patos de Minas', 404, 120, 30], ['Patrocínio', 473, -10, -14], ['Uberlândia', 605, 40, 34]].forEach(([n, k, dx, dy]) =>
+[['BR-040 · São Gonçalo do Abaeté', 277, -12, 10], ['Varjão de Minas', 347, -12, 10], ['Patos de Minas', 404, 120, 30], ['Patrocínio', 473, -10, -14], ['Uberlândia', 605, 40, 34]].forEach(([n, k, dx, dy]) =>
   rotulo(pontoDoKm(k), `<div class="marca-cid">${n}</div>`, dx, dy, 1000));
-[450, 500, 550, 600].forEach(k => rotulo(pontoDoKm(k), `<div class="marca-km">km ${k}</div>`, 20, -14, 900));
+[300, 350, 450, 500, 550, 600].forEach(k => rotulo(pontoDoKm(k), `<div class="marca-km">km ${k}</div>`, 20, -14, 900));
 C.pracas.forEach(p => L.marker(pontoDoKm(p.km), {icon: L.divIcon({className: '', html: '<div class="marca-praca">🚧</div>', iconSize: [24, 24], iconAnchor: [12, 12]})})
   .bindPopup(`<div class="pop"><h4>🚧 ${p.name || p.nome}</h4>${kmBR(p.km)} · cobra pedágio no trecho da EPR Triângulo</div>`).addTo(mapa));
 
@@ -285,8 +349,30 @@ function popup(a) {
 }
 
 /* ---------- filtro e desenho ---------- */
+// escolha de trecho: todo o caminho ou um pedaço
+let trechoSel = null;
+const noTrecho = a => !trechoSel || (a.km >= trechoSel.de && a.km < (trechoSel.ate >= C.km_fim ? 1e9 : trechoSel.ate));
+const nomeTrecho = () => trechoSel ? 'entre ' + trechoSel.rotulo.replace(' ↔ ', ' e ') : 'de Uberlândia até a BR-040, em São Gonçalo do Abaeté';
+const selT = document.getElementById('trechosSel');
+C.trechos.slice().reverse().forEach(t => selT.insertAdjacentHTML('beforeend',
+  `<button class="chip" data-t="${t.id}"><i style="display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;background:${t.tipo === 'concessao' ? '#F07E13' : '#2F6FB3'}"></i>${t.rotulo}</button>`));
+function escolherTrecho(id) {
+  trechoSel = C.trechos.find(t => t.id === id) || null;
+  selT.querySelectorAll('.chip').forEach(b => b.classList.toggle('on', (b.dataset.t || null) === (trechoSel ? trechoSel.id : null)));
+  document.querySelector('.lado.conc').style.display = !trechoSel || trechoSel.tipo === 'concessao' ? '' : 'none';
+  document.querySelector('.lado.sem').style.display = !trechoSel || trechoSel.tipo === 'sem' ? '' : 'none';
+  if (trechoSel) {
+    document.getElementById('tag-sem').textContent = trechoSel.tipo === 'sem' ? trechoSel.rotulo + ' · km ' + fmt(trechoSel.de) + ' a ' + fmt(trechoSel.ate) + ' · ' + fmt(Math.round(trechoSel.ate - trechoSel.de)) + ' km' : '';
+    extSem = trechoSel.tipo === 'sem' ? trechoSel.ate - trechoSel.de : extSemTodo;
+  } else { document.getElementById('tag-sem').textContent = tagSemTodo; extSem = extSemTodo; }
+  desenhar();
+  const pts = kmPts.filter(([k]) => !trechoSel || (k >= trechoSel.de && k <= trechoSel.ate)).map(([, p]) => p);
+  if (trechoSel && pts.length) { mapa.invalidateSize(); mapa.fitBounds(L.latLngBounds(pts).pad(.08)); } else enquadrar();
+}
+selT.querySelectorAll('.chip').forEach(b => b.onclick = () => escolherTrecho(b.dataset.t));
+
 function filtrados() {
-  return D.acidentes.filter(a => a.km != null && a.data >= inpDesde.value &&
+  return D.acidentes.filter(a => a.km != null && a.data >= inpDesde.value && noTrecho(a) &&
     (filtro === 'todos' || (filtro === 'mortes' && a.mortos > 0) || (filtro === 'frontal' && frontal(a))));
 }
 
@@ -306,13 +392,15 @@ function desenhar() {
   const conc = lista.filter(a => ehConc(a.km)), sem = lista.filter(a => !ehConc(a.km));
   const sc = soma(conc), ss = soma(sem);
   caixaNums('n-conc', sc); caixaNums('n-sem', ss);
-  const p = (s, ext) => `A cada 10 km: ${(s.ac / ext * 10).toLocaleString('pt-BR', {maximumFractionDigits: 1})} acidentes e ${(s.m / ext * 10).toLocaleString('pt-BR', {maximumFractionDigits: 1})} mortes`;
+  const n1 = v => (v).toLocaleString('pt-BR', {maximumFractionDigits: 1});
+  const p = (s, ext) => { const a = s.ac / ext * 10, m = s.m / ext * 10;
+    return `A cada 10 km: ${n1(a)} ${n1(a) === '1' ? 'acidente' : 'acidentes'} e ${n1(m)} ${n1(m) === '1' ? 'morte' : 'mortes'}`; };
   document.getElementById('p-conc').textContent = p(sc, extConc) + ` (${fmt(Math.round(extConc))} km)`;
   document.getElementById('p-sem').textContent = p(ss, extSem) + ` (${fmt(Math.round(extSem))} km)`;
 
   const tot = soma(lista);
   document.getElementById('periodo').innerHTML =
-    `De <b>${dataBR(inpDesde.value)}</b> até hoje: <b>${fmt(tot.ac)} acidentes</b>, <b style="color:var(--morte)">${fmt(tot.m)} mortes</b> e <b>${fmt(tot.f)} feridos</b> nos ${fmt(Math.round(C.km_fim - C.km_inicio))} km.`;
+    `De <b>${dataBR(inpDesde.value)}</b> até hoje: <b>${fmt(tot.ac)} ${tot.ac === 1 ? 'acidente' : 'acidentes'}</b>, <b style="color:var(--morte)">${fmt(tot.m)} ${tot.m === 1 ? 'morte' : 'mortes'}</b> e <b>${fmt(tot.f)} ${tot.f === 1 ? 'ferido' : 'feridos'}</b> na BR-365 ${nomeTrecho()}.`;
 
   // bolinhas
   camada.clearLayers();
@@ -350,11 +438,11 @@ function regua(lista) {
     if (c.n >= max * .5) s += `<text x="${x + w / 2}" y="${base - 10 - h}" text-anchor="middle" class="rot">${c.n}</text>`;
   });
   C.pracas.forEach(p => s += `<text x="${X(p.km)}" y="${base + 13}" text-anchor="middle" font-size="16">🚧</text>`);
-  for (let k = 400; k <= C.km_fim; k += 25) s += `<text x="${X(k)}" y="${base + 34}" text-anchor="middle" class="rot">km ${k}</text>`;
-  [['Patos de Minas', 404], ['Patrocínio', 474.6], ['Uberlândia', 600]].forEach(([n, k]) =>
+  for (let k = Math.ceil(C.km_inicio / 25) * 25; k <= C.km_fim; k += 25) s += `<text x="${X(k)}" y="${base + 34}" text-anchor="middle" class="rot">km ${k}</text>`;
+  [['BR-040', C.km_inicio + 8], ['Varjão', 347], ['Patos de Minas', 404], ['Patrocínio', 474.6], ['Uberlândia', 598]].forEach(([n, k]) =>
     s += `<text x="${X(k)}" y="${base + 56}" text-anchor="middle" class="cid">${n}</text>`);
   s += `<text x="${(X(474.6) + X(605.5)) / 2}" y="${H - 4}" text-anchor="middle" font-size="13" font-weight="800" fill="#F07E13">◀ trecho com pedágio (EPR Triângulo) ▶</text>`;
-  s += `<text x="${(X(400) + X(474.6)) / 2}" y="${H - 4}" text-anchor="middle" font-size="13" font-weight="800" fill="#2F6FB3">sem concessão</text>`;
+  s += `<text x="${(X(C.km_inicio) + X(474.6)) / 2}" y="${H - 4}" text-anchor="middle" font-size="13" font-weight="800" fill="#2F6FB3">sem concessão</text>`;
   document.getElementById('regua').innerHTML = s + '</svg>';
 }
 
@@ -389,16 +477,13 @@ function tipos(lista) {
     `<tr><td>${/frontal/i.test(t) ? '<b>' + t + '</b>' : t}</td><td style="width:40%"><div style="height:10px;border-radius:5px;background:${/frontal/i.test(t) ? '#C8102E' : '#9AA5B5'};width:${v.n / max * 100}%"></div></td><td class="n">${v.n}</td><td class="n" style="color:#C8102E">${v.m}</td></tr>`).join('');
 }
 
-document.querySelectorAll('.chip').forEach(b => b.onclick = () => {
-  document.querySelectorAll('.chip').forEach(x => x.classList.remove('on')); b.classList.add('on'); filtro = b.dataset.f; desenhar();
-});
 inpDesde.onchange = desenhar;
 
 document.getElementById('rodape').innerHTML = `
   <b>De onde vêm os dados.</b> PRF (dados abertos, um registro por acidente, com km, tipo, mortos e feridos), comunicados da concessionária EPR Triângulo e a imprensa da região.
   Quando duas fontes falam do mesmo acidente (mesma data, até 1 dia de diferença, e mesmo km, até 5 km), ele entra uma vez só, com as duas fontes no cartão.
   Se a imprensa noticia uma morte depois (no hospital), vale o número maior, e o cartão avisa.<br>
-  <b>Trechos.</b> Concessão estadual da EPR Triângulo na BR-365 do km 474,6 ao 605,5 (Delegação nº 10/2022; contrato nº 003/2022). O resto do caminho é federal, sem concessão.
+  <b>Trechos.</b> Concessão estadual da EPR Triângulo na BR-365 do km 474,6 ao 605,5 (Delegação nº 10/2022; contrato nº 003/2022). O resto do caminho, do cruzamento com a BR-040, perto de São Gonçalo do Abaeté (km 277), até Patrocínio, é federal, sem concessão.
   <div class="alerta">📌 A PRF publicou os dados até <b>${D.prf_ate ? dataBR(D.prf_ate) : '—'}</b>. Depois dessa data, os acidentes entram pela concessionária e pela imprensa, e são conferidos com a PRF quando ela publicar.
   ${C.data_manifestacao_confirmada ? '<br>📣 A contagem começa no dia da manifestação "Pedágio sem obra, não", ' + dataBR(C.data_manifestacao) + (C.manifestacao_fonte ? ' (' + C.manifestacao_fonte.replace(/^[^,]*, [^:]*: /, 'noticiada por ') + ')' : '') + '.' :'<br>⚠️ A data da manifestação ainda está provisória (' + dataBR(C.data_manifestacao) + ').'}
   Atualizado em ${D.gerado_em}.</div>`;
@@ -407,7 +492,7 @@ document.getElementById('rodape').innerHTML = `
 const NOMES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
 let mesSel = null;
 function mesesGrafico() {
-  const base = D.acidentes.filter(a => a.km != null && a.data >= inpDesde.value &&
+  const base = D.acidentes.filter(a => a.km != null && a.data >= inpDesde.value && noTrecho(a) &&
     (filtro === 'todos' || (filtro === 'mortes' && a.mortos > 0) || (filtro === 'frontal' && frontal(a))));
   const m = {};
   base.forEach(a => { const k = a.data.slice(0, 7); (m[k] ||= {c: 0, s: 0, mo: 0}); ehConc(a.km) ? m[k].c++ : m[k].s++; m[k].mo += a.mortos; });
