@@ -1,7 +1,7 @@
 {
-  "name": "Movimento BR-365 · Duplicação já",
-  "short_name": "BR-365",
-  "description": "Acidentes e mortes na BR-365 de Uberlândia até a BR-040, km por km. Movimento BR-365: Pedágio sem obra, não!",
+  "name": "Radar BR-365 · Painel de Acidentes",
+  "short_name": "Radar BR-365",
+  "description": "Mapeamento de ocorrências na BR-365, de Uberlândia até a BR-040. Uma iniciativa do Movimento BR-365.",
   "lang": "pt-BR",
   "start_url": "./",
   "scope": "./",
