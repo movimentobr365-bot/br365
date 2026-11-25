@@ -299,6 +299,18 @@
     .menu .marca{font-size:0}
     .cont{min-width:0;flex:1}
   }
+  .cams{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin-top:10px}
+  .cam{margin:0;background:var(--preto);border-radius:12px;overflow:hidden;border:3px solid var(--amarelo)}
+  .cam a{display:block;position:relative;aspect-ratio:16/9;background:#222}
+  .cam img{width:100%;height:100%;object-fit:cover;display:block}
+  .cam .ao{position:absolute;left:8px;top:8px;background:#C8102E;color:#fff;font-size:11px;font-weight:900;padding:2px 7px;border-radius:5px;letter-spacing:.05em}
+  .cam .ao::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#fff;margin-right:5px;animation:pisca 1.2s infinite}
+  @keyframes pisca{50%{opacity:.2}}
+  .cam .sem{position:absolute;inset:0;display:none;align-items:center;justify-content:center;color:#ccc;font-size:13px;text-align:center;padding:10px}
+  .cam.falhou .sem{display:flex} .cam.falhou img{display:none}
+  .cam figcaption{color:#fff;padding:7px 10px;font-size:13px;line-height:1.3}
+  .cam figcaption b{color:var(--amarelo)} .cam figcaption small{color:#bbb}
+  .cam-aviso{font-size:12.5px;color:#666;margin-top:10px}
 </style>
 </head>
 <body>
@@ -465,6 +477,13 @@
   <div class="caixa">
     <h3>💥 Que tipo de acidente acontece mais</h3>
     <table id="tipos"></table>
+  </div>
+
+  <div class="caixa" id="cameras">
+    <h3>📹 Câmeras da BR-365 agora</h3>
+    <p class="dica">Fotos das câmeras da concessionária EPR Triângulo, nas duas praças de pedágio da BR-365. A imagem se renova sozinha a cada minuto. Toque numa foto para ampliar.</p>
+    <div class="cams" id="cams"></div>
+    <p class="cam-aviso">Imagens: <a href="https://eprtriangulo.com.br/condicoes-da-via/" target="_blank" rel="noopener">EPR Triângulo (Condições da via)</a>. No trecho sem concessão, de Patrocínio até a BR-040, o DNIT e a PRF não publicam nenhuma câmera. Onde mais se morre, ninguém monitora.</p>
   </div>
 
   <section class="mov" id="movimento">
@@ -977,6 +996,39 @@ tracadoReal();
   const celular = matchMedia('(max-width: 900px)').matches || 'ontouchstart' in window;
   if (instalado) document.getElementById('abaApp').hidden = true;
   else if (celular && Date.now() - fechou > 3 * 864e5) setTimeout(() => faixa.hidden = false, 4000);
+})();
+</script>
+<script>
+/* Câmeras da EPR Triângulo na BR-365: a imagem vem direto do site deles e é renovada a cada minuto. */
+(() => {
+  const BASE = 'https://eprtriangulo.com.br/wp-admin/admin-post.php?action=trbx_tor_imagem&chave=';
+  const CAMS = [
+    {km: '514,9', lugar: 'Pedágio de Monte Carmelo', sentido: 'sentido Uberlândia', chave: '8037f4400c6a1e936e64009c1809be49c666772e3ae076ff7323cb3602f21aa9'},
+    {km: '514,9', lugar: 'Pedágio de Monte Carmelo', sentido: 'sentido Patrocínio', chave: '13d00ff5e6bd868f3bebaebbb299f5c53bf404f3b756bbbaba2ce4ea2a7d54be'},
+    {km: '588,9', lugar: 'Pedágio de Indianópolis', sentido: 'sentido Patrocínio', chave: 'd56cf947fdabc12981c59dbe6c9ebe5e0dade64dd966a200aa453156b4903ee0'},
+    {km: '588,9', lugar: 'Pedágio de Indianópolis', sentido: 'sentido Uberlândia', chave: '884e51d3257897cca84ae19814770bdfb344c41cef3143c477dcebd12e5723ed'},
+  ];
+  const caixa = document.getElementById('cams'); if (!caixa) return;
+  caixa.innerHTML = CAMS.map((c, i) => `
+    <figure class="cam" id="cam${i}">
+      <a href="${BASE + c.chave}" target="_blank" rel="noopener">
+        <img alt="Câmera da BR-365 no km ${c.km}, ${c.lugar}" referrerpolicy="no-referrer">
+        <span class="ao">AGORA</span>
+        <span class="sem">Imagem fora do ar agora.<br>Veja no site da EPR.</span>
+      </a>
+      <figcaption><b>km ${c.km}</b> · ${c.lugar}<br><small>${c.sentido} · <span class="hora">carregando…</span></small></figcaption>
+    </figure>`).join('');
+  const hm = () => new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
+  function renova() {
+    CAMS.forEach((c, i) => {
+      const fig = document.getElementById('cam' + i), img = fig.querySelector('img');
+      img.onload = () => { fig.classList.remove('falhou'); fig.querySelector('.hora').textContent = 'foto buscada às ' + hm(); };
+      img.onerror = () => { fig.classList.add('falhou'); fig.querySelector('.hora').textContent = 'sem imagem agora'; };
+      img.src = BASE + c.chave + '&t=' + Date.now();
+    });
+  }
+  renova();
+  setInterval(() => { if (!document.hidden) renova(); }, 60000);
 })();
 </script>
 </body>
