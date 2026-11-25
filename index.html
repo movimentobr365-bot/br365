@@ -644,7 +644,7 @@ const marcadores = {};
 /* ---------- fontes e redes sociais ---------- */
 const FONTES = [
   {nome: 'PRF em Minas Gerais', re: /^PRF/, site: 'https://www.gov.br/prf/pt-br', ig: 'prf_mg'},
-  {nome: 'EPR Triângulo (concessionária)', re: /EPR/, site: 'https://eprtriangulo.com.br', ig: 'epr.triangulo'},
+  {nome: 'EPR Triângulo (concessionária, ocorrências em tempo real)', re: /EPR/, site: 'https://eprtriangulo.com.br', ig: 'epr.triangulo'},
   {nome: 'Patos Notícias', re: /Patos Not[ií]cias/, site: 'https://patosnoticias.com.br', ig: 'patosnoticias', fb: 'patosnoticias'},
   {nome: 'Patos Hoje', re: /Patos Hoje/, site: 'https://patoshoje.com.br', ig: 'patoshoje', fb: 'Patoshoje'},
   {nome: 'Patos Agora', re: /Patos Agora/, site: 'https://patosagora.net', ig: 'patos_agora', fb: 'patosagora'},
@@ -663,6 +663,14 @@ const FONTES = [
   {nome: 'Tribuna Informa', re: /Tribuna Informa/, site: 'https://tribunainforma.com.br', ig: 'tribunainforma', fb: 'jornaltribunainforma'},
   {nome: 'Estado de Minas', re: /Estado de Minas/, site: 'https://www.em.com.br'},
   {nome: 'g1', re: /\bg1\b/, site: 'https://g1.globo.com'},
+  {nome: 'Diário de Uberlândia', re: /Di[áa]rio de Uberl[âa]ndia/, site: 'https://diariodeuberlandia.com.br'},
+  {nome: 'V9 TV Uberlândia', re: /V9/, site: 'https://v9vitoriosa.com.br'},
+  {nome: 'Alô Uberlândia', re: /Al[ôo] Uberl[âa]ndia/, site: 'https://www.alouberlandia.com'},
+  {nome: 'Gazeta do Triângulo', re: /Gazeta do Tri[âa]ngulo/, site: 'https://gazetadotriangulo.com.br'},
+  {nome: 'Uberlândia Notícias', re: /Uberl[âa]ndia Not[ií]cia/, site: 'https://uberlandianoticia.com.br'},
+  {nome: 'Paranaíba Mais', re: /Parana[ií]ba Mais/, site: 'https://paranaibamais.com.br'},
+  {nome: 'O Tempo', re: /O Tempo/, site: 'https://www.otempo.com.br'},
+  {nome: 'Expresso FM 100,1', re: /Expresso FM/, site: 'https://expressofm.com.br'},
 ];
 const igLink = f => f.ig ? `<a class="rs ig" href="https://www.instagram.com/${f.ig}/" target="_blank" rel="noopener" title="Instagram de ${f.nome}">IG @${f.ig}</a>` : '';
 const redesDe = nome => FONTES.filter(f => f.re.test(nome || '')).map(igLink).filter(Boolean).join(' ');
@@ -674,7 +682,7 @@ function popup(a) {
     <span class="t" style="background:${tr.tipo === 'concessao' ? '#F07E13' : '#2F6FB3'}">${tr.tipo === 'concessao' ? 'TRECHO COM PEDÁGIO' : 'TRECHO SEM CONCESSÃO'}</span>
     <h4>${a.tipo || 'Acidente'}</h4>
     📅 ${dataBR(a.data)}${a.hora ? ' às ' + a.hora : ''}<br>📍 ${kmBR(a.km)}${a.municipio ? ' · ' + a.municipio : ''}
-    <div class="v"><span style="color:#C8102E">✝ ${a.mortos} morte${a.mortos === 1 ? '' : 's'}</span><span style="color:#B07F00">🩹 ${a.feridos} ferido${a.feridos === 1 ? '' : 's'}</span></div>
+    ${a.vitimas_pendente ? `<div class="v"><span style="color:#555">Vítimas: a confirmar</span></div>` : `<div class="v"><span style="color:#C8102E">✝ ${a.mortos} morte${a.mortos === 1 ? '' : 's'}</span><span style="color:#B07F00">🩹 ${a.feridos} ferido${a.feridos === 1 ? '' : 's'}</span></div>`}
     ${a.feridos_graves ? `<small>${a.feridos_graves} ferido(s) grave(s)</small><br>` : ''}
     ${a.causa ? `<small>Causa apontada pela PRF: ${a.causa}</small><br>` : ''}
     ${a.descricao ? `<small>${a.descricao}</small><br>` : ''}
