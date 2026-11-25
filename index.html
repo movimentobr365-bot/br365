@@ -348,15 +348,15 @@
     main#painel{display:flex;flex-direction:column}
     main#painel>.radar-marca{order:-4;margin-top:14px;padding:12px 14px;gap:12px;border-radius:14px}
     main#painel>.painel-cab{order:-3}
-    main#painel>.caixa-mapa{order:-2}
+    main#painel>.filtros{order:-2}
+    main#painel>.caixa-mapa{order:-1}
     .radar-ic{width:44px;height:44px}
     .radar-desc{font-size:10.5px}
     #periodo{font-size:14px;margin:0}
     .radar-ass{font-size:11px}
-    .filtros{flex-wrap:nowrap;overflow-x:auto;margin:6px -20px;padding:2px 20px 6px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-    .filtros::-webkit-scrollbar{display:none}
-    .filtros .chip{white-space:nowrap;flex:none;font-size:13px;padding:8px 12px}
-    .filtros label{white-space:nowrap;font-size:13px}
+    .filtros{flex-wrap:wrap;gap:6px;margin:6px 0}
+    .filtros .chip{font-size:12px;padding:6px 10px;line-height:1.2;max-width:100%;white-space:normal;text-align:left}
+    .filtros label{font-size:12px;width:100%;margin-bottom:-2px}
     label[for=mesCal],#mesCal{display:none}
     #mapa{height:380px}
   }
@@ -735,6 +735,22 @@ C.pracas.forEach(p => L.marker(pontoDoKm(p.km), {icon: L.divIcon({className: '',
   .bindPopup(`<div class="pop"><h4>🚧 ${p.name || p.nome}</h4>${kmBR(p.km)} · cobra pedágio no trecho da EPR Triângulo</div>`).addTo(mapa));
 
 const camada = L.layerGroup().addTo(mapa);
+
+// Nenhuma etiqueta por cima de outra nem saindo do mapa: esconde a de menor prioridade
+// (ordem: NOVO, cidades, km). As praças de pedágio ficam sempre e contam como obstáculo.
+function arrumarRotulos() {
+  const caixaMapa = document.getElementById('mapa').getBoundingClientRect();
+  const ocupados = [...document.querySelectorAll('#mapa .marca-praca, #mapa .leaflet-control')].map(e => e.getBoundingClientRect());
+  const els = [...document.querySelectorAll('#mapa .novo-tt'), ...document.querySelectorAll('#mapa .marca-cid'), ...document.querySelectorAll('#mapa .marca-km')];
+  els.forEach(e => e.style.visibility = '');
+  els.forEach(e => {
+    const r = e.getBoundingClientRect();
+    const fora = r.left < caixaMapa.left + 2 || r.right > caixaMapa.right - 2 || r.top < caixaMapa.top + 2 || r.bottom > caixaMapa.bottom - 2;
+    const bate = ocupados.some(o => r.left < o.right + 2 && r.right > o.left - 2 && r.top < o.bottom + 2 && r.bottom > o.top - 2);
+    if (fora || bate) e.style.visibility = 'hidden'; else ocupados.push(r);
+  });
+}
+mapa.on('zoomend moveend', () => requestAnimationFrame(arrumarRotulos));
 const marcadores = {};
 
 /* ---------- fontes e redes sociais ---------- */
@@ -746,6 +762,7 @@ const FONTES = [
   {nome: 'SAMU Noroeste (Cisreuno, Patos de Minas)', re: /Cisreuno|SAMU Noroeste/i},
   {nome: 'DNIT (trecho federal)', re: /^DNIT/, site: 'https://www.gov.br/dnit/pt-br', ig: 'dnitoficial'},
   {nome: 'Artemig (agência que fiscaliza a concessão)', re: /Artemig/i, site: 'https://www.artemig.mg.gov.br'},
+  {nome: 'ZapCoró (Coromandel e região)', re: /ZapCor[óo]/i, site: 'https://www.zapcoro.com.br', ig: 'zapcoro'},
   {nome: 'Patos Notícias', re: /Patos Not[ií]cias/, site: 'https://patosnoticias.com.br', ig: 'patosnoticias', fb: 'patosnoticias'},
   {nome: 'Patos Hoje', re: /Patos Hoje/, site: 'https://patoshoje.com.br', ig: 'patoshoje', fb: 'Patoshoje'},
   {nome: 'Patos Agora', re: /Patos Agora/, site: 'https://patosagora.net', ig: 'patos_agora', fb: 'patosagora'},
@@ -872,6 +889,7 @@ function desenhar() {
     });
 
   regua(lista); piores(lista); ultimos(lista); tipos(lista);
+  setTimeout(arrumarRotulos, 60);
 }
 
 /* ---------- régua ---------- */
