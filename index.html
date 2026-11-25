@@ -79,7 +79,7 @@
   .hero-in{max-width:1200px;margin:auto;padding:34px 20px 40px;display:flex;gap:28px;align-items:center;position:relative;z-index:1}
   .hero-logo{width:clamp(110px,20vw,230px);flex:none;border-radius:18px;animation:balanca 5s ease-in-out infinite}
   .grito{font-size:clamp(48px,7.6vw,112px);line-height:.88;margin:12px 0 12px;font-weight:900;text-transform:uppercase;letter-spacing:-.03em}
-  .grito em{font-style:normal;color:var(--amarelo);display:inline-block;animation:pulsa 2.4s ease-in-out infinite}
+  .grito{display:inline-block}.grito em{font-style:normal;color:var(--amarelo);display:block;text-align:center;transform-origin:center;animation:pulsa 2.4s ease-in-out infinite}
   .hero-sub{font-size:clamp(16px,2vw,20px);line-height:1.4;max-width:620px;margin:0 0 18px;color:#EDEDED}
   .contadores{display:flex;flex-wrap:wrap;gap:10px}
   .cont{background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.18);border-radius:14px;padding:10px 16px;min-width:130px}
@@ -376,9 +376,9 @@
   #cameras{scroll-margin-top:70px}
   .bt-zap-pop{display:block;margin-top:8px;text-align:center;background:#25D366;color:#fff !important;font-weight:800;font-size:13px;padding:8px 10px;border-radius:10px;text-decoration:none}
   .pisca-ic{background:none;border:0}
-  .pisca{position:absolute;inset:0;border-radius:50%;border:4px solid #FFC72C;box-shadow:0 0 0 2px #151515;animation:pulsa 1.4s ease-out infinite}
+  .pisca{position:absolute;inset:0;border-radius:50%;border:4px solid #FFC72C;box-shadow:0 0 0 2px #151515;animation:pulsaNovo 1.4s ease-out infinite}
   .pisca::after{content:"";position:absolute;inset:14px;border-radius:50%;background:#FFC72C;opacity:.9;animation:pulsa2 1.4s ease-in-out infinite}
-  @keyframes pulsa{0%{transform:scale(.35);opacity:1}80%,100%{transform:scale(1.15);opacity:0}}
+  @keyframes pulsaNovo{0%{transform:scale(.35);opacity:1}80%,100%{transform:scale(1.15);opacity:0}}
   @keyframes pulsa2{50%{opacity:.25}}
   .novo-tt{pointer-events:auto;cursor:pointer;background:#151515;color:#FFC72C;border:2px solid #FFC72C;font-weight:900;font-size:11px;padding:1px 6px;border-radius:6px}
   .novo-tt::before{display:none}
