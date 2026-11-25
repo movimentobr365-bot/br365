@@ -21,8 +21,8 @@
 <script>document.write('<script src="dados.js?v=' + Date.now() + '"><\/script>');</script>
 <style>
   :root{
-    --conc:#6F42C1; --conc-claro:#F1EAFB; --sem:#2F6FB3; --sem-claro:#E6F0FA;
-    --morte:#C8102E; --ferido:#F07E13; --leve:#8A94A6;
+    --conc:#F07E13; --conc-claro:#FFF1E2; --sem:#2F6FB3; --sem-claro:#E6F0FA;
+    --morte:#C8102E; --ferido:#F2B705; --leve:#8A94A6;
     --amarelo:#FFC72C; --preto:#151515;
     --tinta:#1B2330; --suave:#5B6676; --fundo:#F6F4EF; --cartao:#fff; --linha:#E4E0D6;
   }
@@ -138,16 +138,6 @@
   .radar-desc{color:#cfcfcf;font-size:13px;text-transform:uppercase;letter-spacing:.05em;margin-top:6px}
   .radar-ass{font-size:13px;color:#666;margin:2px 0 0}
   .painel-cab{padding:8px 0 4px}
-  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0 8px}
-  .kpi{background:#fff;border:2px solid var(--linha);border-top:6px solid var(--preto);border-radius:14px;padding:10px 14px}
-  .kpi b{display:block;font-size:clamp(28px,5vw,44px);font-weight:900;line-height:1}
-  .kpi span{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#555}
-  .kpi.k-m{border-top-color:var(--morte)} .kpi.k-m b{color:var(--morte)}
-  .kpi.k-f{border-top-color:var(--ferido)} .kpi.k-f b{color:#C25E00}
-  .filtros-cx{background:#fff;border:2px solid var(--linha);border-radius:14px;padding:12px 14px 4px;margin:0 0 14px}
-  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
-  .fgrupo{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 10px}
-  .fgrupo>.ft{font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:#555;min-width:74px}
   .painel-cab h2{font-size:clamp(24px,3.6vw,38px);line-height:1.05;margin:10px 0 8px;font-weight:900;letter-spacing:-.02em}
   .painel-cab h2 em{font-style:normal;background:linear-gradient(transparent 60%,var(--amarelo) 60%)}
   .sub{color:var(--suave);font-size:16px;margin:0}
@@ -193,7 +183,7 @@
 
   .filtros{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:14px 0}
   .filtros label{font-size:14px;color:var(--suave)}
-  .fgrupo input[type=month],.filtros input[type=month]{font:inherit;padding:7px 10px;border:2px solid var(--linha);border-radius:10px;background:#fff}
+  .filtros input[type=month]{font:inherit;padding:7px 10px;border:2px solid var(--linha);border-radius:10px;background:#fff}
   .chip{border:2px solid var(--linha);background:#fff;border-radius:99px;padding:7px 14px;font:inherit;font-size:14px;font-weight:700;cursor:pointer;color:var(--tinta)}
   .chip.on{background:var(--tinta);border-color:var(--tinta);color:#fff}
 
@@ -215,10 +205,6 @@
   .caixa .dica{padding:0 18px 10px;color:var(--suave);font-size:13px;margin:0}
   #mapa{height:520px}
   .fundo-mapa{filter:saturate(.55) brightness(1.04)}
-  #mapa.noite{background:#1b1b1b}
-  .fundo-noite{filter:invert(1) hue-rotate(180deg) brightness(.85) contrast(.9) saturate(.35)}
-  .bt-fundo{background:var(--preto);color:#fff;border:2px solid var(--amarelo);border-radius:10px;font:inherit;font-size:13px;font-weight:800;padding:6px 10px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.3)}
-  #mapa.noite .leaflet-tooltip:not(.novo-tt){background:#222;color:#fff;border-color:#444}
   .legenda{display:flex;flex-wrap:wrap;gap:14px;padding:10px 18px 14px;font-size:13px;color:var(--suave)}
   .legenda i{display:inline-block;vertical-align:middle;margin-right:6px}
   .faixa{width:28px;height:8px;border-radius:4px}
@@ -408,27 +394,20 @@
     </div>
   </div>
   <div class="painel-cab">
-    <div class="kpis" id="kpis"></div>
     <p class="sub" id="periodo"></p>
     <p class="radar-ass">Uma iniciativa do <b>Movimento BR-365</b></p>
   </div>
-  <div class="filtros-cx">
-    <div class="fgrupo">
-      <span class="ft">📅 Período</span>
-      <button class="chip" id="verTudo">Desde a manifestação</button>
-      <label for="mesCal" class="sr">Escolher um mês</label><input type="month" id="mesCal" title="Escolher um mês">
-      <input type="hidden" id="desde">
-    </div>
-    <div class="fgrupo">
-      <span class="ft">🔎 Mostrar</span>
-      <button class="chip on" data-f="todos">Todos</button>
-      <button class="chip" data-f="mortes">Só com morte</button>
-      <button class="chip" data-f="frontal">Só batida frontal</button>
-    </div>
-    <div class="fgrupo" id="trechosSel">
-      <span class="ft">🛣️ Trecho</span>
-      <button class="chip on" data-t="">Todo o caminho</button>
-    </div>
+  <div class="filtros">
+    <label for="mesCal">📅 Mês:</label><input type="month" id="mesCal">
+    <button class="chip" id="verTudo">Ver tudo desde a manifestação</button>
+    <input type="hidden" id="desde">
+    <button class="chip on" data-f="todos">Todos</button>
+    <button class="chip" data-f="mortes">Só com morte</button>
+    <button class="chip" data-f="frontal">Só batida frontal</button>
+  </div>
+  <div class="filtros" id="trechosSel">
+    <label>🛣️ Trecho:</label>
+    <button class="chip on" data-t="">Todo o caminho</button>
   </div>
 
   <div class="caixa">
@@ -441,7 +420,6 @@
       <span><i class="bola" style="background:var(--morte)"></i>Teve morte</span>
       <span><i class="bola" style="background:var(--ferido)"></i>Teve ferido</span>
       <span><i class="bola" style="background:var(--leve)"></i>Sem feridos</span>
-      <span><i class="bola" style="background:#151515"></i>Vítimas a confirmar</span>
       <span>🚧 Praça de pedágio</span>
       <span><i class="bola nova"></i>Piscando: os 3 mais recentes</span>
     </div>
@@ -467,7 +445,7 @@
 
   <section class="placar">
     <div class="lado conc">
-      <h2>🟪 Com pedágio</h2>
+      <h2>🟧 Com pedágio</h2>
       <div class="tag">Patrocínio → Uberlândia · concessão EPR Triângulo · km 474,6 a 605,5</div>
       <div class="nums" id="n-conc"></div>
       <div class="por10" id="p-conc"></div>
@@ -609,7 +587,7 @@ const kmBR = k => 'km ' + k.toLocaleString('pt-BR', {maximumFractionDigits: 1});
 const trechoDe = km => C.trechos.find(t => km >= t.de && km <= t.ate) || C.trechos[0];
 const ehConc = km => trechoDe(Math.min(km, C.km_fim)).tipo === 'concessao';
 const cor = a => a.mortos > 0 ? 'var(--morte)' : (a.feridos > 0 ? 'var(--ferido)' : 'var(--leve)');
-const corHex = a => a.vitimas_pendente ? '#151515' : a.mortos > 0 ? '#C8102E' : (a.feridos > 0 ? '#F07E13' : '#8A94A6');
+const corHex = a => a.mortos > 0 ? '#C8102E' : (a.feridos > 0 ? '#F2B705' : '#8A94A6');
 const frontal = a => /frontal/i.test(a.tipo);
 const extSemTodo = C.trechos.filter(t => t.tipo === 'sem').reduce((s, t) => s + (t.ate - t.de), 0);
 let extSem = extSemTodo;
@@ -624,33 +602,9 @@ inpDesde.value = C.data_manifestacao;
 
 /* ---------- mapa ---------- */
 const mapa = L.map('mapa', {scrollWheelZoom: true, wheelPxPerZoomLevel: 90, zoomSnap: .25});
-// Fundo do mapa muda com a hora, como no GPS: claro de dia, escuro das 18h às 6h.
-const FUNDOS = {
-  dia: () => L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; OpenStreetMap', maxZoom: 18, className: 'fundo-mapa'}),
-  noite: () => L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; OpenStreetMap', maxZoom: 18, className: 'fundo-noite'}),
-};
-let fundoAtual = null, fundoCamada = null, fundoManual = null;
-const ehNoite = () => { const h = new Date().getHours(); return h >= 18 || h < 6; };
-function aplicarFundo() {
-  const modo = fundoManual || (ehNoite() ? 'noite' : 'dia');
-  if (modo === fundoAtual) return;
-  if (fundoCamada) mapa.removeLayer(fundoCamada);
-  fundoCamada = FUNDOS[modo]().addTo(mapa); fundoCamada.bringToBack();
-  fundoAtual = modo;
-  document.getElementById('mapa').classList.toggle('noite', modo === 'noite');
-  const b = document.getElementById('btFundo');
-  if (b) b.textContent = modo === 'noite' ? '🌙 Modo noite' : '☀️ Modo dia';
-}
-const BotaoFundo = L.Control.extend({options: {position: 'topright'}, onAdd() {
-  const b = L.DomUtil.create('button', 'bt-fundo'); b.id = 'btFundo'; b.type = 'button';
-  b.title = 'Muda sozinho com a hora (escuro das 18h às 6h). Toque para trocar.';
-  L.DomEvent.disableClickPropagation(b);
-  b.onclick = () => { fundoManual = fundoAtual === 'noite' ? 'dia' : 'noite'; aplicarFundo(); };
-  return b;
-}});
-mapa.addControl(new BotaoFundo());
-aplicarFundo();
-setInterval(() => { if (!fundoManual) aplicarFundo(); }, 5 * 60 * 1000);
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; OpenStreetMap', maxZoom: 18, className: 'fundo-mapa'
+}).addTo(mapa);
 
 const kmPts = Object.entries(D.km_pontos).map(([k, v]) => [Number(k), v]).sort((a, b) => a[0] - b[0]);
 function pontoDoKm(km) {
@@ -680,7 +634,7 @@ async function tracadoReal() {
       const g = (w.geometry || []).map(p => [p.lat, p.lon]); if (g.length < 2) return;
       for (let i = 1; i < g.length; i++) {
         const k = kmDe(g[i][0], g[i][1]); if (k == null || k < C.km_inicio || k > C.km_fim) continue;
-        L.polyline([g[i - 1], g[i]], {color: ehConc(k) ? '#6F42C1' : '#2F6FB3', weight: 4, opacity: .95}).addTo(mapa); desenhou++;
+        L.polyline([g[i - 1], g[i]], {color: ehConc(k) ? '#F07E13' : '#2F6FB3', weight: 4, opacity: .95}).addTo(mapa); desenhou++;
       }
     });
     if (desenhou > 20) linhasAprox.forEach(l => mapa.removeLayer(l));
@@ -690,7 +644,7 @@ async function tracadoReal() {
 D.tracado.forEach(seg => {
   let atual = null, ultimoKm = null;
   const fechar = () => { if (atual && atual.pts.length > 1) {
-    const c = atual.tipo === 'concessao' ? '#6F42C1' : '#2F6FB3';
+    const c = atual.tipo === 'concessao' ? '#F07E13' : '#2F6FB3';
     atual.linha = L.polyline(atual.pts, {color: c, weight: 4, opacity: .9}).addTo(mapa);
     linhasAprox.push(atual.linha);
   }};
@@ -766,10 +720,10 @@ function popup(a) {
   const tr = trechoDe(a.km);
   const fontes = a.fontes.map(f => (f.link ? `<a href="${f.link}" target="_blank" rel="noopener">${f.nome}</a>` : f.nome) + (redesDe(f.nome) ? ' ' + redesDe(f.nome) : '')).join(' · ');
   return `<div class="pop">
-    <span class="t" style="background:${tr.tipo === 'concessao' ? '#6F42C1' : '#2F6FB3'}">${tr.tipo === 'concessao' ? 'TRECHO COM PEDÁGIO' : 'TRECHO SEM CONCESSÃO'}</span>
+    <span class="t" style="background:${tr.tipo === 'concessao' ? '#F07E13' : '#2F6FB3'}">${tr.tipo === 'concessao' ? 'TRECHO COM PEDÁGIO' : 'TRECHO SEM CONCESSÃO'}</span>
     <h4>${a.tipo || 'Acidente'}</h4>
     📅 ${dataBR(a.data)}${a.hora ? ' às ' + a.hora : ''}<br>📍 ${kmBR(a.km)}${a.municipio ? ' · ' + a.municipio : ''}
-    ${a.vitimas_pendente ? `<div class="v"><span style="color:#555">Vítimas: a confirmar</span></div>` : `<div class="v"><span style="color:#C8102E">✝ ${a.mortos} morte${a.mortos === 1 ? '' : 's'}</span><span style="color:#C25E00">🩹 ${a.feridos} ferido${a.feridos === 1 ? '' : 's'}</span></div>`}
+    ${a.vitimas_pendente ? `<div class="v"><span style="color:#555">Vítimas: a confirmar</span></div>` : `<div class="v"><span style="color:#C8102E">✝ ${a.mortos} morte${a.mortos === 1 ? '' : 's'}</span><span style="color:#B07F00">🩹 ${a.feridos} ferido${a.feridos === 1 ? '' : 's'}</span></div>`}
     ${a.feridos_graves ? `<small>${a.feridos_graves} ferido(s) grave(s)</small><br>` : ''}
     ${a.causa ? `<small>Causa apontada pela PRF: ${a.causa}</small><br>` : ''}
     ${a.descricao ? `<small>${a.descricao}</small><br>` : ''}
@@ -785,7 +739,7 @@ const noTrecho = a => !trechoSel || (a.km >= trechoSel.de && a.km < (trechoSel.a
 const nomeTrecho = () => trechoSel ? 'entre ' + trechoSel.rotulo.replace(' ↔ ', ' e ') : 'de Uberlândia até a BR-040, em São Gonçalo do Abaeté';
 const selT = document.getElementById('trechosSel');
 C.trechos.slice().reverse().forEach(t => selT.insertAdjacentHTML('beforeend',
-  `<button class="chip" data-t="${t.id}"><i style="display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;background:${t.tipo === 'concessao' ? '#6F42C1' : '#2F6FB3'}"></i>${t.rotulo}</button>`));
+  `<button class="chip" data-t="${t.id}"><i style="display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;background:${t.tipo === 'concessao' ? '#F07E13' : '#2F6FB3'}"></i>${t.rotulo}</button>`));
 function escolherTrecho(id) {
   trechoSel = C.trechos.find(t => t.id === id) || null;
   selT.querySelectorAll('.chip').forEach(b => b.classList.toggle('on', (b.dataset.t || null) === (trechoSel ? trechoSel.id : null)));
@@ -829,10 +783,6 @@ function desenhar() {
   document.getElementById('p-sem').textContent = p(ss, extSem) + ` (${fmt(Math.round(extSem))} km)`;
 
   const tot = soma(lista);
-  document.getElementById('kpis').innerHTML =
-    `<div class="kpi"><b>${fmt(tot.ac)}</b><span>acidentes</span></div>` +
-    `<div class="kpi k-m"><b>${fmt(tot.m)}</b><span>mortes</span></div>` +
-    `<div class="kpi k-f"><b>${fmt(tot.f)}</b><span>feridos</span></div>`;
   document.getElementById('periodo').innerHTML =
     `De <b>${dataBR(inpDesde.value)}</b> até hoje: <b>${fmt(tot.ac)} ${tot.ac === 1 ? 'acidente' : 'acidentes'}</b>, <b style="color:var(--morte)">${fmt(tot.m)} ${tot.m === 1 ? 'morte' : 'mortes'}</b> e <b>${fmt(tot.f)} ${tot.f === 1 ? 'ferido' : 'feridos'}</b> na BR-365 ${nomeTrecho()}.`;
 
@@ -870,12 +820,12 @@ function regua(lista) {
   const max = Math.max(1, ...Object.values(caixas).map(c => c.n));
   let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Acidentes por km">`;
   C.trechos.forEach(t => {
-    s += `<rect x="${X(t.de)}" y="${base}" width="${X(t.ate) - X(t.de)}" height="16" rx="4" fill="${t.tipo === 'concessao' ? '#6F42C1' : '#2F6FB3'}"/>`;
+    s += `<rect x="${X(t.de)}" y="${base}" width="${X(t.ate) - X(t.de)}" height="16" rx="4" fill="${t.tipo === 'concessao' ? '#F07E13' : '#2F6FB3'}"/>`;
   });
   s += `<line x1="${x0}" x2="${x1}" y1="${base + 8}" y2="${base + 8}" stroke="#fff" stroke-width="2" stroke-dasharray="10 8"/>`;
   Object.entries(caixas).forEach(([b, c]) => {
     b = Number(b); const h = c.n / max * 110, x = X(b) + 1, w = X(b + passo) - X(b) - 2;
-    const fill = ehConc(b + passo / 2) ? '#6F42C1' : '#2F6FB3';
+    const fill = ehConc(b + passo / 2) ? '#F07E13' : '#2F6FB3';
     s += `<rect x="${x}" y="${base - 4 - h}" width="${w}" height="${h}" rx="3" fill="${fill}" opacity=".35"><title>km ${b} a ${b + passo}: ${c.n} acidentes, ${c.m} mortes</title></rect>`;
     for (let i = 0; i < Math.min(c.m, 8); i++)
       s += `<text x="${x + w / 2}" y="${base - 8 - i * 13}" text-anchor="middle" font-size="13" font-weight="900" fill="#C8102E">✝</text>`;
@@ -885,7 +835,7 @@ function regua(lista) {
   for (let k = Math.ceil(C.km_inicio / 25) * 25; k <= C.km_fim; k += 25) s += `<text x="${X(k)}" y="${base + 34}" text-anchor="middle" class="rot">km ${k}</text>`;
   [['BR-040', C.km_inicio + 8], ['Varjão', 347], ['Patos de Minas', 404], ['Patrocínio', 474.6], ['Uberlândia', 598]].forEach(([n, k]) =>
     s += `<text x="${X(k)}" y="${base + 56}" text-anchor="middle" class="cid">${n}</text>`);
-  s += `<text x="${(X(474.6) + X(605.5)) / 2}" y="${H - 4}" text-anchor="middle" font-size="13" font-weight="800" fill="#6F42C1">◀ trecho com pedágio (EPR Triângulo) ▶</text>`;
+  s += `<text x="${(X(474.6) + X(605.5)) / 2}" y="${H - 4}" text-anchor="middle" font-size="13" font-weight="800" fill="#F07E13">◀ trecho com pedágio (EPR Triângulo) ▶</text>`;
   s += `<text x="${(X(C.km_inicio) + X(474.6)) / 2}" y="${H - 4}" text-anchor="middle" font-size="13" font-weight="800" fill="#2F6FB3">sem concessão</text>`;
   document.getElementById('regua').innerHTML = s + '</svg>';
 }
@@ -895,7 +845,7 @@ function piores(lista) {
   lista.forEach(a => { const b = Math.floor(a.km / 5) * 5; (c[b] ||= {n: 0, m: 0, f: 0}); c[b].n++; c[b].m += a.mortos; c[b].f += a.feridos; });
   const top = Object.entries(c).sort((a, b) => b[1].n - a[1].n || b[1].m - a[1].m).slice(0, 8);
   document.getElementById('piores').innerHTML = '<tr><th>Trecho</th><th>Acid.</th><th>Mortes</th><th>Feridos</th></tr>' +
-    top.map(([b, v]) => { b = Number(b); return `<tr><td><span class="ponto" style="background:${ehConc(b + 2.5) ? '#6F42C1' : '#2F6FB3'}"></span>km ${b} a ${b + 5}</td><td class="n">${v.n}</td><td class="n" style="color:#C8102E">${v.m}</td><td class="n">${v.f}</td></tr>`; }).join('');
+    top.map(([b, v]) => { b = Number(b); return `<tr><td><span class="ponto" style="background:${ehConc(b + 2.5) ? '#F07E13' : '#2F6FB3'}"></span>km ${b} a ${b + 5}</td><td class="n">${v.n}</td><td class="n" style="color:#C8102E">${v.m}</td><td class="n">${v.f}</td></tr>`; }).join('');
 }
 
 function ultimos(lista) {
@@ -944,7 +894,7 @@ function mesesGrafico() {
   document.getElementById('meses').innerHTML = ks.map(k => {
     const v = m[k], [ano, mm] = k.split('-');
     return `<button class="mes ${mesSel === k ? 'on' : ''}" data-m="${k}" title="${v.c + v.s} acidentes, ${v.mo} mortes">
-      <span class="pilha"><i style="height:${v.s / max * 100}%;background:#2F6FB3"></i><i style="height:${v.c / max * 100}%;background:#6F42C1"></i></span>
+      <span class="pilha"><i style="height:${v.s / max * 100}%;background:#2F6FB3"></i><i style="height:${v.c / max * 100}%;background:#F07E13"></i></span>
       <b>${v.c + v.s}</b><small>${v.mo ? '✝' + v.mo : '&nbsp;'}</small><em>${NOMES[mm - 1]}/${ano.slice(2)}</em></button>`;
   }).join('');
   document.querySelectorAll('.mes').forEach(b => b.onclick = () => escolherMes(mesSel === b.dataset.m ? null : b.dataset.m));
