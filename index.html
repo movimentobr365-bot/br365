@@ -374,6 +374,16 @@
   .cam figcaption b{color:var(--amarelo)} .cam figcaption small{color:#bbb}
   .cam-aviso{font-size:12.5px;color:#666;margin-top:10px}
   #cameras{scroll-margin-top:70px}
+  .perfil-g{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:0 18px 16px}
+  .pf-col h4{margin:0 0 8px;font-size:15px}
+  .pf-col h4 b{font-size:26px;font-weight:900}
+  .pf-col.m h4 b{color:var(--morte)} .pf-col.f h4 b{color:#B07F00}
+  .pf-bloco{margin:0 0 10px} .pf-bloco small{display:block;font-size:11px;font-weight:900;letter-spacing:.06em;color:var(--suave);text-transform:uppercase;margin-bottom:3px}
+  .pf-l{display:grid;grid-template-columns:150px 1fr 34px;gap:6px;align-items:center;font-size:13px;margin:2px 0}
+  .pf-l i{display:block;height:10px;border-radius:5px;background:#e8e3d6;overflow:hidden} .pf-l i b{display:block;height:100%}
+  .pf-col.m .pf-l i b{background:var(--morte)} .pf-col.f .pf-l i b{background:var(--ferido)}
+  .pf-l span:last-child{text-align:right;font-weight:800}
+  @media (max-width:760px){.perfil-g{grid-template-columns:1fr}.pf-l{grid-template-columns:120px 1fr 30px}}
   .bt-zap-pop{display:block;margin-top:8px;text-align:center;background:#25D366;color:#fff !important;font-weight:800;font-size:13px;padding:8px 10px;border-radius:10px;text-decoration:none}
   .pisca-ic{background:none;border:0}
   .pisca{position:absolute;inset:0;border-radius:50%;border:4px solid #FFC72C;box-shadow:0 0 0 2px #151515;animation:pulsaNovo 1.4s ease-out infinite}
@@ -563,6 +573,12 @@
     </div>
   </section>
 
+
+  <div class="caixa" id="perfil" hidden>
+    <h3>👥 Quem são as vítimas</h3>
+    <p class="dica" id="perfil-dica"></p>
+    <div class="perfil-g" id="perfil-g"></div>
+  </div>
 
   <div class="caixa" id="cameras">
     <h3>📹 Câmeras da BR-365 agora</h3>
@@ -935,6 +951,24 @@ const FONTES = [
 ];
 const igLink = f => f.ig ? `<a class="rs ig" href="https://www.instagram.com/${f.ig}/" target="_blank" rel="noopener" title="Instagram de ${f.nome}">IG @${f.ig}</a>` : '';
 const redesDe = nome => FONTES.filter(f => f.re.test(nome || '')).map(igLink).filter(Boolean).join(' ');
+
+// Quem são as vítimas: dados da PRF por pessoa (desde a manifestação até onde a PRF já publicou)
+(() => {
+  const P = D.perfil; if (!P || !P.mortos) return;
+  const cx = document.getElementById('perfil'); cx.hidden = false;
+  document.getElementById('perfil-dica').textContent =
+    `Dados da PRF por pessoa, de ${dataBR(C.data_manifestacao)} a ${dataBR(P.ate)}. A PRF conta quem morreu no local ou foi registrado por ela; as mortes no hospital que a imprensa noticiou depois entram no placar do Radar, mas não aqui.`;
+  const bloco = (titulo, lista) => {
+    if (!lista || !lista.length) return '';
+    const max = Math.max(...lista.map(x => x[1]));
+    return `<div class="pf-bloco"><small>${titulo}</small>` + lista.map(([n, v]) =>
+      `<div class="pf-l"><span>${n}</span><i><b style="width:${v / max * 100}%"></b></i><span>${v}</span></div>`).join('') + '</div>';
+  };
+  const col = (cls, rot, g, extra) => `<div class="pf-col ${cls}"><h4><b>${g.total}</b> ${rot}${extra || ''}</h4>` +
+    bloco('Quem eram', g.papel) + bloco('Idade', g.idade) + bloco('Em que veículo estavam', g.veiculo) + bloco('Sexo', g.sexo) + '</div>';
+  document.getElementById('perfil-g').innerHTML =
+    col('m', 'mortes registradas pela PRF', P.mortos) + col('f', 'feridos', P.feridos, ` <small style="font-weight:600;color:#666">(${P.graves} graves)</small>`);
+})();
 
 // Mensagem pronta para o WhatsApp: o acidente, o total desde a manifestação e o link do Radar.
 function textoZap(a) {
