@@ -349,7 +349,13 @@
     main#painel>.radar-marca{order:-4;margin-top:14px;padding:12px 14px;gap:12px;border-radius:14px}
     main#painel>.painel-cab{order:-3}
     main#painel>.filtros{order:-2}
-    main#painel>.caixa-mapa{order:-1}
+    main#painel>.caixa-mapa,main#painel>.caixa-ultimos{order:-1}
+    #cameras .cams{grid-template-columns:1fr 1fr;gap:8px}
+    #cameras .cam{border-width:2px}
+    #cameras .cam figcaption{font-size:11px;padding:5px 7px}
+    #cameras .cam .ao{font-size:9px;left:5px;top:5px}
+    .an-abas{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -2px}
+    .an-abas::-webkit-scrollbar{display:none}
     .radar-ic{width:44px;height:44px}
     .radar-desc{font-size:10.5px}
     #periodo{font-size:14px;margin:0}
@@ -374,6 +380,13 @@
   .cam figcaption b{color:var(--amarelo)} .cam figcaption small{color:#bbb}
   .cam-aviso{font-size:12.5px;color:#666;margin-top:10px}
   #cameras{scroll-margin-top:70px}
+  /* Entenda os acidentes: análises em abas */
+  .an-abas{display:flex;flex-wrap:wrap;gap:6px;padding:0 18px 12px;border-bottom:2px solid var(--linha);margin-bottom:12px}
+  .an-bt{flex:none;white-space:nowrap;border:2px solid var(--linha);background:#fff;border-radius:999px;font:inherit;font-size:13px;font-weight:800;padding:7px 12px;cursor:pointer}
+  .an-bt.on{background:var(--preto);color:var(--amarelo);border-color:var(--preto)}
+  .an-pane>.caixa,.an-pane>.grade>.caixa{border:0;box-shadow:none;margin:0;background:none;padding-top:0}
+  .an-pane>.caixa>h3{display:none}
+  .caixa-ultimos .lista{max-height:330px}
   .perfil-g{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:0 18px 16px}
   .pf-col h4{margin:0 0 8px;font-size:15px}
   .pf-col h4 b{font-size:26px;font-weight:900}
@@ -536,6 +549,80 @@
     </div>
   </div>
 
+    <div class="caixa caixa-ultimos" id="caixa-ultimos">
+      <h3>🕒 Últimos acidentes</h3>
+      <p class="dica">Do mais novo para o mais antigo. Toque para ver no mapa.</p>
+      <div class="lista" id="ultimos"></div>
+    </div>
+
+  <section class="placar">
+    <div class="lado conc">
+      <h2>🟧 Com pedágio</h2>
+      <div class="tag">Patrocínio → Uberlândia · concessão EPR Triângulo · km 474,6 a 605,5</div>
+      <div class="nums" id="n-conc"></div>
+      <div class="por10" id="p-conc"></div>
+    </div>
+    <div class="lado sem">
+      <h2>🟦 Sem concessão</h2>
+      <div class="tag" id="tag-sem"></div>
+      <div class="nums" id="n-sem"></div>
+      <div class="por10" id="p-sem"></div>
+    </div>
+  </section>
+
+  <div class="caixa" id="cameras">
+    <h3>📹 Câmeras da BR-365 agora</h3>
+    <p class="dica">Fotos das câmeras da concessionária EPR Triângulo, nas duas praças de pedágio da BR-365. As fotos são geradas pela EPR; embaixo de cada uma aparece a hora em que a EPR tirou a foto. O painel busca a foto mais nova a cada minuto. Toque numa foto para ampliar.</p>
+    <div class="cams" id="cams"></div>
+    <p class="cam-aviso">Imagens: <a href="https://eprtriangulo.com.br/condicoes-da-via/" target="_blank" rel="noopener">EPR Triângulo (Condições da via)</a>. No trecho sem concessão, de Patrocínio até a BR-040, o DNIT e a PRF não publicam nenhuma câmera. Onde mais se morre, ninguém monitora.</p>
+  </div>
+
+  <div class="caixa analises" id="analises">
+    <h3>📊 Entenda os acidentes</h3>
+    <p class="dica">Os números por trás do Radar. Toque num assunto.</p>
+    <div class="an-abas" role="tablist">
+      <button class="an-bt on" data-an="porque" role="tab">🔍 Por que acontecem</button>
+      <button class="an-bt" data-an="perfil" role="tab">👥 Quem são as vítimas</button>
+      <button class="an-bt" data-an="regua" role="tab">📏 Km por km</button>
+      <button class="an-bt" data-an="piores" role="tab">⚠️ Pontos perigosos</button>
+      <button class="an-bt" data-an="tipos" role="tab">💥 Tipos</button>
+      <button class="an-bt" data-an="datas" role="tab">📅 Mês e dia da semana</button>
+    </div>
+    <div class="an-pane" data-an="porque">
+  <div class="caixa" id="porque" hidden>
+    <h3>🔍 Por que acontecem</h3>
+    <p class="dica" id="porque-dica"></p>
+    <div class="perfil-g" id="porque-g"></div>
+  </div>
+    </div>
+    <div class="an-pane" data-an="perfil" hidden>
+  <div class="caixa" id="perfil" hidden>
+    <h3>👥 Quem são as vítimas</h3>
+    <p class="dica" id="perfil-dica"></p>
+    <div class="perfil-g" id="perfil-g"></div>
+  </div>
+    </div>
+    <div class="an-pane" data-an="regua" hidden>
+  <div class="caixa">
+    <h3>📏 A rodovia esticada, km por km</h3>
+    <p class="dica">Cada coluna é um pedaço de 5 km. Quanto mais alta, mais acidentes ali. As cruzes vermelhas são mortes.</p>
+    <div id="regua"></div>
+  </div>
+    </div>
+    <div class="an-pane" data-an="piores" hidden>
+    <div class="caixa">
+      <h3>⚠️ Os pontos mais perigosos</h3>
+      <p class="dica">Os pedaços de 5 km com mais acidentes no período.</p>
+      <table id="piores"></table>
+    </div>
+    </div>
+    <div class="an-pane" data-an="tipos" hidden>
+  <div class="caixa">
+    <h3>💥 Que tipo de acidente acontece mais</h3>
+    <table id="tipos"></table>
+  </div>
+    </div>
+    <div class="an-pane" data-an="datas" hidden>
   <div class="caixa datas" style="margin:0 0 14px">
     <div class="datas-col">
       <h3>📅 Mês a mês</h3>
@@ -557,64 +644,7 @@
       <div id="doDia"></div>
     </div>
   </div>
-
-  <section class="placar">
-    <div class="lado conc">
-      <h2>🟧 Com pedágio</h2>
-      <div class="tag">Patrocínio → Uberlândia · concessão EPR Triângulo · km 474,6 a 605,5</div>
-      <div class="nums" id="n-conc"></div>
-      <div class="por10" id="p-conc"></div>
     </div>
-    <div class="lado sem">
-      <h2>🟦 Sem concessão</h2>
-      <div class="tag" id="tag-sem"></div>
-      <div class="nums" id="n-sem"></div>
-      <div class="por10" id="p-sem"></div>
-    </div>
-  </section>
-
-
-  <div class="caixa" id="porque" hidden>
-    <h3>🔍 Por que acontecem</h3>
-    <p class="dica" id="porque-dica"></p>
-    <div class="perfil-g" id="porque-g"></div>
-  </div>
-
-  <div class="caixa" id="perfil" hidden>
-    <h3>👥 Quem são as vítimas</h3>
-    <p class="dica" id="perfil-dica"></p>
-    <div class="perfil-g" id="perfil-g"></div>
-  </div>
-
-  <div class="caixa" id="cameras">
-    <h3>📹 Câmeras da BR-365 agora</h3>
-    <p class="dica">Fotos das câmeras da concessionária EPR Triângulo, nas duas praças de pedágio da BR-365. As fotos são geradas pela EPR; embaixo de cada uma aparece a hora em que a EPR tirou a foto. O painel busca a foto mais nova a cada minuto. Toque numa foto para ampliar.</p>
-    <div class="cams" id="cams"></div>
-    <p class="cam-aviso">Imagens: <a href="https://eprtriangulo.com.br/condicoes-da-via/" target="_blank" rel="noopener">EPR Triângulo (Condições da via)</a>. No trecho sem concessão, de Patrocínio até a BR-040, o DNIT e a PRF não publicam nenhuma câmera. Onde mais se morre, ninguém monitora.</p>
-  </div>
-
-  <div class="caixa">
-    <h3>📏 A rodovia esticada, km por km</h3>
-    <p class="dica">Cada coluna é um pedaço de 5 km. Quanto mais alta, mais acidentes ali. As cruzes vermelhas são mortes.</p>
-    <div id="regua"></div>
-  </div>
-
-  <div class="grade">
-    <div class="caixa">
-      <h3>⚠️ Os pontos mais perigosos</h3>
-      <p class="dica">Os pedaços de 5 km com mais acidentes no período.</p>
-      <table id="piores"></table>
-    </div>
-    <div class="caixa">
-      <h3>🕒 Últimos acidentes</h3>
-      <p class="dica">Do mais novo para o mais antigo. Toque para ver no mapa.</p>
-      <div class="lista" id="ultimos"></div>
-    </div>
-  </div>
-
-  <div class="caixa">
-    <h3>💥 Que tipo de acidente acontece mais</h3>
-    <table id="tipos"></table>
   </div>
 
 </main>
@@ -958,6 +988,12 @@ const FONTES = [
 ];
 const igLink = f => f.ig ? `<a class="rs ig" href="https://www.instagram.com/${f.ig}/" target="_blank" rel="noopener" title="Instagram de ${f.nome}">IG @${f.ig}</a>` : '';
 const redesDe = nome => FONTES.filter(f => f.re.test(nome || '')).map(igLink).filter(Boolean).join(' ');
+
+// Abas do "Entenda os acidentes"
+document.querySelectorAll('.an-bt').forEach(b => b.onclick = () => {
+  document.querySelectorAll('.an-bt').forEach(x => x.classList.toggle('on', x === b));
+  document.querySelectorAll('.an-pane').forEach(p => p.hidden = p.dataset.an !== b.dataset.an);
+});
 
 // Por que acontecem: causas apontadas pela PRF nos acidentes + multas da PRF no trecho
 (() => {
