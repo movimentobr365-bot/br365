@@ -328,6 +328,38 @@
     .menu .marca{font-size:0}
     .cont{min-width:0;flex:1}
   }
+  /* ---------- celular: abertura curta, mapa logo depois, botões em faixas que deslizam ---------- */
+  @media (max-width:600px){
+    .hero-in{gap:14px;padding-top:14px;padding-bottom:18px}
+    .hero-foto{width:68%;max-width:280px}
+    .hero-selo{width:56px;left:-16px}
+    .grito{font-size:clamp(42px,13vw,64px)}
+    .hero-sub{font-size:15px;margin:6px 0 10px}
+    .contadores{gap:8px}
+    .cont{padding:10px 8px}
+    .cont b{font-size:30px}
+    .cont span{font-size:10px}
+    .hero-nota{display:none}
+    .hero-bts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .hero-bts .bt{text-align:center;justify-content:center;font-size:14px;padding:11px 8px;margin:0}
+    .hero-bts .bt.am{grid-column:1 / -1;font-size:16px}
+    .hero-bts .bt.zap{font-size:0}
+    .hero-bts .bt.zap::after{content:"💬 Grupo do WhatsApp";font-size:14px}
+    main#painel{display:flex;flex-direction:column}
+    main#painel>.radar-marca{order:-4;margin-top:14px;padding:12px 14px;gap:12px;border-radius:14px}
+    main#painel>.painel-cab{order:-3}
+    main#painel>.caixa-mapa{order:-2}
+    .radar-ic{width:44px;height:44px}
+    .radar-desc{font-size:10.5px}
+    #periodo{font-size:14px;margin:0}
+    .radar-ass{font-size:11px}
+    .filtros{flex-wrap:nowrap;overflow-x:auto;margin:6px -20px;padding:2px 20px 6px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+    .filtros::-webkit-scrollbar{display:none}
+    .filtros .chip{white-space:nowrap;flex:none;font-size:13px;padding:8px 12px}
+    .filtros label{white-space:nowrap;font-size:13px}
+    label[for=mesCal],#mesCal{display:none}
+    #mapa{height:380px}
+  }
   .cams{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin-top:10px}
   .cam{margin:0;background:var(--preto);border-radius:12px;overflow:hidden;border:3px solid var(--amarelo)}
   .cam a{display:block;position:relative;aspect-ratio:16/9;background:#222}
@@ -430,7 +462,7 @@
     <button class="chip on" data-t="">Todo o caminho</button>
   </div>
 
-  <div class="caixa">
+  <div class="caixa caixa-mapa">
     <h3>📡 Radar BR-365: o mapa da rodovia</h3>
     <p class="dica">Cada bolinha é um acidente, no km onde aconteceu. Toque nela para ver o que houve.</p>
     <div id="mapa"></div>
@@ -688,7 +720,11 @@ document.addEventListener('visibilitychange', () => { if (!document.hidden && ma
 new IntersectionObserver(e => { if (e[0].isIntersecting && mapa.getZoom() < 6) enquadrar(); }).observe(document.getElementById('mapa'));
 mapa.setView(limites.getCenter(), 9);
 window.addEventListener('load', enquadrar);
-new ResizeObserver(() => { if (mapa.getZoom() < 6) enquadrar(); else mapa.invalidateSize(); }).observe(document.getElementById('mapa'));
+// Enquadra a rodovia inteira de novo quando o tamanho do mapa muda, até a pessoa mexer nele.
+let mexeuNoMapa = false;
+['mousedown', 'touchstart', 'wheel'].forEach(ev => document.getElementById('mapa').addEventListener(ev, () => { mexeuNoMapa = true; }, {passive: true}));
+new ResizeObserver(() => { if (!mexeuNoMapa || mapa.getZoom() < 6) enquadrar(); else mapa.invalidateSize(); }).observe(document.getElementById('mapa'));
+setTimeout(() => { if (!mexeuNoMapa) enquadrar(); }, 1500);
 
 // cidades, km e praças
 const rotulo = (pt, html, dx, dy, z) => L.marker(pt, {interactive: false, zIndexOffset: z || 0, icon: L.divIcon({className: 'rotulo', html, iconSize: null, iconAnchor: [dx, dy]})}).addTo(mapa);
