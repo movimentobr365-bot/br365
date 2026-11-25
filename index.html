@@ -374,6 +374,7 @@
   .cam figcaption b{color:var(--amarelo)} .cam figcaption small{color:#bbb}
   .cam-aviso{font-size:12.5px;color:#666;margin-top:10px}
   #cameras{scroll-margin-top:70px}
+  .bt-zap-pop{display:block;margin-top:8px;text-align:center;background:#25D366;color:#fff !important;font-weight:800;font-size:13px;padding:8px 10px;border-radius:10px;text-decoration:none}
   .pisca-ic{background:none;border:0}
   .pisca{position:absolute;inset:0;border-radius:50%;border:4px solid #FFC72C;box-shadow:0 0 0 2px #151515;animation:pulsa 1.4s ease-out infinite}
   .pisca::after{content:"";position:absolute;inset:14px;border-radius:50%;background:#FFC72C;opacity:.9;animation:pulsa2 1.4s ease-in-out infinite}
@@ -793,6 +794,19 @@ const FONTES = [
 const igLink = f => f.ig ? `<a class="rs ig" href="https://www.instagram.com/${f.ig}/" target="_blank" rel="noopener" title="Instagram de ${f.nome}">IG @${f.ig}</a>` : '';
 const redesDe = nome => FONTES.filter(f => f.re.test(nome || '')).map(igLink).filter(Boolean).join(' ');
 
+// Mensagem pronta para o WhatsApp: o acidente, o total desde a manifestação e o link do Radar.
+function textoZap(a) {
+  const desde = D.acidentes.filter(x => x.km != null && x.data >= C.data_manifestacao);
+  const t = soma(desde);
+  const lugar = (a.municipio || '').trim();
+  const vit = a.vitimas_pendente ? 'Vítimas ainda a confirmar.'
+    : a.mortos ? `${a.mortos} ${a.mortos === 1 ? 'morte' : 'mortes'}${a.feridos ? ` e ${a.feridos} ${a.feridos === 1 ? 'ferido' : 'feridos'}` : ''}.`
+    : a.feridos ? `${a.feridos} ${a.feridos === 1 ? 'ferido' : 'feridos'}.` : 'Sem feridos.';
+  return `🚨 Acidente na BR-365: ${a.tipo.toLowerCase()} no km ${kmBR(a.km).replace(/^km /, '')}${lugar ? ', ' + lugar : ''}, em ${dataBR(a.data)}. ${vit}\n\n` +
+    `Desde a manifestação de 02/02/2026, já são ${fmt(t.ac)} acidentes e ${fmt(t.m)} mortes na BR-365, de Uberlândia até a BR-040.\n\n` +
+    `📡 Veja no RADAR BR-365: https://www.movimentobr365.com.br\n#DuplicaçãoJá #BR365`;
+}
+
 function popup(a) {
   const tr = trechoDe(a.km);
   const fontes = a.fontes.map(f => (f.link ? `<a href="${f.link}" target="_blank" rel="noopener">${f.nome}</a>` : f.nome) + (redesDe(f.nome) ? ' ' + redesDe(f.nome) : '')).join(' · ');
@@ -806,7 +820,8 @@ function popup(a) {
     ${a.descricao ? `<small>${a.descricao}</small><br>` : ''}
     ${a.obs_mortos ? `<small><b>${a.obs_mortos}</b></small><br>` : ''}
     ${a.obs_ligacao ? `<small><i>${a.obs_ligacao}</i></small><br>` : ''}
-    <small>Fonte: ${fontes}</small></div>`;
+    <small>Fonte: ${fontes}</small>
+    <a class="bt-zap-pop" href="https://wa.me/?text=${encodeURIComponent(textoZap(a))}" target="_blank" rel="noopener">💬 Compartilhar no WhatsApp</a></div>`;
 }
 
 /* ---------- filtro e desenho ---------- */
