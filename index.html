@@ -369,37 +369,6 @@
   <span>DUPLICAÇÃO JÁ</span><i>▲</i><span>PEDÁGIO SEM OBRA, NÃO!</span><i>▲</i><span>NÃO É SOBRE POLÍTICA. É SOBRE VIDAS.</span><i>▲</i><span>OBRA PRIMEIRO, PEDÁGIO DEPOIS</span><i>▲</i>
 </div></div>
 
-<section class="manifesto" id="manifesto">
-  <div class="mf-in">
-    <div class="mf-cab">
-      <span class="tri">▲</span>
-      <div><small>Por que o movimento nasceu</small><h2>Manifesto do Movimento BR-365</h2></div>
-    </div>
-    <div class="mf-corpo revela">
-      <p class="mf-abre">Nós somos produtores, caminhoneiros, trabalhadores, famílias e lideranças do Alto Paranaíba e do Noroeste de Minas. A BR-365 é o nosso caminho de todo dia: leva a safra, o leite, o frete, o paciente para o hospital e o filho para a escola.</p>
-      <p>No começo de 2026, o governo de Minas pôs em licitação o <b>Lote Noroeste</b>: a BR-365 entre Patrocínio, Patos de Minas e a BR-040 seria entregue a uma concessão, com praças de pedágio, sem a duplicação que essa estrada pede há anos. Pagar antes de receber. Foi isso que levou o povo para a beira da pista.</p>
-      <p>Em <b>2 de fevereiro</b>, no trevo de Coromandel, debaixo de chuva. Em <b>7 de fevereiro</b>, no trevo da Pipoca, em Patos de Minas. Em <b>13 de fevereiro</b>, o edital foi revogado e o Ministério dos Transportes anunciou que a duplicação será feita pelo DNIT.</p>
-      <p>Mas a estrada continua matando. <b class="mf-vivo" id="mfVivo"></b> Cada número deste painel tem nome, família e endereço.</p>
-    </div>
-    <figure class="comeco revela">
-      <img src="fotos/comeco.jpg" alt="Anderson, Marcão, Chicão, Arthur e Lucas, de punho erguido, segurando a faixa Acorda Região! Pedágio sem obras não!, à beira da BR-365" loading="lazy">
-      <div class="nomes" aria-hidden="true">
-        <span style="left:11%">Anderson</span><span style="left:33%">Marcão</span><span style="left:53%">Chicão</span><span style="left:69.5%">Arthur</span><span style="left:84%">Lucas</span>
-      </div>
-      <figcaption><span>▲ Onde tudo começou</span><b>Os primeiros do movimento.</b> Anderson, Marcão, Chicão, Arthur e Lucas. Foi com essa faixa, à beira da BR-365, que os cinco decidiram chamar a região: <i>"Acorda, Região! Pedágio sem obras, não!"</i> Depois deles, veio o povo.</figcaption>
-    </figure>
-    <div class="principios">
-      <div class="pr revela"><span>1</span><b>Duplicação já</b><p>Duplicação imediata da BR-365, para salvar vidas. Cada mês de espera custa gente.</p></div>
-      <div class="pr revela"><span>2</span><b>Obra primeiro, pedágio depois</b><p>Não somos contra o progresso. Somos contra pagar antes de receber. Pedágio sem obra, não!</p></div>
-      <div class="pr revela"><span>3</span><b>É sobre vidas</b><p>Não é sobre partido nem vaidade. É sobre quem sai de casa pela BR-365 e precisa voltar.</p></div>
-      <div class="pr revela"><span>4</span><b>Cobrança com prova</b><p>Cada acidente registrado no km onde aconteceu, com fonte: PRF, concessionária e imprensa. Sem número inventado.</p></div>
-      <div class="pr revela"><span>5</span><b>Movimento do povo</b><p>Pacífico, legítimo e aberto. Quem usa a BR-365 faz parte. Quanto mais gente cobrar, mais difícil é ignorar.</p></div>
-    </div>
-    <p class="mf-grito revela">DUPLICAÇÃO JÁ. PARA SALVAR VIDAS.</p>
-  </div>
-</section>
-<div class="fita"></div>
-
 <main id="painel">
   <div class="painel-cab revela">
     <span class="selo">O painel dos acidentes</span>
@@ -417,6 +386,21 @@
   <div class="filtros" id="trechosSel">
     <label>🛣️ Trecho:</label>
     <button class="chip on" data-t="">Todo o caminho</button>
+  </div>
+
+  <div class="caixa">
+    <h3>🗺️ O mapa da rodovia</h3>
+    <p class="dica">Cada bolinha é um acidente, no km onde aconteceu. Toque nela para ver o que houve.</p>
+    <div id="mapa"></div>
+    <div class="legenda">
+      <span><i class="faixa" style="background:var(--conc)"></i>Trecho com pedágio (EPR Triângulo)</span>
+      <span><i class="faixa" style="background:var(--sem)"></i>Trecho sem concessão</span>
+      <span><i class="bola" style="background:var(--morte)"></i>Teve morte</span>
+      <span><i class="bola" style="background:var(--ferido)"></i>Teve ferido</span>
+      <span><i class="bola" style="background:var(--leve)"></i>Sem feridos</span>
+      <span>🚧 Praça de pedágio</span>
+      <span><i class="bola nova"></i>Piscando: os 3 mais recentes</span>
+    </div>
   </div>
 
   <div class="caixa" style="margin:0 0 14px">
@@ -452,20 +436,6 @@
     </div>
   </section>
 
-  <div class="caixa">
-    <h3>🗺️ O mapa da rodovia</h3>
-    <p class="dica">Cada bolinha é um acidente, no km onde aconteceu. Toque nela para ver o que houve.</p>
-    <div id="mapa"></div>
-    <div class="legenda">
-      <span><i class="faixa" style="background:var(--conc)"></i>Trecho com pedágio (EPR Triângulo)</span>
-      <span><i class="faixa" style="background:var(--sem)"></i>Trecho sem concessão</span>
-      <span><i class="bola" style="background:var(--morte)"></i>Teve morte</span>
-      <span><i class="bola" style="background:var(--ferido)"></i>Teve ferido</span>
-      <span><i class="bola" style="background:var(--leve)"></i>Sem feridos</span>
-      <span>🚧 Praça de pedágio</span>
-      <span><i class="bola nova"></i>Piscando: os 3 mais recentes</span>
-    </div>
-  </div>
 
   <div class="caixa" id="cameras">
     <h3>📹 Câmeras da BR-365 agora</h3>
@@ -498,6 +468,40 @@
     <table id="tipos"></table>
   </div>
 
+</main>
+
+<section class="manifesto" id="manifesto">
+  <div class="mf-in">
+    <div class="mf-cab">
+      <span class="tri">▲</span>
+      <div><small>Por que o movimento nasceu</small><h2>Manifesto do Movimento BR-365</h2></div>
+    </div>
+    <div class="mf-corpo revela">
+      <p class="mf-abre">Nós somos produtores, caminhoneiros, trabalhadores, famílias e lideranças do Alto Paranaíba e do Noroeste de Minas. A BR-365 é o nosso caminho de todo dia: leva a safra, o leite, o frete, o paciente para o hospital e o filho para a escola.</p>
+      <p>No começo de 2026, o governo de Minas pôs em licitação o <b>Lote Noroeste</b>: a BR-365 entre Patrocínio, Patos de Minas e a BR-040 seria entregue a uma concessão, com praças de pedágio, sem a duplicação que essa estrada pede há anos. Pagar antes de receber. Foi isso que levou o povo para a beira da pista.</p>
+      <p>Em <b>2 de fevereiro</b>, no trevo de Coromandel, debaixo de chuva. Em <b>7 de fevereiro</b>, no trevo da Pipoca, em Patos de Minas. Em <b>13 de fevereiro</b>, o edital foi revogado e o Ministério dos Transportes anunciou que a duplicação será feita pelo DNIT.</p>
+      <p>Mas a estrada continua matando. <b class="mf-vivo" id="mfVivo"></b> Cada número deste painel tem nome, família e endereço.</p>
+    </div>
+    <figure class="comeco revela">
+      <img src="fotos/comeco.jpg" alt="Anderson, Marcão, Chicão, Arthur e Lucas, de punho erguido, segurando a faixa Acorda Região! Pedágio sem obras não!, à beira da BR-365" loading="lazy">
+      <div class="nomes" aria-hidden="true">
+        <span style="left:11%">Anderson</span><span style="left:33%">Marcão</span><span style="left:53%">Chicão</span><span style="left:69.5%">Arthur</span><span style="left:84%">Lucas</span>
+      </div>
+      <figcaption><span>▲ Onde tudo começou</span><b>Os primeiros do movimento.</b> Anderson, Marcão, Chicão, Arthur e Lucas. Foi com essa faixa, à beira da BR-365, que os cinco decidiram chamar a região: <i>"Acorda, Região! Pedágio sem obras, não!"</i> Depois deles, veio o povo.</figcaption>
+    </figure>
+    <div class="principios">
+      <div class="pr revela"><span>1</span><b>Duplicação já</b><p>Duplicação imediata da BR-365, para salvar vidas. Cada mês de espera custa gente.</p></div>
+      <div class="pr revela"><span>2</span><b>Obra primeiro, pedágio depois</b><p>Não somos contra o progresso. Somos contra pagar antes de receber. Pedágio sem obra, não!</p></div>
+      <div class="pr revela"><span>3</span><b>É sobre vidas</b><p>Não é sobre partido nem vaidade. É sobre quem sai de casa pela BR-365 e precisa voltar.</p></div>
+      <div class="pr revela"><span>4</span><b>Cobrança com prova</b><p>Cada acidente registrado no km onde aconteceu, com fonte: PRF, concessionária e imprensa. Sem número inventado.</p></div>
+      <div class="pr revela"><span>5</span><b>Movimento do povo</b><p>Pacífico, legítimo e aberto. Quem usa a BR-365 faz parte. Quanto mais gente cobrar, mais difícil é ignorar.</p></div>
+    </div>
+    <p class="mf-grito revela">DUPLICAÇÃO JÁ. PARA SALVAR VIDAS.</p>
+  </div>
+</section>
+<div class="fita"></div>
+
+<main>
   <section class="mov" id="movimento">
     <h3>✊ Nossa luta</h3>
     <p class="dica">Moradores, produtores, caminhoneiros e lideranças do Alto Paranaíba e do Noroeste de Minas que foram para a beira da rodovia cobrar uma coisa simples: <b style="color:#fff">primeiro a obra, depois o pedágio</b>. O movimento é pacífico e cobra a duplicação imediata da BR-365, porque quem usa essa estrada todo dia está perdendo a vida nela.</p>
