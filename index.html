@@ -574,6 +574,12 @@
   </section>
 
 
+  <div class="caixa" id="porque" hidden>
+    <h3>🔍 Por que acontecem</h3>
+    <p class="dica" id="porque-dica"></p>
+    <div class="perfil-g" id="porque-g"></div>
+  </div>
+
   <div class="caixa" id="perfil" hidden>
     <h3>👥 Quem são as vítimas</h3>
     <p class="dica" id="perfil-dica"></p>
@@ -915,6 +921,7 @@ const marcadores = {};
 /* ---------- fontes e redes sociais ---------- */
 const FONTES = [
   {nome: 'PRF em Minas Gerais', re: /^PRF/, site: 'https://www.gov.br/prf/pt-br', ig: 'prf_mg'},
+  {nome: 'PRF · Dados Abertos (acidentes por ocorrência, por pessoa e multas)', re: /^PRF \(dados abertos\)/, site: 'https://www.gov.br/prf/pt-br/acesso-a-informacao/dados-abertos/dados-abertos-da-prf'},
   {nome: 'EPR Triângulo (concessionária, ocorrências em tempo real)', re: /EPR/, site: 'https://eprtriangulo.com.br', ig: 'epr.triangulo'},
   {nome: 'Corpo de Bombeiros Militar de MG', re: /^(Corpo de Bombeiros|CBMMG)/, site: 'https://www.bombeiros.mg.gov.br', ig: 'bombeirosmg'},
   {nome: 'SAMU Triângulo Norte (CISTRI)', re: /CISTRI|SAMU Tri[âa]ngulo/i, site: 'https://cistri.saude.mg.gov.br'},
@@ -951,6 +958,35 @@ const FONTES = [
 ];
 const igLink = f => f.ig ? `<a class="rs ig" href="https://www.instagram.com/${f.ig}/" target="_blank" rel="noopener" title="Instagram de ${f.nome}">IG @${f.ig}</a>` : '';
 const redesDe = nome => FONTES.filter(f => f.re.test(nome || '')).map(igLink).filter(Boolean).join(' ');
+
+// Por que acontecem: causas apontadas pela PRF nos acidentes + multas da PRF no trecho
+(() => {
+  const acs = D.acidentes.filter(a => a.km != null && a.data >= C.data_manifestacao && a.id.startsWith('prf-'));
+  if (!acs.length) return;
+  const conta = f => { const m = {}; acs.forEach(a => { const k = f(a); if (k) { (m[k] ||= {n: 0, m: 0}); m[k].n++; m[k].m += a.mortos; } }); return Object.entries(m).sort((x, y) => y[1].n - x[1].n); };
+  const curta = c => c.replace('Reação tardia ou ineficiente do condutor', 'Reação tardia do motorista').replace('Ausência de reação do condutor', 'Motorista não reagiu (sono, distração)')
+    .replace('Acessar a via sem observar a presença dos outros veículos', 'Entrar na pista sem olhar').replace('Demais falhas mecânicas ou elétricas', 'Falha mecânica');
+  const causas = conta(a => a.causa && curta(a.causa)).slice(0, 6);
+  const noite = acs.filter(a => a.hora && (a.hora >= '18:00' || a.hora < '06:00'));
+  const simples = acs.filter(a => a.pista === 'Simples');
+  const pct = (p, t) => Math.round(p / t * 100) + '%';
+  const max = Math.max(...causas.map(c => c[1].n));
+  let h = `<div class="pf-col m"><h4>Causas dos acidentes <small style="font-weight:600;color:#666">(segundo a PRF)</small></h4><div class="pf-bloco">` +
+    causas.map(([n, v]) => `<div class="pf-l"><span>${n}</span><i><b style="width:${v.n / max * 100}%"></b></i><span>${v.n}</span></div>`).join('') + '</div>' +
+    `<div class="pf-bloco"><small>Onde e quando</small>` +
+    `<div class="pf-l"><span>Em pista simples</span><i><b style="width:${simples.length / acs.length * 100}%"></b></i><span>${pct(simples.length, acs.length)}</span></div>` +
+    `<div class="pf-l"><span>À noite (18h às 6h)</span><i><b style="width:${noite.length / acs.length * 100}%"></b></i><span>${pct(noite.length, acs.length)}</span></div></div></div>`;
+  const M = D.multas;
+  if (M) {
+    const mx = Math.max(...M.top.map(t => t[1]));
+    h += `<div class="pf-col f"><h4><b>${M.total.toLocaleString('pt-BR')}</b> multas da PRF no trecho</h4><div class="pf-bloco"><small>As infrações mais comuns</small>` +
+      M.top.map(([n, v]) => `<div class="pf-l"><span>${n}</span><i><b style="width:${v / mx * 100}%"></b></i><span>${v}</span></div>`).join('') +
+      `</div><p class="dica" style="padding:0">A infração mais comum é a ultrapassagem pela contramão, a mesma manobra que provoca as batidas de frente, que mais matam na BR-365. Multas de ${dataBR(M.de)} a ${dataBR(M.ate)}.</p></div>`;
+  }
+  document.getElementById('porque-g').innerHTML = h;
+  document.getElementById('porque-dica').textContent = `Acidentes registrados pela PRF de ${dataBR(C.data_manifestacao)} até ${dataBR(D.prf_ate)}, de Uberlândia até a BR-040. Fonte: PRF, dados abertos.`;
+  document.getElementById('porque').hidden = false;
+})();
 
 // Quem são as vítimas: dados da PRF por pessoa (desde a manifestação até onde a PRF já publicou)
 (() => {
