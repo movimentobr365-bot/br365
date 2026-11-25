@@ -264,6 +264,26 @@
   .dia-linha label{font-size:14px;color:var(--suave)}
   .dia-linha input{font:inherit;padding:7px 10px;border:2px solid var(--linha);border-radius:10px;background:#fff}
   #calendario{padding:0 18px 12px}
+  /* Mês a mês e dia da semana: compactos, lado a lado */
+  .caixa.datas{display:grid;grid-template-columns:1.4fr 1fr;gap:0}
+  .datas-col{min-width:0}
+  .datas-col+.datas-col{border-left:2px solid var(--linha)}
+  .caixa.datas h3{font-size:15px}
+  .caixa.datas .dica{font-size:12px;margin-top:0}
+  .caixa.datas #meses{gap:4px;padding:2px 14px 10px}
+  .caixa.datas .mes{min-width:40px;padding:4px 2px;border-width:1px;border-radius:8px}
+  .caixa.datas .mes .pilha{height:30px;width:14px}
+  .caixa.datas .mes b{font-size:13px}.caixa.datas .mes small,.caixa.datas .mes em{font-size:10px}
+  .caixa.datas #semana{gap:4px;padding:2px 14px 6px}
+  .caixa.datas .dsem{padding:4px 1px;border-width:1px;border-radius:8px}
+  .caixa.datas .dsem .barra{height:28px;width:12px}
+  .caixa.datas .dsem b{font-size:13px}.caixa.datas .dsem small{font-size:10px}.caixa.datas .dsem em{font-size:10px}
+  .dia-a-dia{margin:2px 14px 10px}
+  .dia-a-dia summary{cursor:pointer;font-weight:800;font-size:13px;color:var(--suave);padding:4px 0}
+  .dia-a-dia[open] summary{color:var(--tinta)}
+  .dia-a-dia #calendario{padding:4px 0 6px}
+  .dia-a-dia .dia-linha{padding:4px 0}
+  @media (max-width:760px){.caixa.datas{grid-template-columns:1fr}.datas-col+.datas-col{border-left:0;border-top:2px solid var(--linha)}}
   .cal-tit{font-weight:900;margin:4px 0 6px}
   .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;max-width:560px}
   .cal .cab{font-size:11px;font-weight:800;color:var(--suave);text-align:center;text-transform:uppercase}
@@ -425,22 +445,26 @@
     </div>
   </div>
 
-  <div class="caixa" style="margin:0 0 14px">
-    <h3>📅 Mês a mês</h3>
-    <p class="dica" id="mes-aviso"></p>
-    <div id="meses"></div>
-  </div>
-
-  <div class="caixa" id="caixaDias" style="margin:0 0 14px">
-    <h3>📆 Dia da semana e dia a dia</h3>
-    <p class="dica" id="dia-aviso">Toque num dia da semana para ver só ele. Escolha um mês (ou uma data) e toque num dia do calendário para ver todos os acidentes daquele dia no mapa.</p>
-    <div id="semana"></div>
-    <div class="dia-linha">
-      <label for="diaCal">📅 Ver um dia:</label><input type="date" id="diaCal">
-      <button class="chip" id="limpaDia" hidden>✕ Limpar dia e dia da semana</button>
+  <div class="caixa datas" style="margin:0 0 14px">
+    <div class="datas-col">
+      <h3>📅 Mês a mês</h3>
+      <p class="dica" id="mes-aviso"></p>
+      <div id="meses"></div>
     </div>
-    <div id="calendario"></div>
-    <div id="doDia"></div>
+    <div class="datas-col" id="caixaDias">
+      <h3>📆 Dia da semana</h3>
+      <p class="dica" id="dia-aviso">Toque num dia da semana para ver só ele.</p>
+      <div id="semana"></div>
+      <details class="dia-a-dia">
+        <summary>🗓️ Ver dia a dia (calendário)</summary>
+        <div class="dia-linha">
+          <label for="diaCal">Ver um dia:</label><input type="date" id="diaCal">
+          <button class="chip" id="limpaDia" hidden>✕ Limpar dia e dia da semana</button>
+        </div>
+        <div id="calendario"></div>
+      </details>
+      <div id="doDia"></div>
+    </div>
   </div>
 
   <section class="placar">
@@ -981,6 +1005,7 @@ function listaDia() {
 
 function escolherDia(iso) {
   diaSel = iso && diaSel !== iso ? iso : null;
+  if (diaSel) document.querySelector('.dia-a-dia').open = true;
   if (diaSel) { mesSel = diaSel.slice(0, 7); document.getElementById('mesCal').value = mesSel; }
   inpDia.value = diaSel || '';
   desenhar();
@@ -1002,7 +1027,7 @@ desenhar = () => {
   document.getElementById('limpaDia').hidden = !diaSel && semSel == null;
   document.getElementById('dia-aviso').textContent = diaSel ? 'Mostrando só este dia no placar, no mapa e nas listas. Toque no dia de novo para ver tudo.'
     : semSel != null ? `Mostrando só ${DIAS_LONGO[semSel].endsWith('feira') ? 'as' : 'os'} ${DIAS_LONGO[semSel].replace('-feira', 's-feiras').replace('sábado', 'sábados').replace('domingo', 'domingos')}. Toque de novo para ver todos os dias.`
-    : 'Toque num dia da semana para ver só ele. Escolha um mês (ou uma data) e toque num dia do calendário para ver todos os acidentes daquele dia no mapa.';
+    : 'Toque num dia da semana para ver só ele.';
 };
 
 desenhar();
