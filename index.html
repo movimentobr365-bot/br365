@@ -327,7 +327,7 @@
   .pisca::after{content:"";position:absolute;inset:14px;border-radius:50%;background:#FFC72C;opacity:.9;animation:pulsa2 1.4s ease-in-out infinite}
   @keyframes pulsa{0%{transform:scale(.35);opacity:1}80%,100%{transform:scale(1.15);opacity:0}}
   @keyframes pulsa2{50%{opacity:.25}}
-  .novo-tt{background:#151515;color:#FFC72C;border:2px solid #FFC72C;font-weight:900;font-size:11px;padding:1px 6px;border-radius:6px}
+  .novo-tt{pointer-events:auto;cursor:pointer;background:#151515;color:#FFC72C;border:2px solid #FFC72C;font-weight:900;font-size:11px;padding:1px 6px;border-radius:6px}
   .novo-tt::before{display:none}
   .bola.nova{background:#FFC72C;box-shadow:0 0 0 2px #151515}
 </style>
@@ -803,9 +803,12 @@ function desenhar() {
     .forEach((a, i) => {
       const lado = [['top', [0, -16]], ['right', [16, 0]], ['left', [-16, 0]]][i];
       const p = L.marker([a.lat, a.lon], {icon: L.divIcon({className: 'pisca-ic', html: '<span class="pisca"></span>', iconSize: [44, 44], iconAnchor: [22, 22]}), zIndexOffset: 1000, keyboard: false})
-        .bindTooltip(`NOVO · ${a.data.slice(8, 10)}/${a.data.slice(5, 7)}`, {permanent: true, direction: lado[0], offset: lado[1], className: 'novo-tt'})
+        .bindTooltip(`NOVO · ${a.data.slice(8, 10)}/${a.data.slice(5, 7)}`, {permanent: true, interactive: true, direction: lado[0], offset: lado[1], className: 'novo-tt'})
         .bindPopup(popup(a));
       camada.addLayer(p);
+      // a etiqueta "NOVO" também abre o cartão do acidente
+      const et = p.getTooltip() && p.getTooltip().getElement();
+      if (et) { et.style.cursor = 'pointer'; et.title = 'Ver o acidente'; L.DomEvent.on(et, 'click', e => { L.DomEvent.stop(e); p.openPopup(); }); }
     });
 
   regua(lista); piores(lista); ultimos(lista); tipos(lista);
