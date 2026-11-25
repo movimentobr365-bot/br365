@@ -311,6 +311,7 @@
   .cam figcaption{color:#fff;padding:7px 10px;font-size:13px;line-height:1.3}
   .cam figcaption b{color:var(--amarelo)} .cam figcaption small{color:#bbb}
   .cam-aviso{font-size:12.5px;color:#666;margin-top:10px}
+  #cameras{scroll-margin-top:70px}
 </style>
 </head>
 <body>
@@ -456,6 +457,13 @@
     </div>
   </div>
 
+  <div class="caixa" id="cameras">
+    <h3>📹 Câmeras da BR-365 agora</h3>
+    <p class="dica">Fotos das câmeras da concessionária EPR Triângulo, nas duas praças de pedágio da BR-365. A imagem se renova sozinha a cada minuto. Toque numa foto para ampliar.</p>
+    <div class="cams" id="cams"></div>
+    <p class="cam-aviso">Imagens: <a href="https://eprtriangulo.com.br/condicoes-da-via/" target="_blank" rel="noopener">EPR Triângulo (Condições da via)</a>. No trecho sem concessão, de Patrocínio até a BR-040, o DNIT e a PRF não publicam nenhuma câmera. Onde mais se morre, ninguém monitora.</p>
+  </div>
+
   <div class="caixa">
     <h3>📏 A rodovia esticada, km por km</h3>
     <p class="dica">Cada coluna é um pedaço de 5 km. Quanto mais alta, mais acidentes ali. As cruzes vermelhas são mortes.</p>
@@ -478,13 +486,6 @@
   <div class="caixa">
     <h3>💥 Que tipo de acidente acontece mais</h3>
     <table id="tipos"></table>
-  </div>
-
-  <div class="caixa" id="cameras">
-    <h3>📹 Câmeras da BR-365 agora</h3>
-    <p class="dica">Fotos das câmeras da concessionária EPR Triângulo, nas duas praças de pedágio da BR-365. A imagem se renova sozinha a cada minuto. Toque numa foto para ampliar.</p>
-    <div class="cams" id="cams"></div>
-    <p class="cam-aviso">Imagens: <a href="https://eprtriangulo.com.br/condicoes-da-via/" target="_blank" rel="noopener">EPR Triângulo (Condições da via)</a>. No trecho sem concessão, de Patrocínio até a BR-040, o DNIT e a PRF não publicam nenhuma câmera. Onde mais se morre, ninguém monitora.</p>
   </div>
 
   <section class="mov" id="movimento">
@@ -970,7 +971,7 @@ tracadoReal();
   const abas = [...document.querySelectorAll('.abas a[data-sec]')];
   const io2 = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting)
     abas.forEach(a => a.classList.toggle('on', a.dataset.sec === e.target.id)); }), {rootMargin: '-45% 0px -50% 0px'});
-  ['painel', 'manifesto', 'movimento'].forEach(id => io2.observe(document.getElementById(id)));
+  ['painel', 'cameras', 'manifesto', 'movimento'].forEach(id => io2.observe(document.getElementById(id)));
 })();
 
 /* ---------- app no celular ---------- */
