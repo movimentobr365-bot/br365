@@ -558,7 +558,7 @@
   <section class="placar">
     <div class="lado conc">
       <h2>🟧 Com pedágio</h2>
-      <div class="tag">Patrocínio → Uberlândia · concessão EPR Triângulo · km 474,6 a 605,5</div>
+      <div class="tag">Patrocínio → Uberlândia · concessão EPR Triângulo · km 474,6 a 608</div>
       <div class="nums" id="n-conc"></div>
       <div class="por10" id="p-conc"></div>
     </div>
@@ -923,7 +923,7 @@ setTimeout(() => { if (!mexeuNoMapa) enquadrar(); }, 1500);
 
 // cidades, km e praças
 const rotulo = (pt, html, dx, dy, z) => L.marker(pt, {interactive: false, zIndexOffset: z || 0, icon: L.divIcon({className: 'rotulo', html, iconSize: null, iconAnchor: [dx, dy]})}).addTo(mapa);
-[['BR-040 · São Gonçalo do Abaeté', 277, -12, 10], ['Varjão de Minas', 347, -12, 10], ['Patos de Minas', 404, 120, 30], ['Patrocínio', 473, -10, -14], ['Uberlândia', 605, 40, 34]].forEach(([n, k, dx, dy]) =>
+[['BR-040 · São Gonçalo do Abaeté', 277, -12, 10], ['Varjão de Minas', 347, -12, 10], ['Patos de Minas', 404, 120, 30], ['Patrocínio', 473, -10, -14], ['Uberlândia', 607, 40, 34]].forEach(([n, k, dx, dy]) =>
   rotulo(pontoDoKm(k), `<div class="marca-cid">${n}</div>`, dx, dy, 1000));
 [300, 350, 450, 500, 550, 600].forEach(k => rotulo(pontoDoKm(k), `<div class="marca-km">km ${k}</div>`, 20, -14, 900));
 C.pracas.forEach(p => L.marker(pontoDoKm(p.km), {icon: L.divIcon({className: '', html: '<div class="marca-praca">🚧</div>', iconSize: [24, 24], iconAnchor: [12, 12]})})
@@ -1179,7 +1179,7 @@ function regua(lista) {
   for (let k = Math.ceil(C.km_inicio / 25) * 25; k <= C.km_fim; k += 25) s += `<text x="${X(k)}" y="${base + 34}" text-anchor="middle" class="rot">km ${k}</text>`;
   [['BR-040', C.km_inicio + 8], ['Varjão', 347], ['Patos de Minas', 404], ['Patrocínio', 474.6], ['Uberlândia', 598]].forEach(([n, k]) =>
     s += `<text x="${X(k)}" y="${base + 56}" text-anchor="middle" class="cid">${n}</text>`);
-  s += `<text x="${(X(474.6) + X(605.5)) / 2}" y="${H - 4}" text-anchor="middle" font-size="13" font-weight="800" fill="#F07E13">◀ trecho com pedágio (EPR Triângulo) ▶</text>`;
+  s += `<text x="${(X(474.6) + X(608)) / 2}" y="${H - 4}" text-anchor="middle" font-size="13" font-weight="800" fill="#F07E13">◀ trecho com pedágio (EPR Triângulo) ▶</text>`;
   s += `<text x="${(X(C.km_inicio) + X(474.6)) / 2}" y="${H - 4}" text-anchor="middle" font-size="13" font-weight="800" fill="#2F6FB3">sem concessão</text>`;
   document.getElementById('regua').innerHTML = s + '</svg>';
 }
@@ -1221,7 +1221,7 @@ document.getElementById('rodape').innerHTML = `
   <b>De onde vêm os dados.</b> PRF (dados abertos, um registro por acidente, com km, tipo, mortos e feridos), comunicados da concessionária EPR Triângulo e a imprensa da região.
   Quando duas fontes falam do mesmo acidente (mesma data, até 1 dia de diferença, e mesmo km, até 5 km), ele entra uma vez só, com as duas fontes no cartão.
   Se a imprensa noticia uma morte depois (no hospital), vale o número maior, e o cartão avisa.<br>
-  <b>Trechos.</b> Concessão estadual da EPR Triângulo na BR-365 do km 474,6 ao 605,5 (Delegação nº 10/2022; contrato nº 003/2022). O resto do caminho, do cruzamento com a BR-040, perto de São Gonçalo do Abaeté (km 277), até Patrocínio, é federal, sem concessão.
+  <b>Trechos.</b> Concessão estadual da EPR Triângulo na BR-365 do km 474,6 ao 608 (Delegação nº 10/2022; contrato nº 003/2022). O resto do caminho, do cruzamento com a BR-040, perto de São Gonçalo do Abaeté (km 277), até Patrocínio, é federal, sem concessão.
   <div class="alerta">📌 A PRF publicou os dados até <b>${D.prf_ate ? dataBR(D.prf_ate) : '—'}</b>. Depois dessa data, os acidentes entram pela concessionária e pela imprensa, e são conferidos com a PRF quando ela publicar.
   ${C.data_manifestacao_confirmada ? '<br>📣 A contagem começa no dia da manifestação "Pedágio sem obra, não", ' + dataBR(C.data_manifestacao) + (C.manifestacao_fonte ? ' (' + C.manifestacao_fonte.replace(/^[^,]*, [^:]*: /, 'noticiada por ') + ')' : '') + '.' :'<br>⚠️ A data da manifestação ainda está provisória (' + dataBR(C.data_manifestacao) + ').'}
   Atualizado em ${D.gerado_em}.</div>`;
