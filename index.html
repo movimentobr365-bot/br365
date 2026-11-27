@@ -457,6 +457,18 @@
   #promessas .pm-relogio{grid-template-columns:1fr}
   #promessas .pm-card{grid-template-columns:1fr;gap:6px}
   }
+
+  /* pré-cadastro dos alertas do Radar BR-365 */
+  .alertas-cx{border:2px solid var(--amarelo);background:#fffdf5}
+  .alertas-in{padding:20px}
+  .alertas-selo{display:inline-block;background:var(--preto);color:var(--amarelo);font-size:11px;font-weight:900;letter-spacing:.08em;padding:5px 9px;border-radius:6px}
+  .alertas-cx h3{padding:12px 0 4px;font-size:clamp(19px,2.5vw,25px);font-weight:900;color:var(--preto)}
+  .alertas-cx p{margin:4px 0 14px;color:var(--tinta);line-height:1.5}
+  .alertas-cta{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:#06281a;text-decoration:none;font-weight:900;padding:13px 18px;border-radius:10px;min-height:48px}
+  .alertas-cta:hover{filter:brightness(.96);transform:translateY(-1px)}
+  .alertas-cx .alertas-nota{margin:14px 0 0;font-size:12px;color:#596170;background:#fff;border-left:4px solid var(--amarelo);padding:10px 12px;border-radius:6px}
+  @media(max-width:640px){.alertas-in{padding:16px}.alertas-cta{width:100%;text-align:center}}
+
 </style>
 </head>
 <body>
@@ -469,6 +481,7 @@
     <a href="#manifesto" data-sec="manifesto">📜 Manifesto</a>
     <a href="#movimento" data-sec="movimento">✊ Nossa luta</a>
     <a class="app" href="#" id="abaApp">📲 App</a>
+    <a class="zap" href="#alertas">🔔 Alertas</a>
     <a class="zap" href="https://chat.whatsapp.com/BVSPz3aiAOjIN6pGvh2V3P" target="_blank" rel="noopener">💬 Grupo</a>
     <a class="seguir" href="https://www.instagram.com/movimentobr365/" target="_blank" rel="noopener">Seguir</a>
   </div>
@@ -558,6 +571,16 @@
       <p class="dica">Do mais novo para o mais antigo. Toque para ver no mapa.</p>
       <div class="lista" id="ultimos"></div>
     </div>
+
+  <section class="caixa alertas-cx" id="alertas" aria-labelledby="alertas-titulo">
+    <div class="alertas-in">
+      <div class="alertas-selo">📡 RADAR BR-365</div>
+      <h3 id="alertas-titulo">🔔 Receba alertas da BR-365 pelo WhatsApp</h3>
+      <p>Peça seu pré-cadastro para receber avisos de novas ocorrências e atualizações importantes no trecho entre Uberlândia e a BR-040.</p>
+      <a class="alertas-cta" href="https://wa.me/5534920002818?text=Ol%C3%A1!%20Quero%20solicitar%20meu%20pr%C3%A9-cadastro%20para%20receber%20alertas%20de%20novas%20ocorr%C3%AAncias%20e%20atualiza%C3%A7%C3%B5es%20do%20Radar%20BR-365%20pelo%20WhatsApp.%20Autorizo%20o%20contato%20para%20essa%20finalidade.%20Para%20cancelar%2C%20poderei%20enviar%20SAIR." target="_blank" rel="noopener">💬 Solicitar pré-cadastro pelo WhatsApp</a>
+      <p class="alertas-nota"><b>Como funciona neste momento:</b> o botão abre uma conversa com a equipe do Zap Coró e envia seu pedido de cadastro. Os disparos automáticos ainda não estão ativos; serão habilitados depois da conclusão da integração oficial do WhatsApp. Seu número será utilizado para os alertas solicitados, e você poderá pedir o cancelamento a qualquer momento.</p>
+    </div>
+  </section>
 
   <section class="placar">
     <div class="lado conc">
