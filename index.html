@@ -605,20 +605,71 @@
   <section class="caixa alertas-cx" id="alertas" aria-labelledby="alertas-titulo">
     <div class="alertas-in">
       <div class="alertas-selo">📡 RADAR BR-365</div>
-      <h3 id="alertas-titulo">🔔 Receba alertas de acidentes no seu celular</h3>
-      <p class="alertas-intro">Ative as notificações neste dispositivo. Sempre que um acidente novo for registrado no painel, você receberá um aviso automático, com data, horário e informações sobre vítimas quando estiverem confirmadas.</p>
+      <h3 id="alertas-titulo">🔔 Cadastre-se para receber alertas de acidentes</h3>
+      <p class="alertas-intro">Receba notificações automáticas no celular sempre que um novo acidente for registrado no painel. Informe também seu WhatsApp para integrar a base de contatos do RADAR BR-365.</p>
       <div class="alertas-push-panel">
         <form id="formPush" class="form-alertas">
+          <label for="pushNome">Seu nome</label>
+          <input id="pushNome" name="nome" type="text" maxlength="80" autocomplete="name" placeholder="Nome completo" required>
+          <label for="pushTelefone">Seu WhatsApp com DDD</label>
+          <input id="pushTelefone" name="telefone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="(34) 99999-9999" required>
+          <fieldset class="alerta-perfil">
+            <legend>Identifique seu perfil:</legend>
+            <div class="alerta-perfis">
+              <label class="alerta-opcao">
+                <input type="radio" name="perfil" value="Pessoa física" required>
+                <span>👤 Sou pessoa física</span>
+              </label>
+              <label class="alerta-opcao">
+                <input type="radio" name="perfil" value="Pessoa jurídica" required>
+                <span>🏢 Sou pessoa jurídica</span>
+              </label>
+            </div>
+          </fieldset>
+          <div id="pushJuridicaWrap" hidden>
+            <label for="pushEmpresa">Nome da empresa ou organização</label>
+            <input id="pushEmpresa" name="empresa" type="text" maxlength="120" placeholder="Nome fantasia ou razão social">
+            <label for="pushTipoJuridico">Tipo de empresa/organização</label>
+            <select id="pushTipoJuridico" name="tipoJuridico">
+              <option value="">Selecione uma opção</option>
+              <option>MEI / Empresário individual</option>
+              <option>Microempresa (ME)</option>
+              <option>Empresa de pequeno porte (EPP)</option>
+              <option>Sociedade limitada (LTDA / SLU)</option>
+              <option>Sociedade anônima (S/A)</option>
+              <option>Associação / Fundação / ONG</option>
+              <option>Cooperativa</option>
+              <option>Órgão público</option>
+              <option>Outro / Não sei informar</option>
+            </select>
+            <label for="pushAtuacao">Área de atuação</label>
+            <select id="pushAtuacao" name="atuacao">
+              <option value="">Selecione uma opção</option>
+              <option>Imprensa / veículo de comunicação</option>
+              <option>Serviços</option>
+              <option>Comércio</option>
+              <option>Indústria</option>
+              <option>Agropecuária</option>
+              <option>Associação / entidade sem fins lucrativos</option>
+              <option>Setor público</option>
+              <option>Outra atividade</option>
+            </select>
+            <p class="alertas-nota juridica-nota">Não é necessário informar CNPJ neste cadastro.</p>
+          </div>
           <label class="alerta-consent">
             <input type="checkbox" id="pushConsent" required>
-            <span>Autorizo este dispositivo a receber notificações do RADAR BR-365. Um identificador técnico do dispositivo será armazenado no Firebase para permitir o envio dos alertas. Posso desativar quando quiser.</span>
+            <span>Autorizo este dispositivo a receber notificações do RADAR BR-365. Sei que preciso permitir as notificações no navegador e que posso desativá-las quando quiser.</span>
           </label>
-          <button type="submit" id="ativarPush" class="alertas-cta">🔔 Ativar alertas neste celular</button>
+          <label class="alerta-consent">
+            <input type="checkbox" id="contactConsent" required>
+            <span>Autorizo o Movimento BR-365 a armazenar meu nome, WhatsApp e perfil na base de contatos do RADAR BR-365 para futuras comunicações relacionadas a acidentes, segurança viária e atividades do movimento. Sei que posso solicitar a exclusão dos meus dados.</span>
+          </label>
+          <button type="submit" id="ativarPush" class="alertas-cta">🔔 Cadastrar e ativar alertas neste celular</button>
           <button type="button" id="desativarPush" class="alertas-cta alerta-push-off" hidden>Desativar alertas neste dispositivo</button>
-          <p id="pushStatus" class="alertas-push-status" role="status" aria-live="polite">Você ainda não ativou as notificações neste dispositivo.</p>
+          <p id="pushStatus" class="alertas-push-status" role="status" aria-live="polite">Preencha seus dados e marque as duas autorizações para se cadastrar.</p>
         </form>
       </div>
-      <p class="alertas-nota"><b>Importante:</b> o serviço é gratuito e não exige WhatsApp, número de telefone ou cadastro com senha. No iPhone, é necessário adicionar o site à Tela de Início e abri-lo pelo ícone para ativar notificações (iOS 16.4 ou superior). A entrega depende da permissão do navegador, da conexão e do suporte do dispositivo.</p>
+      <p class="alertas-nota"><b>Privacidade:</b> o nome e o WhatsApp serão usados para a base de contatos autorizada do RADAR BR-365. O identificador técnico do dispositivo será usado apenas para encaminhar as notificações push. O serviço de alertas é gratuito e não exige WhatsApp instalado. No iPhone, é necessário adicionar o site à Tela de Início e abri-lo pelo ícone (iOS 16.4 ou superior). A entrega depende da permissão e do suporte do navegador.</p>
     </div>
   </section>
 
