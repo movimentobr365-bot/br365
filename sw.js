@@ -48,7 +48,7 @@ self.addEventListener('notificationclick', (event) => {
 // App do Movimento BR-365: guarda a página no celular para abrir mesmo sem internet.
 // Página e dados: busca primeiro na internet (para ter o mais novo) e, sem rede, usa o guardado.
 // Fotos, ícones e mapa: usa o guardado e atualiza por trás.
-const CACHE = 'br365-v6';
+const CACHE = 'br365-v7';
 const BASE = ['./', 'index.html', 'dados.js', 'manifest.webmanifest', 'push.js', 'icones/icone-192.png', 'icones/icone-512.png', 'fotos/perfil.jpg', 'fotos/marcao_povo.jpg'];
 
 self.addEventListener('install', e => {
@@ -64,7 +64,7 @@ self.addEventListener('fetch', e => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   if (url.hostname.includes('overpass')) return; // desenho da estrada: só com internet
-  const pagina = req.mode === 'navigate' || /\/(index\.html)?$/.test(url.pathname) || url.pathname.endsWith('dados.js');
+  const pagina = req.mode === 'navigate' || /\/(index\.html)?$/.test(url.pathname) || url.pathname.endsWith('dados.js') || url.pathname.endsWith('push.js');
   if (pagina) {
     e.respondWith(fetch(req).then(r => {
       const copia = r.clone();
