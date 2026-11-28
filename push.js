@@ -46,8 +46,6 @@ window.__radarPushModuleReady = false;
     const profileRadios = [...document.querySelectorAll('input[name="perfil"]')];
     const companyWrap = document.getElementById("pushJuridicaWrap");
     const companyNameInput = document.getElementById("pushEmpresa");
-    const companyTypeSelect = document.getElementById("pushTipoJuridico");
-    const activitySelect = document.getElementById("pushAtuacao");
 
     let currentMessaging = null;
     let currentRegistration = null;
@@ -61,12 +59,8 @@ window.__radarPushModuleReady = false;
       const isCompany = selectedProfile() === "Pessoa jurídica";
       if (companyWrap) companyWrap.hidden = !isCompany;
       if (companyNameInput) companyNameInput.required = isCompany;
-      if (companyTypeSelect) companyTypeSelect.required = isCompany;
-      if (activitySelect) activitySelect.required = isCompany;
       if (!isCompany) {
         if (companyNameInput) companyNameInput.value = "";
-        if (companyTypeSelect) companyTypeSelect.value = "";
-        if (activitySelect) activitySelect.value = "";
       }
     }
     profileRadios.forEach((radio) => radio.addEventListener("change", updateProfileFields));
@@ -133,8 +127,6 @@ window.__radarPushModuleReady = false;
               phone: data.phone,
               profile: data.profile,
               companyName: data.companyName,
-              companyType: data.companyType,
-              activity: data.activity,
               contactConsent: true,
               updatedAt: serverTimestamp()
             });
@@ -191,9 +183,7 @@ window.__radarPushModuleReady = false;
           name: document.getElementById("pushNome").value.trim(),
           phone: normalizedBrazilianPhone(document.getElementById("pushTelefone").value),
           profile,
-          companyName: profile === "Pessoa jurídica" ? companyNameInput.value.trim() : "",
-          companyType: profile === "Pessoa jurídica" ? companyTypeSelect.value : "",
-          activity: profile === "Pessoa jurídica" ? activitySelect.value : ""
+          companyName: profile === "Pessoa jurídica" ? companyNameInput.value.trim() : ""
         };
         if (!data.name) throw new Error("Informe seu nome.");
 
