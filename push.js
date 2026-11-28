@@ -4,10 +4,9 @@ import { getFirestore, doc, writeBatch, deleteDoc, serverTimestamp } from "https
 import {
   getMessaging,
   isWindowSupported,
-  onRegistered,
-  onMessage,
-  register,
-  unregister
+  getToken,
+  deleteToken,
+  onMessage
 } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-messaging.js";
 
 const firebaseConfig = {
@@ -102,53 +101,34 @@ function notificationOptions(data = {}) {
 }
 
 async function registerDeviceAndSave(data, user, messaging, registration) {
-  return new Promise((resolve, reject) => {
-    let settled = false;
-    let unsubscribe = () => {};
-    const finish = (error, fid) => {
-      if (settled) return;
-      settled = true;
-      clearTimeout(timer);
-      unsubscribe();
-      if (error) reject(error);
-      else resolve(fid);
-    };
-
-    const timer = setTimeout(() => {
-      finish(new Error("O Firebase não confirmou a inscrição do dispositivo. Tente novamente."));
-    }, 30000);
-
-    unsubscribe = onRegistered(messaging, async (fid) => {
-      try {
-        const batch = writeBatch(db);
-        batch.set(doc(db, "contacts", user.uid), {
-          name: data.name,
-          phone: data.phone,
-          profile: data.profile,
-          companyName: data.companyName,
-          companyType: data.companyType,
-          activity: data.activity,
-          contactConsent: true,
-          updatedAt: serverTimestamp()
-        });
-        batch.set(doc(db, "pushSubscriptions", user.uid), {
-          fid: fid,
-          platform: "web",
-          pushConsent: true,
-          updatedAt: serverTimestamp()
-        });
-        await batch.commit();
-        finish(null, fid);
-      } catch (error) {
-        finish(error);
-      }
-    });
-
-    register(messaging, {
-      vapidKey: VAPID_PUBLIC_KEY,
-      serviceWorkerRegistration: registration
-    }).catch((error) => finish(error));
+  const token = await getToken(messaging, {
+    vapidKey: VAPID_PUBLIC_KEY,
+    serviceWorkerRegistration: registration
   });
+
+  if (!token) {
+    throw new Error("O Firebase não retornou o token de notificações deste dispositivo.");
+  }
+
+  const batch = writeBatch(db);
+  batch.set(doc(db, "contacts", user.uid), {
+    name: data.name,
+    phone: data.phone,
+    profile: data.profile,
+    companyName: data.companyName,
+    companyType: data.companyType,
+    activity: data.activity,
+    contactConsent: true,
+    updatedAt: serverTimestamp()
+  });
+  batch.set(doc(db, "pushSubscriptions", user.uid), {
+    token,
+    platform: "web",
+    pushConsent: true,
+    updatedAt: serverTimestamp()
+  });
+  await batch.commit();
+  return token;
 }
 
 form?.addEventListener("submit", async (event) => {
@@ -231,7 +211,7 @@ disableButton?.addEventListener("click", async () => {
   try {
     const user = await getAnonymousUser();
     const messaging = currentMessaging || getMessaging(app);
-    await unregister(messaging);
+    await deleteToken(messaging);
     await deleteDoc(doc(db, "pushSubscriptions", user.uid));
     enableButton.disabled = false;
     enableButton.textContent = "🔔 Cadastrar e ativar alertas neste celular";
@@ -252,7 +232,7 @@ deleteContactButton?.addEventListener("click", async () => {
   try {
     const user = await getAnonymousUser();
     const messaging = currentMessaging || getMessaging(app);
-    await unregister(messaging).catch(() => {});
+    await deleteToken(messaging).catch(() => {});
     const batch = writeBatch(db);
     batch.delete(doc(db, "pushSubscriptions", user.uid));
     batch.delete(doc(db, "contacts", user.uid));
