@@ -33,8 +33,8 @@ jobs:
 
       - name: Identificar acidentes novos e enviar notificações
         env:
-          FIREBASE_SERVICE_ACCOUNT_JSON: \${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
-          BEFORE_SHA: \${{ github.event.before }}
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+          BEFORE_SHA: ${{ github.event.before }}
         run: |
           node --input-type=module <<'NODE'
           import { execFileSync } from 'node:child_process';
