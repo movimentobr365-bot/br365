@@ -127,6 +127,8 @@ window.__radarPushModuleReady = false;
               phone: data.phone,
               profile: data.profile,
               companyName: data.companyName,
+              companyType: data.companyType,
+              activity: data.activity,
               contactConsent: true,
               updatedAt: serverTimestamp()
             });
@@ -183,7 +185,10 @@ window.__radarPushModuleReady = false;
           name: document.getElementById("pushNome").value.trim(),
           phone: normalizedBrazilianPhone(document.getElementById("pushTelefone").value),
           profile,
-          companyName: profile === "Pessoa jurídica" ? companyNameInput.value.trim() : ""
+          companyName: profile === "Pessoa jurídica" ? companyNameInput.value.trim() : "",
+          // Mantém compatibilidade com as regras já publicadas; estes campos não aparecem no formulário.
+          companyType: profile === "Pessoa jurídica" ? "Não informado" : "",
+          activity: profile === "Pessoa jurídica" ? "Não informado" : ""
         };
         if (!data.name) throw new Error("Informe seu nome.");
 
