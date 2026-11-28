@@ -472,6 +472,11 @@
   .form-alertas>label:not(.alerta-consent){font-size:13px;font-weight:800;color:var(--tinta);margin-top:4px}
   .form-alertas input[type=text],.form-alertas input[type=tel]{width:100%;min-height:44px;border:1px solid #b8bdc5;border-radius:9px;padding:10px 12px;font:inherit;font-size:15px;background:#fff;color:var(--tinta)}
   .form-alertas input:focus{outline:3px solid rgba(255,199,44,.4);border-color:#8b6a00}
+  .alertas-cadastro #alertaJuridicaWrap{display:grid;gap:8px;margin-top:10px}
+  .alertas-cadastro #alertaJuridicaWrap[hidden]{display:none}
+  .alertas-cadastro #alertaJuridicaWrap>label{font-size:13px;font-weight:800;color:var(--tinta);margin-top:4px}
+  .alertas-cadastro #alertaJuridicaWrap input,.alertas-cadastro #alertaJuridicaWrap select{width:100%;min-height:44px;border:1px solid #b8bdc5;border-radius:9px;padding:10px 12px;font:inherit;font-size:15px;background:#fff;color:var(--tinta)}
+  .alertas-cadastro .juridica-nota{font-size:12px;margin:6px 0;padding:8px}
   .alerta-perfil{border:0;padding:0;margin:4px 0}
   .alerta-perfil legend{font-size:13px;font-weight:800;color:var(--tinta);margin-bottom:8px}
   .alerta-perfis{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -616,14 +621,40 @@
                   <span>👤 Sou pessoa física</span>
                 </label>
                 <label class="alerta-opcao">
-                  <input type="radio" name="perfil" value="Imprensa / veículo de comunicação" required>
-                  <span>📰 Sou da imprensa</span>
+                  <input type="radio" name="perfil" value="Pessoa jurídica" required>
+                  <span>🏢 Sou pessoa jurídica</span>
                 </label>
               </div>
             </fieldset>
-            <div id="alertaVeiculoWrap" hidden>
-              <label for="alertaVeiculo">Nome do veículo de comunicação</label>
-              <input id="alertaVeiculo" name="veiculo" type="text" maxlength="100" placeholder="Portal, jornal, rádio ou emissora">
+            <div id="alertaJuridicaWrap" hidden>
+              <label for="alertaEmpresa">Nome da empresa ou organização</label>
+              <input id="alertaEmpresa" name="empresa" type="text" maxlength="120" placeholder="Nome fantasia ou razão social">
+              <label for="alertaTipoJuridico">Tipo de empresa/organização</label>
+              <select id="alertaTipoJuridico" name="tipoJuridico">
+                <option value="">Selecione uma opção</option>
+                <option>MEI / Empresário individual</option>
+                <option>Microempresa (ME)</option>
+                <option>Empresa de pequeno porte (EPP)</option>
+                <option>Sociedade limitada (LTDA / SLU)</option>
+                <option>Sociedade anônima (S/A)</option>
+                <option>Associação / Fundação / ONG</option>
+                <option>Cooperativa</option>
+                <option>Órgão público</option>
+                <option>Outro / Não sei informar</option>
+              </select>
+              <label for="alertaAtuacao">Área de atuação</label>
+              <select id="alertaAtuacao" name="atuacao">
+                <option value="">Selecione uma opção</option>
+                <option>Imprensa / veículo de comunicação</option>
+                <option>Serviços</option>
+                <option>Comércio</option>
+                <option>Indústria</option>
+                <option>Agropecuária</option>
+                <option>Associação / entidade sem fins lucrativos</option>
+                <option>Setor público</option>
+                <option>Outra atividade</option>
+              </select>
+              <p class="alertas-nota juridica-nota">Essas informações servem para identificar o perfil do contato. Não é necessário informar CNPJ neste cadastro.</p>
             </div>
             <label class="alerta-consent"><input type="checkbox" id="alertaConsent" required> <span>Autorizo o Movimento BR-365 a usar meu nome e telefone para tratar meu pedido de recebimento de alertas e entrar em contato sobre esse serviço. Posso cancelar a qualquer momento enviando <b>SAIR</b>.</span></label>
             <button type="submit" class="alertas-cta">💬 Enviar pedido de cadastro pelo WhatsApp</button>
@@ -1543,14 +1574,21 @@ tracadoReal();
   if (!form) return;
   const perfis = [...form.querySelectorAll('input[name="perfil"]')];
   const perfilSelecionado = () => form.querySelector('input[name="perfil"]:checked')?.value || '';
-  const veiculoWrap = document.getElementById('alertaVeiculoWrap');
-  const veiculoInput = document.getElementById('alertaVeiculo');
+  const juridicaWrap = document.getElementById('alertaJuridicaWrap');
+  const empresaInput = document.getElementById('alertaEmpresa');
+  const tipoJuridico = document.getElementById('alertaTipoJuridico');
+  const atuacao = document.getElementById('alertaAtuacao');
   const atualizarPerfil = () => {
-    const imprensa = perfilSelecionado() === 'Imprensa / veículo de comunicação';
-    veiculoWrap.hidden = !imprensa;
-    veiculoInput.required = imprensa;
-    veiculoInput.setCustomValidity('');
-    if (!imprensa) veiculoInput.value = '';
+    const juridica = perfilSelecionado() === 'Pessoa jurídica';
+    juridicaWrap.hidden = !juridica;
+    empresaInput.required = juridica;
+    tipoJuridico.required = juridica;
+    atuacao.required = juridica;
+    if (!juridica) {
+      empresaInput.value = '';
+      tipoJuridico.value = '';
+      atuacao.value = '';
+    }
   };
   perfis.forEach(radio => radio.addEventListener('change', atualizarPerfil));
   form.addEventListener('submit', e => {
@@ -1559,19 +1597,16 @@ tracadoReal();
     const nome = document.getElementById('alertaNome').value.trim();
     const telefone = document.getElementById('alertaTelefone').value.trim();
     const perfil = perfilSelecionado();
-    const veiculo = document.getElementById('alertaVeiculo').value.trim();
+    const empresa = empresaInput.value.trim();
+    const tipo = tipoJuridico.value;
+    const area = atuacao.value;
     if (!nome || !telefone || !perfil || !document.getElementById('alertaConsent').checked) return;
-    if (perfil === 'Imprensa / veículo de comunicação' && !veiculo) {
-      document.getElementById('alertaVeiculo').setCustomValidity('Informe o nome do veículo de comunicação.');
-      document.getElementById('alertaVeiculo').reportValidity();
-      return;
-    }
     const mensagem = [
       'CADASTRO VOLUNTÁRIO — ALERTAS RADAR BR-365',
-      'Nome/contato: ' + nome,
+      'Nome do contato: ' + nome,
       'WhatsApp informado: ' + telefone,
       'Perfil: ' + perfil,
-      ...(perfil === 'Imprensa / veículo de comunicação' ? ['Veículo: ' + veiculo] : []),
+      ...(perfil === 'Pessoa jurídica' ? ['Empresa/organização: ' + empresa, 'Tipo: ' + tipo, 'Área de atuação: ' + area] : []),
       'Autorizo o Movimento BR-365 a usar meu nome e telefone para tratar meu pedido de recebimento de alertas e entrar em contato sobre esse serviço.',
       'Estou ciente de que posso cancelar a qualquer momento enviando SAIR.'
     ].join('\\n');
