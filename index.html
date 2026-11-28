@@ -470,7 +470,7 @@
   .alertas-status{display:inline-block;background:#fff4d6;color:#614600;font-size:12px;font-weight:800;padding:5px 9px;border-radius:999px}
   .form-alertas{display:grid;gap:8px}
   .form-alertas>label:not(.alerta-consent){font-size:13px;font-weight:800;color:var(--tinta);margin-top:4px}
-  .form-alertas input[type=text],.form-alertas input[type=tel]{width:100%;min-height:44px;border:1px solid #b8bdc5;border-radius:9px;padding:10px 12px;font:inherit;font-size:15px;background:#fff;color:var(--tinta)}
+  .form-alertas input[type=text],.form-alertas input[type=tel],.form-alertas select{width:100%;min-height:44px;border:1px solid #b8bdc5;border-radius:9px;padding:10px 12px;font:inherit;font-size:15px;background:#fff;color:var(--tinta)}
   .form-alertas input:focus{outline:3px solid rgba(255,199,44,.4);border-color:#8b6a00}
   .alerta-consent{display:flex;align-items:flex-start;gap:9px;font-size:12px;line-height:1.45;color:#4e5968;margin:8px 0}
   .alerta-consent input{margin-top:2px;flex:none;width:17px;height:17px;accent-color:#208b4e}
@@ -601,6 +601,16 @@
             <input id="alertaNome" name="nome" type="text" maxlength="80" autocomplete="name" placeholder="Como podemos chamar você?" required>
             <label for="alertaTelefone">Seu WhatsApp com DDD</label>
             <input id="alertaTelefone" name="telefone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="(34) 99999-9999" required>
+            <label for="alertaPerfil">Este contato é de:</label>
+            <select id="alertaPerfil" name="perfil" required>
+              <option value="">Selecione uma opção</option>
+              <option value="Pessoa física">Pessoa física</option>
+              <option value="Imprensa / veículo de comunicação">Imprensa / veículo de comunicação</option>
+            </select>
+            <div id="alertaVeiculoWrap" hidden>
+              <label for="alertaVeiculo">Nome do veículo de comunicação</label>
+              <input id="alertaVeiculo" name="veiculo" type="text" maxlength="100" placeholder="Portal, jornal, rádio ou emissora">
+            </div>
             <label class="alerta-consent"><input type="checkbox" id="alertaConsent" required> <span>Autorizo o Movimento BR-365 a usar meu nome e telefone para tratar meu pedido de recebimento de alertas e entrar em contato sobre esse serviço. Posso cancelar a qualquer momento enviando <b>SAIR</b>.</span></label>
             <button type="submit" class="alertas-cta">💬 Enviar pedido de cadastro pelo WhatsApp</button>
           </form>
@@ -1517,16 +1527,35 @@ tracadoReal();
 (() => {
   const form = document.getElementById('formAlerta');
   if (!form) return;
+  const perfil = document.getElementById('alertaPerfil');
+  const veiculoWrap = document.getElementById('alertaVeiculoWrap');
+  const veiculoInput = document.getElementById('alertaVeiculo');
+  perfil.addEventListener('change', () => {
+    const imprensa = perfil.value === 'Imprensa / veículo de comunicação';
+    veiculoWrap.hidden = !imprensa;
+    veiculoInput.required = imprensa;
+    veiculoInput.setCustomValidity('');
+    if (!imprensa) veiculoInput.value = '';
+  });
   form.addEventListener('submit', e => {
     e.preventDefault();
     if (!form.reportValidity()) return;
     const nome = document.getElementById('alertaNome').value.trim();
     const telefone = document.getElementById('alertaTelefone').value.trim();
-    if (!nome || !telefone || !document.getElementById('alertaConsent').checked) return;
+    const perfil = document.getElementById('alertaPerfil').value;
+    const veiculo = document.getElementById('alertaVeiculo').value.trim();
+    if (!nome || !telefone || !perfil || !document.getElementById('alertaConsent').checked) return;
+    if (perfil === 'Imprensa / veículo de comunicação' && !veiculo) {
+      document.getElementById('alertaVeiculo').setCustomValidity('Informe o nome do veículo de comunicação.');
+      document.getElementById('alertaVeiculo').reportValidity();
+      return;
+    }
     const mensagem = [
       'CADASTRO VOLUNTÁRIO — ALERTAS RADAR BR-365',
-      'Nome: ' + nome,
+      'Nome/contato: ' + nome,
       'WhatsApp informado: ' + telefone,
+      'Perfil: ' + perfil,
+      ...(perfil === 'Imprensa / veículo de comunicação' ? ['Veículo: ' + veiculo] : []),
       'Autorizo o Movimento BR-365 a usar meu nome e telefone para tratar meu pedido de recebimento de alertas e entrar em contato sobre esse serviço.',
       'Estou ciente de que posso cancelar a qualquer momento enviando SAIR.'
     ].join('\\n');
