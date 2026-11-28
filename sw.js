@@ -48,7 +48,7 @@ self.addEventListener('notificationclick', (event) => {
 // App do Movimento BR-365: guarda a página no celular para abrir mesmo sem internet.
 // Página e dados: busca primeiro na internet (para ter o mais novo) e, sem rede, usa o guardado.
 // Fotos, ícones e mapa: usa o guardado e atualiza por trás.
-const CACHE = 'br365-v9';
+const CACHE = 'br365-v10';
 const BASE = ['./', 'index.html', 'dados.js', 'manifest.webmanifest', 'push.js', 'icones/icone-192.png', 'icones/icone-512.png', 'fotos/perfil.jpg', 'fotos/marcao_povo.jpg'];
 
 self.addEventListener('install', e => {
