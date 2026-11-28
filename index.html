@@ -470,8 +470,15 @@
   .alertas-status{display:inline-block;background:#fff4d6;color:#614600;font-size:12px;font-weight:800;padding:5px 9px;border-radius:999px}
   .form-alertas{display:grid;gap:8px}
   .form-alertas>label:not(.alerta-consent){font-size:13px;font-weight:800;color:var(--tinta);margin-top:4px}
-  .form-alertas input[type=text],.form-alertas input[type=tel],.form-alertas select{width:100%;min-height:44px;border:1px solid #b8bdc5;border-radius:9px;padding:10px 12px;font:inherit;font-size:15px;background:#fff;color:var(--tinta)}
+  .form-alertas input[type=text],.form-alertas input[type=tel]{width:100%;min-height:44px;border:1px solid #b8bdc5;border-radius:9px;padding:10px 12px;font:inherit;font-size:15px;background:#fff;color:var(--tinta)}
   .form-alertas input:focus{outline:3px solid rgba(255,199,44,.4);border-color:#8b6a00}
+  .alerta-perfil{border:0;padding:0;margin:4px 0}
+  .alerta-perfil legend{font-size:13px;font-weight:800;color:var(--tinta);margin-bottom:8px}
+  .alerta-perfis{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .alerta-opcao{display:flex;align-items:center;gap:9px;padding:12px;border:1px solid #b8bdc5;border-radius:10px;background:#fff;cursor:pointer;font-size:14px;font-weight:800;color:var(--tinta)}
+  .alerta-opcao:has(input:checked){border:2px solid var(--amarelo);background:#fff9e8;padding:11px}
+  .alerta-opcao input{width:18px;height:18px;accent-color:#b17b00;flex:none}
+  @media(max-width:420px){.alerta-perfis{grid-template-columns:1fr}}
   .alerta-consent{display:flex;align-items:flex-start;gap:9px;font-size:12px;line-height:1.45;color:#4e5968;margin:8px 0}
   .alerta-consent input{margin-top:2px;flex:none;width:17px;height:17px;accent-color:#208b4e}
   .alertas-cta{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:#06281a;text-decoration:none;font-weight:900;padding:13px 18px;border:0;border-radius:10px;min-height:48px;font:inherit;cursor:pointer;text-align:center}
@@ -601,12 +608,19 @@
             <input id="alertaNome" name="nome" type="text" maxlength="80" autocomplete="name" placeholder="Como podemos chamar você?" required>
             <label for="alertaTelefone">Seu WhatsApp com DDD</label>
             <input id="alertaTelefone" name="telefone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="(34) 99999-9999" required>
-            <label for="alertaPerfil">Este contato é de:</label>
-            <select id="alertaPerfil" name="perfil" required>
-              <option value="">Selecione uma opção</option>
-              <option value="Pessoa física">Pessoa física</option>
-              <option value="Imprensa / veículo de comunicação">Imprensa / veículo de comunicação</option>
-            </select>
+            <fieldset class="alerta-perfil">
+              <legend>Identifique seu perfil:</legend>
+              <div class="alerta-perfis">
+                <label class="alerta-opcao">
+                  <input type="radio" name="perfil" value="Pessoa física" required>
+                  <span>👤 Sou pessoa física</span>
+                </label>
+                <label class="alerta-opcao">
+                  <input type="radio" name="perfil" value="Imprensa / veículo de comunicação" required>
+                  <span>📰 Sou da imprensa</span>
+                </label>
+              </div>
+            </fieldset>
             <div id="alertaVeiculoWrap" hidden>
               <label for="alertaVeiculo">Nome do veículo de comunicação</label>
               <input id="alertaVeiculo" name="veiculo" type="text" maxlength="100" placeholder="Portal, jornal, rádio ou emissora">
@@ -1527,22 +1541,24 @@ tracadoReal();
 (() => {
   const form = document.getElementById('formAlerta');
   if (!form) return;
-  const perfil = document.getElementById('alertaPerfil');
+  const perfis = [...form.querySelectorAll('input[name="perfil"]')];
+  const perfilSelecionado = () => form.querySelector('input[name="perfil"]:checked')?.value || '';
   const veiculoWrap = document.getElementById('alertaVeiculoWrap');
   const veiculoInput = document.getElementById('alertaVeiculo');
-  perfil.addEventListener('change', () => {
-    const imprensa = perfil.value === 'Imprensa / veículo de comunicação';
+  const atualizarPerfil = () => {
+    const imprensa = perfilSelecionado() === 'Imprensa / veículo de comunicação';
     veiculoWrap.hidden = !imprensa;
     veiculoInput.required = imprensa;
     veiculoInput.setCustomValidity('');
     if (!imprensa) veiculoInput.value = '';
-  });
+  };
+  perfis.forEach(radio => radio.addEventListener('change', atualizarPerfil));
   form.addEventListener('submit', e => {
     e.preventDefault();
     if (!form.reportValidity()) return;
     const nome = document.getElementById('alertaNome').value.trim();
     const telefone = document.getElementById('alertaTelefone').value.trim();
-    const perfil = document.getElementById('alertaPerfil').value;
+    const perfil = perfilSelecionado();
     const veiculo = document.getElementById('alertaVeiculo').value.trim();
     if (!nome || !telefone || !perfil || !document.getElementById('alertaConsent').checked) return;
     if (perfil === 'Imprensa / veículo de comunicação' && !veiculo) {
