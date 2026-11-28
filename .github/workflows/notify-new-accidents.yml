@@ -86,7 +86,7 @@ jobs:
           const subscribersSnapshot = await db.collection('pushSubscriptions').get();
           const subscribers = subscribersSnapshot.docs
             .map((document) => ({ uid: document.id, ...document.data() }))
-            .filter((item) => item.token && item.platform === 'web' && item.pushConsent === true);
+            .filter((item) => item.fid && item.platform === 'web' && item.pushConsent === true);
 
           console.log('Dispositivos inscritos encontrados:', subscribers.length);
           if (!subscribers.length) {
@@ -145,12 +145,12 @@ jobs:
             let failed = 0;
             for (const subscriber of subscribers) {
               try {
-                await messaging.send({ token: subscriber.token, data: messageData });
+                await messaging.send({ fid: subscriber.fid, data: messageData });
                 sent++;
               } catch (error) {
                 failed++;
                 console.error('Falha ao enviar para um dispositivo:', subscriber.uid, error.code || error.message);
-                if (['messaging/registration-token-not-registered', 'messaging/invalid-registration-token'].includes(error.code)) {
+                if (['messaging/installation-id-not-registered', 'messaging/registration-token-not-registered', 'messaging/invalid-registration-token'].includes(error.code)) {
                   await db.collection('pushSubscriptions').doc(subscriber.uid).delete().catch(() => {});
                 }
               }
