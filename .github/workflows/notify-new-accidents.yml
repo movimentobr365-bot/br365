@@ -1,0 +1,171 @@
+name: Enviar alertas de novos acidentes do RADAR BR-365
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - dados.js
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  send-push-alerts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar o repositório
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Instalar Firebase Admin
+        run: npm install --no-save firebase-admin
+
+      - name: Identificar acidentes novos e enviar notificações
+        env:
+          FIREBASE_SERVICE_ACCOUNT_JSON: \${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+          BEFORE_SHA: \${{ github.event.before }}
+        run: |
+          node --input-type=module <<'NODE'
+          import { execFileSync } from 'node:child_process';
+          import vm from 'node:vm';
+          import { initializeApp, cert } from 'firebase-admin/app';
+          import { getFirestore } from 'firebase-admin/firestore';
+          import { getMessaging } from 'firebase-admin/messaging';
+
+          const rawCredentials = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
+          if (!rawCredentials) {
+            throw new Error('Configure o segredo FIREBASE_SERVICE_ACCOUNT_JSON no GitHub.');
+          }
+
+          const app = initializeApp({ credential: cert(JSON.parse(rawCredentials)) });
+          const db = getFirestore(app);
+          const messaging = getMessaging(app);
+
+          function loadData(source) {
+            const context = { window: {} };
+            vm.runInNewContext(source, context, { timeout: 5000 });
+            if (!context.window.DADOS || !Array.isArray(context.window.DADOS.acidentes)) {
+              throw new Error('Não foi possível ler a lista de acidentes do dados.js.');
+            }
+            return context.window.DADOS;
+          }
+
+          const currentData = loadData(execFileSync('git', ['show', 'HEAD:dados.js'], { encoding: 'utf8' }));
+          let previousData = { acidentes: [] };
+          const before = process.env.BEFORE_SHA || '';
+          if (before && !/^0+$/.test(before)) {
+            try {
+              previousData = loadData(execFileSync('git', ['show', before + ':dados.js'], { encoding: 'utf8' }));
+            } catch (error) {
+              console.warn('Não foi possível ler a versão anterior; será aplicada a janela de 7 dias.', error.message);
+            }
+          }
+
+          const oldIds = new Set(previousData.acidentes.map((item) => String(item.id)));
+          const newlyAdded = currentData.acidentes.filter((item) => item && item.id && !oldIds.has(String(item.id)));
+
+          const now = Date.now();
+          const sevenDaysAgo = now - (7 * 24 * 60 * 60 * 1000);
+          const recentAccidents = newlyAdded.filter((item) => {
+            const timestamp = Date.parse(String(item.data || '') + 'T12:00:00-03:00');
+            return Number.isFinite(timestamp) && timestamp >= sevenDaysAgo && timestamp <= now + 24 * 60 * 60 * 1000;
+          });
+
+          console.log('Novos registros identificados:', newlyAdded.length);
+          console.log('Novos acidentes recentes elegíveis para alerta:', recentAccidents.length);
+          if (!recentAccidents.length) {
+            console.log('Nenhum acidente recente novo para notificar.');
+            process.exit(0);
+          }
+
+          const subscribersSnapshot = await db.collection('pushSubscriptions').get();
+          const subscribers = subscribersSnapshot.docs
+            .map((document) => ({ uid: document.id, ...document.data() }))
+            .filter((item) => item.fid && item.platform === 'web' && item.pushConsent === true && item.contactConsent === true);
+
+          console.log('Dispositivos inscritos encontrados:', subscribers.length);
+          if (!subscribers.length) {
+            console.log('Ainda não há dispositivos inscritos.');
+            process.exit(0);
+          }
+
+          function formatDate(value) {
+            const parts = String(value || '').split('-');
+            return parts.length === 3 ? parts[2] + '/' + parts[1] + '/' + parts[0] : String(value || '');
+          }
+
+          function buildBody(accident) {
+            const place = (accident.municipio || 'BR-365') +
+              (accident.km != null ? ' · km ' + String(accident.km).replace('.', ',') : '');
+            const when = formatDate(accident.data) +
+              (accident.hora ? ' às ' + accident.hora : '');
+            const parts = ['📍 ' + place, '🗓️ ' + when];
+
+            if (accident.tipo) parts.push('🚗 ' + accident.tipo);
+
+            const deaths = Number(accident.mortos || 0);
+            const injured = Number(accident.feridos || 0);
+            if (deaths > 0 || injured > 0) {
+              const victimParts = [];
+              if (deaths > 0) victimParts.push(deaths + (deaths === 1 ? ' morte' : ' mortes'));
+              if (injured > 0) victimParts.push(injured + (injured === 1 ? ' ferido' : ' feridos'));
+              parts.push('🚑 ' + victimParts.join(' e '));
+            } else if (accident.vitimas_pendente === true) {
+              parts.push('Informações sobre vítimas ainda não confirmadas');
+            }
+
+            if (accident.descricao) parts.push(String(accident.descricao).replace(/\s+/g, ' ').slice(0, 130));
+            parts.push('Toque para abrir o painel.');
+            return parts.join(' | ').slice(0, 900);
+          }
+
+          for (const accident of recentAccidents) {
+            const safeId = String(accident.id).replace(/[\/#?]/g, '_');
+            const alertRef = db.collection('alertedAccidents').doc(safeId);
+            const previousAlert = await alertRef.get();
+            if (previousAlert.exists) {
+              console.log('Alerta já enviado anteriormente; ignorando:', accident.id);
+              continue;
+            }
+
+            const messageData = {
+              title: '🚨 Novo acidente na BR-365',
+              body: buildBody(accident),
+              id: String(accident.id),
+              tag: 'radar-br365-' + String(accident.id),
+              url: 'https://www.movimentobr365.com.br/#painel'
+            };
+
+            let sent = 0;
+            let failed = 0;
+            for (const subscriber of subscribers) {
+              try {
+                await messaging.send({ fid: subscriber.fid, data: messageData });
+                sent++;
+              } catch (error) {
+                failed++;
+                console.error('Falha ao enviar para um dispositivo:', subscriber.uid, error.code || error.message);
+                if (['messaging/registration-token-not-registered', 'messaging/invalid-registration-token'].includes(error.code)) {
+                  await db.collection('pushSubscriptions').doc(subscriber.uid).delete().catch(() => {});
+                }
+              }
+            }
+
+            await alertRef.set({
+              accidentId: String(accident.id),
+              accidentDate: String(accident.data || ''),
+              sentAt: new Date(),
+              sentDevices: sent,
+              failedDevices: failed
+            });
+            console.log('Alerta concluído:', accident.id, 'enviados:', sent, 'falhas:', failed);
+          }
+          NODE
