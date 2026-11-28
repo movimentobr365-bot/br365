@@ -39,7 +39,7 @@ window.__radarPushModuleReady = false;
     } = messagingSdk;
 
     const firebaseConfig = {
-      apiKey: "AIzaSyCTPsOy1bmd3ob3oYfEhKDfJIa3ZS2I8as",
+      apiKey: "AIzaSyCTPsOy1bmd3ob3oYfEhKDJIa3ZS2I8as",
       authDomain: "radar-br-365.firebaseapp.com",
       projectId: "radar-br-365",
       storageBucket: "radar-br-365.firebasestorage.app",
