@@ -86,7 +86,7 @@ jobs:
           const subscribersSnapshot = await db.collection('pushSubscriptions').get();
           const subscribers = subscribersSnapshot.docs
             .map((document) => ({ uid: document.id, ...document.data() }))
-            .filter((item) => item.fid && item.platform === 'web' && item.pushConsent === true);
+            .filter((item) => item.token && item.platform === 'web' && item.pushConsent === true);
 
           console.log('Dispositivos inscritos encontrados:', subscribers.length);
           if (!subscribers.length) {
@@ -145,7 +145,7 @@ jobs:
             let failed = 0;
             for (const subscriber of subscribers) {
               try {
-                await messaging.send({ fid: subscriber.fid, data: messageData });
+                await messaging.send({ token: subscriber.token, data: messageData });
                 sent++;
               } catch (error) {
                 failed++;
