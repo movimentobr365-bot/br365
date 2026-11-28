@@ -458,16 +458,26 @@
   #promessas .pm-card{grid-template-columns:1fr;gap:6px}
   }
 
-  /* pré-cadastro dos alertas do Radar BR-365 */
+  /* cadastro voluntário e canal de alertas do Radar BR-365 */
   .alertas-cx{border:2px solid var(--amarelo);background:#fffdf5}
   .alertas-in{padding:20px}
   .alertas-selo{display:inline-block;background:var(--preto);color:var(--amarelo);font-size:11px;font-weight:900;letter-spacing:.08em;padding:5px 9px;border-radius:6px}
   .alertas-cx h3{padding:12px 0 4px;font-size:clamp(19px,2.5vw,25px);font-weight:900;color:var(--preto)}
   .alertas-cx p{margin:4px 0 14px;color:var(--tinta);line-height:1.5}
-  .alertas-cta{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:#06281a;text-decoration:none;font-weight:900;padding:13px 18px;border-radius:10px;min-height:48px}
+  .alertas-opcoes{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+  .alertas-canal,.alertas-cadastro{background:#fff;border:1px solid var(--linha);border-radius:14px;padding:16px;min-width:0}
+  .alertas-canal strong,.alertas-cadastro strong{display:block;font-size:16px;color:var(--preto);margin-bottom:8px}
+  .alertas-status{display:inline-block;background:#fff4d6;color:#614600;font-size:12px;font-weight:800;padding:5px 9px;border-radius:999px}
+  .form-alertas{display:grid;gap:8px}
+  .form-alertas>label:not(.alerta-consent){font-size:13px;font-weight:800;color:var(--tinta);margin-top:4px}
+  .form-alertas input[type=text],.form-alertas input[type=tel]{width:100%;min-height:44px;border:1px solid #b8bdc5;border-radius:9px;padding:10px 12px;font:inherit;font-size:15px;background:#fff;color:var(--tinta)}
+  .form-alertas input:focus{outline:3px solid rgba(255,199,44,.4);border-color:#8b6a00}
+  .alerta-consent{display:flex;align-items:flex-start;gap:9px;font-size:12px;line-height:1.45;color:#4e5968;margin:8px 0}
+  .alerta-consent input{margin-top:2px;flex:none;width:17px;height:17px;accent-color:#208b4e}
+  .alertas-cta{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:#06281a;text-decoration:none;font-weight:900;padding:13px 18px;border:0;border-radius:10px;min-height:48px;font:inherit;cursor:pointer;text-align:center}
   .alertas-cta:hover{filter:brightness(.96);transform:translateY(-1px)}
   .alertas-cx .alertas-nota{margin:14px 0 0;font-size:12px;color:#596170;background:#fff;border-left:4px solid var(--amarelo);padding:10px 12px;border-radius:6px}
-  @media(max-width:640px){.alertas-in{padding:16px}.alertas-cta{width:100%;text-align:center}}
+  @media(max-width:700px){.alertas-in{padding:16px}.alertas-opcoes{grid-template-columns:1fr}.alertas-cta{width:100%}}
 
 </style>
 </head>
@@ -574,11 +584,29 @@
 
   <section class="caixa alertas-cx" id="alertas" aria-labelledby="alertas-titulo">
     <div class="alertas-in">
-      <div class="alertas-selo">📡 RADAR BR-365</div>
-      <h3 id="alertas-titulo">🔔 Receba alertas da BR-365 pelo WhatsApp</h3>
-      <p>Peça seu pré-cadastro para receber avisos de novas ocorrências e atualizações importantes no trecho entre Uberlândia e a BR-040.</p>
-      <a class="alertas-cta" href="https://wa.me/5534920002818?text=Ol%C3%A1!%20Quero%20solicitar%20meu%20pr%C3%A9-cadastro%20para%20receber%20alertas%20de%20novas%20ocorr%C3%AAncias%20e%20atualiza%C3%A7%C3%B5es%20do%20Radar%20BR-365%20pelo%20WhatsApp.%20Autorizo%20o%20contato%20para%20essa%20finalidade.%20Para%20cancelar%2C%20poderei%20enviar%20SAIR." target="_blank" rel="noopener">💬 Solicitar pré-cadastro pelo WhatsApp</a>
-      <p class="alertas-nota"><b>Como funciona neste momento:</b> o botão abre uma conversa com a equipe do Zap Coró e envia seu pedido de cadastro. Os disparos automáticos ainda não estão ativos; serão habilitados depois da conclusão da integração oficial do WhatsApp. Seu número será utilizado para os alertas solicitados, e você poderá pedir o cancelamento a qualquer momento.</p>
+      <div class="alertas-selo">📡 MOVIMENTO BR-365</div>
+      <h3 id="alertas-titulo">🔔 Receba alertas da BR-365</h3>
+      <p class="alertas-intro">Acompanhe acidentes confirmados, interdições e atualizações importantes entre Uberlândia e a BR-040.</p>
+      <div class="alertas-opcoes">
+        <div class="alertas-canal">
+          <strong>📣 Canal oficial no WhatsApp</strong>
+          <p>As atualizações gerais serão publicadas no canal do Radar BR-365. O botão para seguir será liberado aqui assim que o canal estiver criado.</p>
+          <span class="alertas-status">Canal em preparação</span>
+        </div>
+        <div class="alertas-cadastro">
+          <strong>📲 Cadastro voluntário para receber contato</strong>
+          <p>Preencha seus dados e envie a solicitação pelo WhatsApp. A equipe receberá seu pedido e organizará a lista de interessados.</p>
+          <form id="formAlerta" class="form-alertas">
+            <label for="alertaNome">Seu nome</label>
+            <input id="alertaNome" name="nome" type="text" maxlength="80" autocomplete="name" placeholder="Como podemos chamar você?" required>
+            <label for="alertaTelefone">Seu WhatsApp com DDD</label>
+            <input id="alertaTelefone" name="telefone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="(34) 99999-9999" required>
+            <label class="alerta-consent"><input type="checkbox" id="alertaConsent" required> <span>Autorizo o Movimento BR-365 a usar meu nome e telefone para tratar meu pedido de recebimento de alertas e entrar em contato sobre esse serviço. Posso cancelar a qualquer momento enviando <b>SAIR</b>.</span></label>
+            <button type="submit" class="alertas-cta">💬 Enviar pedido de cadastro pelo WhatsApp</button>
+          </form>
+        </div>
+      </div>
+      <p class="alertas-nota"><b>Transparência:</b> o cadastro é gratuito. Ao enviar o formulário, o WhatsApp abre com os dados e a autorização preenchidos; é necessário tocar em “Enviar” no aplicativo para concluir o pedido. Nesta etapa, o site não armazena os dados e ainda não há disparos individuais automáticos. A equipe organizará a lista a partir dos pedidos recebidos. Para cancelar, envie SAIR.</p>
     </div>
   </section>
 
@@ -1481,6 +1509,29 @@ tracadoReal();
   }
   renova();
   setInterval(() => { if (!document.hidden) renova(); }, 60000);
+})();
+</script>
+<script>
+/* Pré-cadastro voluntário: envia dados ao WhatsApp do Zap Coró.
+   A equipe só recebe o pedido quando a pessoa confirma o envio no WhatsApp. */
+(() => {
+  const form = document.getElementById('formAlerta');
+  if (!form) return;
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    if (!form.reportValidity()) return;
+    const nome = document.getElementById('alertaNome').value.trim();
+    const telefone = document.getElementById('alertaTelefone').value.trim();
+    if (!nome || !telefone || !document.getElementById('alertaConsent').checked) return;
+    const mensagem = [
+      'CADASTRO VOLUNTÁRIO — ALERTAS RADAR BR-365',
+      'Nome: ' + nome,
+      'WhatsApp informado: ' + telefone,
+      'Autorizo o Movimento BR-365 a usar meu nome e telefone para tratar meu pedido de recebimento de alertas e entrar em contato sobre esse serviço.',
+      'Estou ciente de que posso cancelar a qualquer momento enviando SAIR.'
+    ].join('\\n');
+    window.open('https://wa.me/5534920002818?text=' + encodeURIComponent(mensagem), '_blank', 'noopener,noreferrer');
+  });
 })();
 </script>
 </body>
