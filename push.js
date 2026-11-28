@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js";
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js";
+import { getFirestore, doc, writeBatch, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js";
 import {
   getMessaging,
   isWindowSupported,
@@ -29,6 +29,7 @@ const db = getFirestore(app);
 const form = document.getElementById("formPush");
 const enableButton = document.getElementById("ativarPush");
 const disableButton = document.getElementById("desativarPush");
+const deleteContactButton = document.getElementById("excluirContato");
 const status = document.getElementById("pushStatus");
 const profileRadios = [...document.querySelectorAll('input[name="perfil"]')];
 const companyWrap = document.getElementById("pushJuridicaWrap");
@@ -119,19 +120,24 @@ async function registerDeviceAndSave(data, user, messaging, registration) {
 
     unsubscribe = onRegistered(messaging, async (fid) => {
       try {
-        await setDoc(doc(db, "pushSubscriptions", user.uid), {
-          fid: fid,
-          platform: "web",
-          pushConsent: true,
-          contactConsent: true,
+        const batch = writeBatch(db);
+        batch.set(doc(db, "contacts", user.uid), {
           name: data.name,
           phone: data.phone,
           profile: data.profile,
           companyName: data.companyName,
           companyType: data.companyType,
           activity: data.activity,
+          contactConsent: true,
           updatedAt: serverTimestamp()
         });
+        batch.set(doc(db, "pushSubscriptions", user.uid), {
+          fid: fid,
+          platform: "web",
+          pushConsent: true,
+          updatedAt: serverTimestamp()
+        });
+        await batch.commit();
         finish(null, fid);
       } catch (error) {
         finish(error);
@@ -230,11 +236,36 @@ disableButton?.addEventListener("click", async () => {
     enableButton.disabled = false;
     enableButton.textContent = "🔔 Cadastrar e ativar alertas neste celular";
     disableButton.hidden = true;
-    setStatus("A inscrição deste dispositivo e o contato associado foram removidos da base do RADAR BR-365.");
+    setStatus("Os alertas foram desativados neste dispositivo. Seu contato continua salvo na base autorizada. Para excluir o contato também, use o botão de exclusão.");
   } catch (error) {
     console.error("Falha ao desativar alertas:", error);
     setStatus("Não foi possível concluir a desativação. Tente novamente.", true);
   } finally {
     disableButton.disabled = false;
+  }
+});
+
+deleteContactButton?.addEventListener("click", async () => {
+  const confirmed = window.confirm("Deseja excluir seu contato da base do RADAR BR-365 e cancelar os alertas deste dispositivo?");
+  if (!confirmed) return;
+  deleteContactButton.disabled = true;
+  try {
+    const user = await getAnonymousUser();
+    const messaging = currentMessaging || getMessaging(app);
+    await unregister(messaging).catch(() => {});
+    const batch = writeBatch(db);
+    batch.delete(doc(db, "pushSubscriptions", user.uid));
+    batch.delete(doc(db, "contacts", user.uid));
+    await batch.commit();
+    enableButton.disabled = false;
+    enableButton.textContent = "🔔 Cadastrar e ativar alertas neste celular";
+    disableButton.hidden = true;
+    deleteContactButton.hidden = true;
+    setStatus("Seu contato foi excluído da base e os alertas deste dispositivo foram desativados.");
+  } catch (error) {
+    console.error("Falha ao excluir contato:", error);
+    setStatus("Não foi possível excluir o cadastro. Tente novamente.", true);
+  } finally {
+    deleteContactButton.disabled = false;
   }
 });
