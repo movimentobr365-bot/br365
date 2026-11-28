@@ -1,12 +1,15 @@
 name: Enviar alertas de novos acidentes do RADAR BR-365
 
+concurrency:
+  group: radar-br365-alertas-main
+  cancel-in-progress: false
+
 on:
   push:
     branches:
       - main
     paths:
       - dados.js
-  workflow_dispatch:
 
 permissions:
   contents: read
@@ -18,7 +21,7 @@ jobs:
       - name: Baixar o repositório
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 0
 
       - name: Preparar Node.js
         uses: actions/setup-node@v4
@@ -59,30 +62,24 @@ jobs:
           }
 
           const currentData = loadData(execFileSync('git', ['show', 'HEAD:dados.js'], { encoding: 'utf8' }));
-          let previousData = { acidentes: [] };
           const before = process.env.BEFORE_SHA || '';
-          if (before && !/^0+$/.test(before)) {
-            try {
-              previousData = loadData(execFileSync('git', ['show', before + ':dados.js'], { encoding: 'utf8' }));
-            } catch (error) {
-              console.warn('Não foi possível ler a versão anterior; será aplicada a janela de 7 dias.', error.message);
-            }
+          if (!before || /^0+$/.test(before)) {
+            throw new Error('Não foi possível comparar com a versão anterior. Por segurança, nenhum alerta será enviado.');
+          }
+
+          let previousData;
+          try {
+            previousData = loadData(execFileSync('git', ['show', before + ':dados.js'], { encoding: 'utf8' }));
+          } catch (error) {
+            throw new Error('Falha ao ler a versão anterior de dados.js; nenhum alerta será enviado: ' + error.message);
           }
 
           const oldIds = new Set(previousData.acidentes.map((item) => String(item.id)));
-          const newlyAdded = currentData.acidentes.filter((item) => item && item.id && !oldIds.has(String(item.id)));
+          const newAccidents = currentData.acidentes.filter((item) => item && item.id && !oldIds.has(String(item.id)));
 
-          const now = Date.now();
-          const sevenDaysAgo = now - (7 * 24 * 60 * 60 * 1000);
-          const recentAccidents = newlyAdded.filter((item) => {
-            const timestamp = Date.parse(String(item.data || '') + 'T12:00:00-03:00');
-            return Number.isFinite(timestamp) && timestamp >= sevenDaysAgo && timestamp <= now + 24 * 60 * 60 * 1000;
-          });
-
-          console.log('Novos registros identificados:', newlyAdded.length);
-          console.log('Novos acidentes recentes elegíveis para alerta:', recentAccidents.length);
-          if (!recentAccidents.length) {
-            console.log('Nenhum acidente recente novo para notificar.');
+          console.log('Novos acidentes identificados:', newAccidents.length);
+          if (!newAccidents.length) {
+            console.log('Nenhum novo ID de acidente neste commit.');
             process.exit(0);
           }
 
@@ -127,7 +124,7 @@ jobs:
             return parts.join(' | ').slice(0, 900);
           }
 
-          for (const accident of recentAccidents) {
+          for (const accident of newAccidents) {
             const safeId = String(accident.id).replace(/[\/#?]/g, '_');
             const alertRef = db.collection('alertedAccidents').doc(safeId);
             const previousAlert = await alertRef.get();
