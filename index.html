@@ -491,6 +491,14 @@
   .alertas-cx .alertas-nota{margin:14px 0 0;font-size:12px;color:#596170;background:#fff;border-left:4px solid var(--amarelo);padding:10px 12px;border-radius:6px}
   @media(max-width:700px){.alertas-in{padding:16px}.alertas-opcoes{grid-template-columns:1fr}.alertas-cta{width:100%}}
 
+
+  .alertas-push-panel{background:#fff;border:1px solid var(--linha);border-radius:14px;padding:18px;margin-top:14px}
+  .alertas-push-panel .form-alertas{max-width:620px}
+  .alertas-push-panel .alerta-consent{margin:0 0 10px}
+  .alertas-push-status{margin:10px 0 0!important;font-size:13px;color:var(--tinta)}
+  .alerta-push-off{background:#475569!important;color:#fff!important;margin-top:8px}
+  .alertas-push-panel [hidden]{display:none!important}
+
 </style>
 </head>
 <body>
@@ -596,72 +604,21 @@
 
   <section class="caixa alertas-cx" id="alertas" aria-labelledby="alertas-titulo">
     <div class="alertas-in">
-      <div class="alertas-selo">📡 MOVIMENTO BR-365</div>
-      <h3 id="alertas-titulo">🔔 Cadastro para receber alertas de acidentes do RADAR BR-365</h3>
-      <p class="alertas-intro">Cadastre seu contato para acompanhar acidentes confirmados, interdições e atualizações do RADAR BR-365 no trecho entre Uberlândia e a BR-040.</p>
-      <div class="alertas-opcoes">
-        <div class="alertas-canal">
-          <strong>📣 Canal oficial no WhatsApp</strong>
-          <p>As atualizações gerais serão publicadas no canal do Radar BR-365. O botão para seguir será liberado aqui assim que o canal estiver criado.</p>
-          <span class="alertas-status">Canal em preparação</span>
-        </div>
-        <div class="alertas-cadastro">
-          <strong>📲 Cadastro para receber alertas de acidentes</strong>
-          <p>Informe seus dados e seu perfil para solicitar o recebimento dos alertas de acidentes publicados pelo RADAR BR-365. O pedido será encaminhado à equipe pelo WhatsApp.</p>
-          <form id="formAlerta" class="form-alertas">
-            <label for="alertaNome">Seu nome</label>
-            <input id="alertaNome" name="nome" type="text" maxlength="80" autocomplete="name" placeholder="Como podemos chamar você?" required>
-            <label for="alertaTelefone">Seu WhatsApp com DDD</label>
-            <input id="alertaTelefone" name="telefone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="(34) 99999-9999" required>
-            <fieldset class="alerta-perfil">
-              <legend>Identifique seu perfil:</legend>
-              <div class="alerta-perfis">
-                <label class="alerta-opcao">
-                  <input type="radio" name="perfil" value="Pessoa física" required>
-                  <span>👤 Sou pessoa física</span>
-                </label>
-                <label class="alerta-opcao">
-                  <input type="radio" name="perfil" value="Pessoa jurídica" required>
-                  <span>🏢 Sou pessoa jurídica</span>
-                </label>
-              </div>
-            </fieldset>
-            <div id="alertaJuridicaWrap" hidden>
-              <label for="alertaEmpresa">Nome da empresa ou organização</label>
-              <input id="alertaEmpresa" name="empresa" type="text" maxlength="120" placeholder="Nome fantasia ou razão social">
-              <label for="alertaTipoJuridico">Tipo de empresa/organização</label>
-              <select id="alertaTipoJuridico" name="tipoJuridico">
-                <option value="">Selecione uma opção</option>
-                <option>MEI / Empresário individual</option>
-                <option>Microempresa (ME)</option>
-                <option>Empresa de pequeno porte (EPP)</option>
-                <option>Sociedade limitada (LTDA / SLU)</option>
-                <option>Sociedade anônima (S/A)</option>
-                <option>Associação / Fundação / ONG</option>
-                <option>Cooperativa</option>
-                <option>Órgão público</option>
-                <option>Outro / Não sei informar</option>
-              </select>
-              <label for="alertaAtuacao">Área de atuação</label>
-              <select id="alertaAtuacao" name="atuacao">
-                <option value="">Selecione uma opção</option>
-                <option>Imprensa / veículo de comunicação</option>
-                <option>Serviços</option>
-                <option>Comércio</option>
-                <option>Indústria</option>
-                <option>Agropecuária</option>
-                <option>Associação / entidade sem fins lucrativos</option>
-                <option>Setor público</option>
-                <option>Outra atividade</option>
-              </select>
-              <p class="alertas-nota juridica-nota">Essas informações servem para identificar o perfil do contato. Não é necessário informar CNPJ neste cadastro.</p>
-            </div>
-            <label class="alerta-consent"><input type="checkbox" id="alertaConsent" required> <span>Autorizo o Movimento BR-365 a usar meu nome, telefone e dados de perfil para cadastrar meu interesse e entrar em contato sobre os alertas de acidentes, interdições e atualizações do RADAR BR-365. Posso cancelar a qualquer momento enviando <b>SAIR</b>.</span></label>
-            <button type="submit" class="alertas-cta">💬 Enviar pedido de cadastro pelo WhatsApp</button>
-          </form>
-        </div>
+      <div class="alertas-selo">📡 RADAR BR-365</div>
+      <h3 id="alertas-titulo">🔔 Receba alertas de acidentes no seu celular</h3>
+      <p class="alertas-intro">Ative as notificações neste dispositivo. Sempre que um acidente novo for registrado no painel, você receberá um aviso automático, com data, horário e informações sobre vítimas quando estiverem confirmadas.</p>
+      <div class="alertas-push-panel">
+        <form id="formPush" class="form-alertas">
+          <label class="alerta-consent">
+            <input type="checkbox" id="pushConsent" required>
+            <span>Autorizo este dispositivo a receber notificações do RADAR BR-365. Um identificador técnico do dispositivo será armazenado no Firebase para permitir o envio dos alertas. Posso desativar quando quiser.</span>
+          </label>
+          <button type="submit" id="ativarPush" class="alertas-cta">🔔 Ativar alertas neste celular</button>
+          <button type="button" id="desativarPush" class="alertas-cta alerta-push-off" hidden>Desativar alertas neste dispositivo</button>
+          <p id="pushStatus" class="alertas-push-status" role="status" aria-live="polite">Você ainda não ativou as notificações neste dispositivo.</p>
+        </form>
       </div>
-      <p class="alertas-nota"><b>Transparência:</b> o cadastro para receber alertas de acidentes do RADAR BR-365 é gratuito. Ao enviar o formulário, o WhatsApp abre com os dados e a autorização preenchidos; é necessário tocar em “Enviar” no aplicativo para concluir o pedido. Nesta etapa, o site não armazena os dados e ainda não há disparos individuais automáticos. A equipe organizará a lista a partir dos pedidos recebidos. Para cancelar, envie SAIR.</p>
+      <p class="alertas-nota"><b>Importante:</b> o serviço é gratuito e não exige WhatsApp, número de telefone ou cadastro com senha. No iPhone, é necessário adicionar o site à Tela de Início e abri-lo pelo ícone para ativar notificações (iOS 16.4 ou superior). A entrega depende da permissão do navegador, da conexão e do suporte do dispositivo.</p>
     </div>
   </section>
 
@@ -1566,53 +1523,6 @@ tracadoReal();
   setInterval(() => { if (!document.hidden) renova(); }, 60000);
 })();
 </script>
-<script>
-/* Pré-cadastro voluntário: envia dados ao WhatsApp do Zap Coró.
-   A equipe só recebe o pedido quando a pessoa confirma o envio no WhatsApp. */
-(() => {
-  const form = document.getElementById('formAlerta');
-  if (!form) return;
-  const perfis = [...form.querySelectorAll('input[name="perfil"]')];
-  const perfilSelecionado = () => form.querySelector('input[name="perfil"]:checked')?.value || '';
-  const juridicaWrap = document.getElementById('alertaJuridicaWrap');
-  const empresaInput = document.getElementById('alertaEmpresa');
-  const tipoJuridico = document.getElementById('alertaTipoJuridico');
-  const atuacao = document.getElementById('alertaAtuacao');
-  const atualizarPerfil = () => {
-    const juridica = perfilSelecionado() === 'Pessoa jurídica';
-    juridicaWrap.hidden = !juridica;
-    empresaInput.required = juridica;
-    tipoJuridico.required = juridica;
-    atuacao.required = juridica;
-    if (!juridica) {
-      empresaInput.value = '';
-      tipoJuridico.value = '';
-      atuacao.value = '';
-    }
-  };
-  perfis.forEach(radio => radio.addEventListener('change', atualizarPerfil));
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    if (!form.reportValidity()) return;
-    const nome = document.getElementById('alertaNome').value.trim();
-    const telefone = document.getElementById('alertaTelefone').value.trim();
-    const perfil = perfilSelecionado();
-    const empresa = empresaInput.value.trim();
-    const tipo = tipoJuridico.value;
-    const area = atuacao.value;
-    if (!nome || !telefone || !perfil || !document.getElementById('alertaConsent').checked) return;
-    const mensagem = [
-      'CADASTRO — ALERTAS DE ACIDENTES DO RADAR BR-365',
-      'Nome do contato: ' + nome,
-      'WhatsApp informado: ' + telefone,
-      'Perfil: ' + perfil,
-      ...(perfil === 'Pessoa jurídica' ? ['Empresa/organização: ' + empresa, 'Tipo: ' + tipo, 'Área de atuação: ' + area] : []),
-      'Autorizo o Movimento BR-365 a usar meu nome, telefone e dados de perfil para cadastrar meu interesse e entrar em contato sobre os alertas de acidentes, interdições e atualizações do RADAR BR-365.',
-      'Estou ciente de que posso cancelar a qualquer momento enviando SAIR.'
-    ].join('\\n');
-    window.open('https://wa.me/5534920002818?text=' + encodeURIComponent(mensagem), '_blank', 'noopener,noreferrer');
-  });
-})();
-</script>
+<script type="module" src="push.js?v=1"></script>
 </body>
 </html>
