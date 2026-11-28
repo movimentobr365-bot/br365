@@ -9,6 +9,8 @@ import {
   onMessage
 } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-messaging.js";
 
+window.__radarPushModuleReady = false;
+
 const firebaseConfig = {
   apiKey: "AIzaSyCTPsOy1bmd3ob3oYfEhKDfJIa3ZS2I8as",
   authDomain: "radar-br-365.firebaseapp.com",
@@ -249,3 +251,7 @@ deleteContactButton?.addEventListener("click", async () => {
     deleteContactButton.disabled = false;
   }
 });
+
+// Confirma que o módulo carregou e que os handlers do formulário foram instalados.
+window.__radarPushModuleReady = true;
+setStatus("Formulário pronto. Preencha seus dados e autorizações para ativar os alertas.");
