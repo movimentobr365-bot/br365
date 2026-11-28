@@ -21,7 +21,7 @@ window.__radarPushModuleReady = false;
     const { initializeApp } = appSdk;
     const { getAuth, signInAnonymously } = authSdk;
     const { getFirestore, doc, writeBatch, deleteDoc, serverTimestamp } = firestoreSdk;
-    const { getMessaging, isWindowSupported, getToken, deleteToken, onMessage } = messagingSdk;
+    const { getMessaging, isSupported, onRegistered, register, unregister, onMessage } = messagingSdk;
 
     const firebaseConfig = {
       apiKey: "AIzaSyCTPsOy1bmd3ob3oYfEhKDfJIa3ZS2I8as",
@@ -108,34 +108,54 @@ window.__radarPushModuleReady = false;
     }
 
     async function registerDeviceAndSave(data, user, messaging, registration) {
-      const token = await getToken(messaging, {
-        vapidKey: VAPID_PUBLIC_KEY,
-        serviceWorkerRegistration: registration
-      });
+      return new Promise((resolve, reject) => {
+        let completed = false;
+        let unsubscribe = () => {};
 
-      if (!token) {
-        throw new Error("O Firebase não retornou o token de notificações deste dispositivo.");
-      }
+        const finish = (error, fid) => {
+          if (completed) return;
+          completed = true;
+          clearTimeout(timer);
+          unsubscribe();
+          if (error) reject(error);
+          else resolve(fid);
+        };
 
-      const batch = writeBatch(db);
-      batch.set(doc(db, "contacts", user.uid), {
-        name: data.name,
-        phone: data.phone,
-        profile: data.profile,
-        companyName: data.companyName,
-        companyType: data.companyType,
-        activity: data.activity,
-        contactConsent: true,
-        updatedAt: serverTimestamp()
+        const timer = setTimeout(() => {
+          finish(new Error("O Firebase não confirmou a inscrição deste celular. Tente novamente."));
+        }, 30000);
+
+        unsubscribe = onRegistered(messaging, async (fid) => {
+          try {
+            const batch = writeBatch(db);
+            batch.set(doc(db, "contacts", user.uid), {
+              name: data.name,
+              phone: data.phone,
+              profile: data.profile,
+              companyName: data.companyName,
+              companyType: data.companyType,
+              activity: data.activity,
+              contactConsent: true,
+              updatedAt: serverTimestamp()
+            });
+            batch.set(doc(db, "pushSubscriptions", user.uid), {
+              fid,
+              platform: "web",
+              pushConsent: true,
+              updatedAt: serverTimestamp()
+            });
+            await batch.commit();
+            finish(null, fid);
+          } catch (error) {
+            finish(error);
+          }
+        });
+
+        register(messaging, {
+          vapidKey: VAPID_PUBLIC_KEY,
+          serviceWorkerRegistration: registration
+        }).catch((error) => finish(error));
       });
-      batch.set(doc(db, "pushSubscriptions", user.uid), {
-        token,
-        platform: "web",
-        pushConsent: true,
-        updatedAt: serverTimestamp()
-      });
-      await batch.commit();
-      return token;
     }
 
     form?.addEventListener("submit", async (event) => {
@@ -160,7 +180,7 @@ window.__radarPushModuleReady = false;
         if (isIOS() && !isStandalone()) {
           throw new Error("No iPhone, adicione primeiro o site à Tela de Início, abra pelo ícone e tente novamente.");
         }
-        if (!(await isWindowSupported())) {
+        if (!(await isSupported())) {
           throw new Error("Este navegador não oferece suporte ao Firebase Cloud Messaging.");
         }
 
@@ -219,7 +239,7 @@ window.__radarPushModuleReady = false;
       try {
         const user = await getAnonymousUser();
         const messaging = currentMessaging || getMessaging(app);
-        await deleteToken(messaging);
+        await unregister(messaging);
         await deleteDoc(doc(db, "pushSubscriptions", user.uid));
         enableButton.disabled = false;
         enableButton.textContent = "🔔 Cadastrar e ativar alertas neste celular";
@@ -240,7 +260,7 @@ window.__radarPushModuleReady = false;
       try {
         const user = await getAnonymousUser();
         const messaging = currentMessaging || getMessaging(app);
-        await deleteToken(messaging).catch(() => {});
+        await unregister(messaging).catch(() => {});
         const batch = writeBatch(db);
         batch.delete(doc(db, "pushSubscriptions", user.uid));
         batch.delete(doc(db, "contacts", user.uid));
