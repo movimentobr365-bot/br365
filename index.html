@@ -1576,6 +1576,33 @@ tracadoReal();
   setInterval(() => { if (!document.hidden) renova(); }, 60000);
 })();
 </script>
-<script type="module" src="push.js?v=2"></script>
+<script id="radarPushModuleGuard">
+(() => {
+  const form = document.getElementById('formPush');
+  const status = document.getElementById('pushStatus');
+  const moduleScript = document.getElementById('radarPushModule');
+  if (!form) return;
+
+  form.addEventListener('submit', (event) => {
+    if (window.__radarPushModuleReady !== true) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      if (status) {
+        status.textContent = 'A integração de notificações ainda não carregou. Seus dados não foram enviados. Atualize a página e tente novamente.';
+        status.style.color = '#a12622';
+      }
+    }
+  }, true);
+
+  moduleScript?.addEventListener('error', () => {
+    if (status) {
+      status.textContent = 'Não foi possível carregar o módulo de cadastro. Seus dados não foram enviados. Atualize a página em alguns instantes.';
+      status.style.color = '#a12622';
+    }
+  });
+})();
+</script>
+
+<script id="radarPushModule" type="module" src="push.js?v=3"></script>
 </body>
 </html>
