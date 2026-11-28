@@ -260,7 +260,7 @@ window.__radarPushModuleReady = false;
       const originalText = enableButton.textContent;
 
       enableButton.disabled = true;
-      enableButton.textContent = "Cadastrando...";
+      enableButton.textContent = "Solicitando autorização...";
 
       try {
         if (
@@ -275,12 +275,6 @@ window.__radarPushModuleReady = false;
         if (isIOS() && !isStandalone()) {
           throw new Error(
             "No iPhone, adicione primeiro o site à Tela de Início, abra pelo ícone e tente novamente."
-          );
-        }
-
-        if (!(await isSupported())) {
-          throw new Error(
-            "Este navegador não oferece suporte ao Firebase Cloud Messaging."
           );
         }
 
@@ -321,12 +315,37 @@ window.__radarPushModuleReady = false;
           throw new Error("Informe seu nome.");
         }
 
-        const permission =
-          await Notification.requestPermission();
+        // IMPORTANTE NO IOS:
+        // Solicitar a permissão imediatamente dentro do toque do usuário.
+        // Não colocar nenhum await antes desta chamada.
+        setStatus(
+          "Aguardando a autorização de notificações do iPhone..."
+        );
+
+        const permissionPromise =
+          Notification.permission === "granted"
+            ? Promise.resolve("granted")
+            : Notification.requestPermission();
+
+        const permission = await permissionPromise;
 
         if (permission !== "granted") {
+          if (permission === "denied") {
+            throw new Error(
+              "As notificações estão bloqueadas para este aplicativo. Verifique os Ajustes do iPhone e tente novamente."
+            );
+          }
+
           throw new Error(
-            "A permissão de notificações não foi concedida. Verifique as permissões do navegador."
+            "O iPhone não confirmou a autorização. Abra o Radar pelo ícone da Tela de Início e toque novamente em Cadastrar e ativar alertas."
+          );
+        }
+
+        enableButton.textContent = "Preparando os alertas...";
+
+        if (!(await isSupported())) {
+          throw new Error(
+            "Este navegador não oferece suporte ao Firebase Cloud Messaging."
           );
         }
 
