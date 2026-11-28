@@ -597,8 +597,8 @@
   <section class="caixa alertas-cx" id="alertas" aria-labelledby="alertas-titulo">
     <div class="alertas-in">
       <div class="alertas-selo">📡 MOVIMENTO BR-365</div>
-      <h3 id="alertas-titulo">🔔 Receba alertas da BR-365</h3>
-      <p class="alertas-intro">Acompanhe acidentes confirmados, interdições e atualizações importantes entre Uberlândia e a BR-040.</p>
+      <h3 id="alertas-titulo">🔔 Cadastro para receber alertas de acidentes do RADAR BR-365</h3>
+      <p class="alertas-intro">Cadastre seu contato para acompanhar acidentes confirmados, interdições e atualizações do RADAR BR-365 no trecho entre Uberlândia e a BR-040.</p>
       <div class="alertas-opcoes">
         <div class="alertas-canal">
           <strong>📣 Canal oficial no WhatsApp</strong>
@@ -606,8 +606,8 @@
           <span class="alertas-status">Canal em preparação</span>
         </div>
         <div class="alertas-cadastro">
-          <strong>📲 Cadastro voluntário para receber contato</strong>
-          <p>Preencha seus dados e envie a solicitação pelo WhatsApp. A equipe receberá seu pedido e organizará a lista de interessados.</p>
+          <strong>📲 Cadastro para receber alertas de acidentes</strong>
+          <p>Informe seus dados e seu perfil para solicitar o recebimento dos alertas de acidentes publicados pelo RADAR BR-365. O pedido será encaminhado à equipe pelo WhatsApp.</p>
           <form id="formAlerta" class="form-alertas">
             <label for="alertaNome">Seu nome</label>
             <input id="alertaNome" name="nome" type="text" maxlength="80" autocomplete="name" placeholder="Como podemos chamar você?" required>
@@ -656,12 +656,12 @@
               </select>
               <p class="alertas-nota juridica-nota">Essas informações servem para identificar o perfil do contato. Não é necessário informar CNPJ neste cadastro.</p>
             </div>
-            <label class="alerta-consent"><input type="checkbox" id="alertaConsent" required> <span>Autorizo o Movimento BR-365 a usar meu nome e telefone para tratar meu pedido de recebimento de alertas e entrar em contato sobre esse serviço. Posso cancelar a qualquer momento enviando <b>SAIR</b>.</span></label>
+            <label class="alerta-consent"><input type="checkbox" id="alertaConsent" required> <span>Autorizo o Movimento BR-365 a usar meu nome, telefone e dados de perfil para cadastrar meu interesse e entrar em contato sobre os alertas de acidentes, interdições e atualizações do RADAR BR-365. Posso cancelar a qualquer momento enviando <b>SAIR</b>.</span></label>
             <button type="submit" class="alertas-cta">💬 Enviar pedido de cadastro pelo WhatsApp</button>
           </form>
         </div>
       </div>
-      <p class="alertas-nota"><b>Transparência:</b> o cadastro é gratuito. Ao enviar o formulário, o WhatsApp abre com os dados e a autorização preenchidos; é necessário tocar em “Enviar” no aplicativo para concluir o pedido. Nesta etapa, o site não armazena os dados e ainda não há disparos individuais automáticos. A equipe organizará a lista a partir dos pedidos recebidos. Para cancelar, envie SAIR.</p>
+      <p class="alertas-nota"><b>Transparência:</b> o cadastro para receber alertas de acidentes do RADAR BR-365 é gratuito. Ao enviar o formulário, o WhatsApp abre com os dados e a autorização preenchidos; é necessário tocar em “Enviar” no aplicativo para concluir o pedido. Nesta etapa, o site não armazena os dados e ainda não há disparos individuais automáticos. A equipe organizará a lista a partir dos pedidos recebidos. Para cancelar, envie SAIR.</p>
     </div>
   </section>
 
@@ -1602,12 +1602,12 @@ tracadoReal();
     const area = atuacao.value;
     if (!nome || !telefone || !perfil || !document.getElementById('alertaConsent').checked) return;
     const mensagem = [
-      'CADASTRO VOLUNTÁRIO — ALERTAS RADAR BR-365',
+      'CADASTRO — ALERTAS DE ACIDENTES DO RADAR BR-365',
       'Nome do contato: ' + nome,
       'WhatsApp informado: ' + telefone,
       'Perfil: ' + perfil,
       ...(perfil === 'Pessoa jurídica' ? ['Empresa/organização: ' + empresa, 'Tipo: ' + tipo, 'Área de atuação: ' + area] : []),
-      'Autorizo o Movimento BR-365 a usar meu nome e telefone para tratar meu pedido de recebimento de alertas e entrar em contato sobre esse serviço.',
+      'Autorizo o Movimento BR-365 a usar meu nome, telefone e dados de perfil para cadastrar meu interesse e entrar em contato sobre os alertas de acidentes, interdições e atualizações do RADAR BR-365.',
       'Estou ciente de que posso cancelar a qualquer momento enviando SAIR.'
     ].join('\\n');
     window.open('https://wa.me/5534920002818?text=' + encodeURIComponent(mensagem), '_blank', 'noopener,noreferrer');
