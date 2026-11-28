@@ -112,7 +112,7 @@ jobs:
             if (accident.tipo) parts.push('🚗 ' + accident.tipo);
 
             const deaths = Number(accident.mortos || 0);
-            const injured = Number(accident.feridos || 0);
+            const injured = Math.max(Number(accident.feridos || 0), Number(accident.feridos_graves || 0) + Number(accident.feridos_leves || 0));
             if (deaths > 0 || injured > 0) {
               const victimParts = [];
               if (deaths > 0) victimParts.push(deaths + (deaths === 1 ? ' morte' : ' mortes'));
